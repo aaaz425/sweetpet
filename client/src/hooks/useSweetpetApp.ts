@@ -90,7 +90,7 @@ export function useSweetpetApp() {
     if (!selectedPetId) return;
 
     await createOrder(selectedPetId, orderForm);
-    setActivePage("orders");
+    setActivePage("my-orders");
     await loadAll();
   }
 

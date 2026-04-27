@@ -37,7 +37,10 @@ textarea {
 
 button,
 select,
-input[type="date"] {
+input[type="date"],
+a,
+[role="button"],
+[data-radix-collection-item] {
   cursor: pointer;
 }
 

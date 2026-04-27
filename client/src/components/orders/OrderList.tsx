@@ -15,7 +15,7 @@ import { badgeClass, panelClass } from "../ui";
 
 type OrderListProps = {
   orders: Order[];
-  onUpdateStatus: (order: Order, status: Order["status"]) => void;
+  onUpdateStatus?: (order: Order, status: Order["status"]) => void;
   onExportOrder: (orderUid: string) => void;
 };
 
@@ -36,27 +36,29 @@ export function OrderList({ orders, onUpdateStatus, onExportOrder }: OrderListPr
               <span className={badgeClass}>{orderStatusLabels[order.status]}</span>
             </div>
             <div className="flex flex-wrap gap-2">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button>
-                    상태 변경
-                    <ChevronDown aria-hidden="true" size={16} />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuLabel>주문 상태</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {orderStatuses.map((status) => (
-                    <DropdownMenuItem
-                      disabled={order.status === status}
-                      key={status}
-                      onSelect={() => onUpdateStatus(order, status)}
-                    >
-                      {orderStatusLabels[status]}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+              {onUpdateStatus && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button>
+                      상태 변경
+                      <ChevronDown aria-hidden="true" size={16} />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuLabel>주문 상태</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {orderStatuses.map((status) => (
+                      <DropdownMenuItem
+                        disabled={order.status === status}
+                        key={status}
+                        onSelect={() => onUpdateStatus(order, status)}
+                      >
+                        {orderStatusLabels[status]}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
               <Button onClick={() => onExportOrder(order.orderUid)}>JSON 보기</Button>
             </div>
           </article>

@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 import type { Page, Pet } from "../../types";
 import { Footer } from "./Footer";
+import { GlobalHeader } from "./GlobalHeader";
 import { PageHeader } from "./PageHeader";
-import { Sidebar } from "./Sidebar";
 
 type LayoutProps = {
   activePage: Page;
@@ -28,19 +28,19 @@ export function Layout({
   children
 }: LayoutProps) {
   return (
-    <div className="min-h-screen bg-background text-text-primary md:grid md:grid-cols-[240px_minmax(0,1fr)]">
-      <Sidebar
+    <div className="flex min-h-screen flex-col bg-background text-text-primary">
+      <GlobalHeader
         activePage={activePage}
         pets={pets}
         selectedPetId={selectedPetId}
         onSelectPage={onSelectPage}
         onSelectPet={onSelectPet}
       />
-      <main className="mx-auto flex min-h-screen w-full max-w-[1120px] flex-col px-4 py-6 md:px-8 md:py-8">
+      <main className="mx-auto flex w-full max-w-[1120px] flex-1 flex-col px-4 py-6 md:px-8 md:py-8">
         <PageHeader activePage={activePage} selectedPet={selectedPet} recordCount={recordCount} orderCount={orderCount} />
         <div className="flex-1">{children}</div>
-        <Footer />
       </main>
+      <Footer />
     </div>
   );
 }

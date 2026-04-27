@@ -1,4 +1,4 @@
-export type Page = "pets" | "records" | "orders" | "export";
+export type Page = "pets" | "records" | "orders" | "my-orders" | "admin-orders" | "export";
 
 export type Pet = {
   id: number;
