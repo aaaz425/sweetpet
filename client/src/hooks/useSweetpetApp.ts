@@ -1,9 +1,11 @@
 import type { FormEvent } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { createOrder, exportOrder, getOrders, updateOrderStatus } from "../api/orders";
 import { createPet, getPets } from "../api/pets";
 import { createRecord, deleteRecord, getRecords } from "../api/records";
-import type { Order, OrderFormState, OrderStatus, Page, Pet, PetFormState, RecordFormState, RecordItem } from "../types";
+import { pagePaths } from "../constants";
+import type { Order, OrderFormState, OrderStatus, Pet, PetFormState, RecordFormState, RecordItem } from "../types";
 
 const initialPetForm: PetFormState = {
   name: "",
@@ -30,7 +32,7 @@ const initialOrderForm: OrderFormState = {
 };
 
 export function useSweetpetApp() {
-  const [activePage, setActivePage] = useState<Page>("records");
+  const navigate = useNavigate();
   const [pets, setPets] = useState<Pet[]>([]);
   const [records, setRecords] = useState<RecordItem[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -102,7 +104,7 @@ export function useSweetpetApp() {
       startDate: orderForm.startDate,
       endDate: orderForm.endDate
     });
-    setActivePage("my-orders");
+    navigate(pagePaths["my-orders"]);
     await loadAll();
   }
 
@@ -118,11 +120,10 @@ export function useSweetpetApp() {
 
     const exportedOrder = await exportOrder(order.orderUid);
     setExportJson(JSON.stringify(exportedOrder, null, 2));
-    setActivePage("export");
+    navigate(pagePaths.export);
   }
 
   return {
-    activePage,
     exportJson,
     orderForm,
     orders,
@@ -140,7 +141,6 @@ export function useSweetpetApp() {
     handleDeleteRecord,
     handleExportOrder,
     handleUpdateOrderStatus,
-    setActivePage,
     setOrderForm,
     setPetForm,
     setRecordForm,

@@ -9,6 +9,23 @@ export const pageLabels: Record<Page, string> = {
   export: "내보내기"
 };
 
+export const pagePaths: Record<Page, string> = {
+  pets: "/pets",
+  records: "/records",
+  orders: "/orders",
+  "my-orders": "/my-orders",
+  "admin-orders": "/admin/orders",
+  export: "/export"
+};
+
+export function getPageFromPath(pathname: string): Page {
+  const normalizedPath = pathname.replace(/\/+$/, "") || "/";
+  if (normalizedPath === "/") return "records";
+
+  const matchingPage = Object.entries(pagePaths).find(([, path]) => path === normalizedPath)?.[0];
+  return matchingPage ? (matchingPage as Page) : "records";
+}
+
 export const pageSummaries: Record<Page, string> = {
   pets: "마이펫 정보를 관리하고 현재 작업 대상을 선택합니다.",
   records: "일상기록을 작성하고 누적된 내용을 검토합니다.",
