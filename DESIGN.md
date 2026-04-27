@@ -61,21 +61,24 @@ Do not introduce additional UI colors unless explicitly requested.
 
 ## Layout Structure
 
-The application must use a sidebar + main content layout.
+The application must use a global header + main content + footer layout.
 
 ### Desktop
 
 ```text
-[ Sidebar ] | [ Main Content ]
+[ Global Header ]
+[ Main Content  ]
+[ Footer        ]
 ```
 
-* Sidebar width: 220px ~ 260px, fixed
-* Main content: flexible
+* Global header: always visible at the top of the layout
+* Main content: flexible and centered
 * Main content max width: 1120px
+* Footer: simple and secondary
 
 ### Mobile
 
-* Sidebar becomes a top navigation
+* Header navigation should remain easy to access
 * Avoid complex drawer behavior unless necessary
 
 ---
@@ -83,6 +86,8 @@ The application must use a sidebar + main content layout.
 ## Navigation Rules
 
 The application should make the active role clear and separate user-facing screens from admin-facing screens.
+
+Global header navigation should make both the User App and Admin Console sections easy to access.
 
 ### User Navigation
 
@@ -105,9 +110,10 @@ Admin screens must not expose pet creation, record creation, or record editing.
 
 ### Shared Rules
 
-* Always visible on desktop
+* Use the global header for primary navigation
 * Current page must be clearly highlighted
 * Keep navigation shallow with no deep nesting
+* Footer must not contain primary workflow actions
 
 ---
 
