@@ -32,6 +32,12 @@ type Order = {
   status: "pending" | "processing" | "completed";
 };
 
+const orderStatusLabels: Record<Order["status"], string> = {
+  pending: "대기",
+  processing: "진행 중",
+  completed: "완료"
+};
+
 function App() {
   const [pets, setPets] = useState<Pet[]>([]);
   const [records, setRecords] = useState<RecordItem[]>([]);
@@ -40,12 +46,12 @@ function App() {
   const [recordForm, setRecordForm] = useState({
     recordDate: "2026-04-27",
     weight: "",
-    condition: "good",
+    condition: "좋음",
     memo: "",
     tags: ""
   });
   const [orderForm, setOrderForm] = useState({
-    title: "Mong's April Album",
+    title: "몽이의 4월 앨범",
     startDate: "2026-04-01",
     endDate: "2026-04-30"
   });
@@ -127,13 +133,13 @@ function App() {
       <header className="page-header">
         <div>
           <p className="eyebrow">sweetpet</p>
-          <h1>Pet records into album-ready order data.</h1>
+          <h1>반려동물의 일상을 앨범 주문 데이터로.</h1>
         </div>
       </header>
 
       <section className="grid">
         <div className="panel">
-          <h2>Pet</h2>
+          <h2>반려동물</h2>
           <div className="pet-list">
             {pets.map((pet) => (
               <button
@@ -150,10 +156,10 @@ function App() {
         </div>
 
         <div className="panel">
-          <h2>New Record</h2>
+          <h2>새 기록</h2>
           <form onSubmit={createRecord} className="form">
             <label>
-              Date
+              날짜
               <input
                 type="date"
                 value={recordForm.recordDate}
@@ -161,7 +167,7 @@ function App() {
               />
             </label>
             <label>
-              Weight
+              몸무게
               <input
                 inputMode="decimal"
                 placeholder="4.5"
@@ -170,41 +176,41 @@ function App() {
               />
             </label>
             <label>
-              Condition
+              컨디션
               <select
                 value={recordForm.condition}
                 onChange={(event) => setRecordForm({ ...recordForm, condition: event.target.value })}
               >
-                <option value="great">great</option>
-                <option value="good">good</option>
-                <option value="normal">normal</option>
-                <option value="tired">tired</option>
+                <option value="아주 좋음">아주 좋음</option>
+                <option value="좋음">좋음</option>
+                <option value="보통">보통</option>
+                <option value="피곤함">피곤함</option>
               </select>
             </label>
             <label className="wide">
-              Memo
+              메모
               <textarea
                 required
-                placeholder="Write a short daily note."
+                placeholder="오늘의 기록을 짧게 남겨주세요."
                 value={recordForm.memo}
                 onChange={(event) => setRecordForm({ ...recordForm, memo: event.target.value })}
               />
             </label>
             <label className="wide">
-              Tags
+              태그
               <input
-                placeholder="walk, grooming"
+                placeholder="산책, 미용"
                 value={recordForm.tags}
                 onChange={(event) => setRecordForm({ ...recordForm, tags: event.target.value })}
               />
             </label>
-            <button className="primary" type="submit">Add record</button>
+            <button className="primary" type="submit">기록 추가</button>
           </form>
         </div>
       </section>
 
       <section className="panel">
-        <h2>Records</h2>
+        <h2>기록</h2>
         <div className="records">
           {records
             .filter((record) => !selectedPetId || record.pet_id === selectedPetId)
@@ -219,8 +225,8 @@ function App() {
                   </div>
                 </div>
                 <div className="record-meta">
-                  <span>{record.weight ? `${record.weight}kg` : "No weight"}</span>
-                  <button onClick={() => deleteRecord(record.id)}>Delete</button>
+                  <span>{record.weight ? `${record.weight}kg` : "몸무게 없음"}</span>
+                  <button onClick={() => deleteRecord(record.id)}>삭제</button>
                 </div>
               </article>
             ))}
@@ -229,17 +235,17 @@ function App() {
 
       <section className="grid">
         <div className="panel">
-          <h2>Create Order</h2>
+          <h2>주문 생성</h2>
           <form onSubmit={createOrder} className="form single">
             <label>
-              Title
+              제목
               <input
                 value={orderForm.title}
                 onChange={(event) => setOrderForm({ ...orderForm, title: event.target.value })}
               />
             </label>
             <label>
-              Start
+              시작일
               <input
                 type="date"
                 value={orderForm.startDate}
@@ -247,19 +253,19 @@ function App() {
               />
             </label>
             <label>
-              End
+              종료일
               <input
                 type="date"
                 value={orderForm.endDate}
                 onChange={(event) => setOrderForm({ ...orderForm, endDate: event.target.value })}
               />
             </label>
-            <button className="primary" type="submit">Create order</button>
+            <button className="primary" type="submit">주문 생성</button>
           </form>
         </div>
 
         <div className="panel">
-          <h2>Orders</h2>
+          <h2>주문</h2>
           <div className="orders">
             {orders.map((order) => (
               <article className="order-row" key={order.id}>
@@ -267,9 +273,9 @@ function App() {
                   <strong>{order.title}</strong>
                   <span>{order.start_date} - {order.end_date}</span>
                 </div>
-                <span className="status">{order.status}</span>
-                <button onClick={() => updateOrderStatus(order)}>Next</button>
-                <button onClick={() => exportOrder(order.id)}>Export</button>
+                <span className="status">{orderStatusLabels[order.status]}</span>
+                <button onClick={() => updateOrderStatus(order)}>다음 상태</button>
+                <button onClick={() => exportOrder(order.id)}>JSON 내보내기</button>
               </article>
             ))}
           </div>
@@ -278,7 +284,7 @@ function App() {
 
       {exportJson && (
         <section className="panel">
-          <h2>JSON Export</h2>
+          <h2>JSON 내보내기</h2>
           <pre>{exportJson}</pre>
         </section>
       )}
