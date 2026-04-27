@@ -41,8 +41,11 @@
 git clone <repo-url>
 cd sweetpet
 
+# 환경변수 준비
+cp .env.example .env
+
 # 실행
-docker-compose up --build
+docker compose up --build
 ```
 
 접속:
@@ -50,12 +53,11 @@ docker-compose up --build
 * Web: http://localhost:5173
 * API: http://localhost:4000
 
-포트를 변경해야 하는 경우 `docker-compose.yml`의 포트 매핑을 수정합니다.
+포트를 변경해야 하는 경우 `.env`의 값을 수정합니다.
 
-```yaml
-ports:
-  - "5173:5173"
-  - "4000:4000"
+```bash
+WEB_PORT=5173
+API_PORT=4000
 ```
 
 ---
@@ -64,7 +66,7 @@ ports:
 
 ### Lv1: 서비스 구현
 
-구현 목표:
+구현 내용:
 
 * 반려동물 등록
 * 반려동물 목록 및 상세 조회
@@ -74,7 +76,7 @@ ports:
 
 ### Lv2: 자체 주문 기능
 
-구현 목표:
+구현 내용:
 
 * 특정 기간의 기록을 선택해 앨범북 주문 생성
 * 주문 목록 및 상세 조회
@@ -83,7 +85,7 @@ ports:
 
 ### Lv3: 주문 데이터 익스포트
 
-구현 목표:
+구현 내용:
 
 * 주문 1건에 필요한 반려동물 정보, 기록 목록, 주문 메타데이터를 JSON으로 export
 * 가상의 인쇄 API에 전달 가능한 구조화된 데이터 생성

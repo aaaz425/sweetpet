@@ -1,0 +1,247 @@
+:root {
+  font-family: Pretendard, Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #2C2C2C;
+  background: #F8F5F0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #F8F5F0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+main {
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 48px 0;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: #7A5230;
+  font-weight: 700;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  max-width: 720px;
+  margin-bottom: 0;
+  font-size: clamp(36px, 6vw, 64px);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+h2 {
+  margin-bottom: 16px;
+  font-size: 22px;
+}
+
+h3 {
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.panel,
+.record-card {
+  border: 1px solid #E7E2DA;
+  border-radius: 16px;
+  background: #FFFFFF;
+}
+
+.panel {
+  padding: 24px;
+  margin-bottom: 16px;
+}
+
+.pet-list,
+.records,
+.orders {
+  display: grid;
+  gap: 12px;
+}
+
+.pet-card,
+.order-row button,
+.record-meta button {
+  border: 1px solid #E7E2DA;
+  border-radius: 12px;
+  background: #FFFFFF;
+  color: #2C2C2C;
+  cursor: pointer;
+}
+
+.pet-card {
+  display: grid;
+  gap: 4px;
+  padding: 16px;
+  text-align: left;
+}
+
+.pet-card span,
+.muted,
+.order-row span,
+time,
+.record-meta {
+  color: #6F6F6F;
+}
+
+.pet-card.active {
+  border-color: #7A5230;
+  background: #EDE3D7;
+}
+
+.form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.form.single {
+  grid-template-columns: 1fr;
+}
+
+.wide {
+  grid-column: 1 / -1;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  color: #6F6F6F;
+  font-size: 14px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border: 1px solid #E7E2DA;
+  border-radius: 12px;
+  padding: 12px;
+  color: #2C2C2C;
+  background: #FFFFFF;
+}
+
+textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+button {
+  padding: 10px 14px;
+}
+
+.primary {
+  min-height: 44px;
+  border: 0;
+  border-radius: 12px;
+  background: #7A5230;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+.record-card,
+.order-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tags span,
+.status {
+  border-radius: 999px;
+  background: #EDE3D7;
+  color: #7A5230;
+  padding: 4px 10px;
+  font-size: 13px;
+}
+
+.record-meta {
+  display: grid;
+  align-content: space-between;
+  justify-items: end;
+  min-width: 96px;
+}
+
+.order-row {
+  align-items: center;
+  border-bottom: 1px solid #E7E2DA;
+}
+
+.order-row:last-child {
+  border-bottom: 0;
+}
+
+.order-row div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+pre {
+  overflow: auto;
+  margin: 0;
+  border: 1px solid #E7E2DA;
+  border-radius: 12px;
+  background: #F8F5F0;
+  padding: 16px;
+}
+
+@media (max-width: 760px) {
+  main {
+    width: min(100% - 24px, 1120px);
+    padding: 32px 0;
+  }
+
+  .grid,
+  .form {
+    grid-template-columns: 1fr;
+  }
+
+  .record-card,
+  .order-row {
+    flex-direction: column;
+  }
+
+  .record-meta {
+    justify-items: start;
+    gap: 8px;
+  }
+}

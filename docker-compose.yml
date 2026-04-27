@@ -1,0 +1,23 @@
+services:
+  server:
+    build:
+      context: ./server
+    environment:
+      PORT: ${API_PORT:-4000}
+      DATABASE_PATH: /app/data/sweetpet.sqlite
+    volumes:
+      - ./data:/app/data
+    ports:
+      - "${API_PORT:-4000}:${API_PORT:-4000}"
+
+  client:
+    build:
+      context: ./client
+      args:
+        VITE_API_URL: http://localhost:${API_PORT:-4000}
+    environment:
+      VITE_API_URL: http://localhost:${API_PORT:-4000}
+    ports:
+      - "${WEB_PORT:-5173}:80"
+    depends_on:
+      - server
