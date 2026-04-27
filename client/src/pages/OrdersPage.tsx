@@ -11,7 +11,7 @@ type OrdersPageProps = {
 
 export function OrdersPage({ orderForm, selectedPetId, setOrderForm, onCreateOrder }: OrdersPageProps) {
   return (
-    <section className="max-w-[480px]">
+    <section className="min-w-0 max-w-[480px]">
       <OrderForm form={orderForm} selectedPetId={selectedPetId} setForm={setOrderForm} onSubmit={onCreateOrder} />
     </section>
   );

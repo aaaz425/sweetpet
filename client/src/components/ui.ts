@@ -3,7 +3,7 @@ export const fieldClass =
 
 export const labelClass = "grid gap-1.5 text-sm font-medium text-text-secondary";
 
-export const panelClass = "rounded-xl border border-border bg-surface p-5";
+export const panelClass = "min-w-0 rounded-xl border border-border bg-surface p-5";
 
 export const primaryButtonClass =
   "min-h-11 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-surface transition duration-150 hover:bg-accent active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60";

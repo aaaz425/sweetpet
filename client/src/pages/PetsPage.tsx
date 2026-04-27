@@ -14,7 +14,7 @@ type PetsPageProps = {
 
 export function PetsPage({ pets, selectedPetId, petForm, setPetForm, onSelectPet, onCreatePet }: PetsPageProps) {
   return (
-    <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
+    <section className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
       <PetList pets={pets} selectedPetId={selectedPetId} onSelectPet={onSelectPet} />
       <PetForm form={petForm} setForm={setPetForm} onSubmit={onCreatePet} />
     </section>

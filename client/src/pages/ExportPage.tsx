@@ -13,11 +13,11 @@ export function ExportPage({ exportJson }: ExportPageProps) {
     <section className={panelClass}>
       <SectionTitle title="주문 데이터" meta="JSON" />
       {exportJson ? (
-        <div className="grid gap-4">
+        <div className="grid min-w-0 gap-4">
           {exportData && (
-            <div className="grid gap-3 rounded-xl border border-border bg-surface p-4">
+            <div className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
-                <div className="grid gap-1">
+                <div className="grid min-w-0 gap-1">
                   <strong className="text-base text-text-primary">{exportData.order.title}</strong>
                   <span className="text-sm text-text-secondary">
                     {exportData.service} · v{exportData.exportVersion} · {exportData.generatedAt}
@@ -35,7 +35,7 @@ export function ExportPage({ exportJson }: ExportPageProps) {
               </div>
             </div>
           )}
-          <pre className="min-h-[420px] overflow-auto rounded-xl border border-border bg-background p-4 text-sm leading-6 text-text-primary">{exportJson}</pre>
+          <pre className="min-h-[420px] whitespace-pre-wrap break-words rounded-xl border border-border bg-background p-4 text-sm leading-6 text-text-primary">{exportJson}</pre>
         </div>
       ) : (
         <div className="rounded-xl border border-border bg-background p-6">

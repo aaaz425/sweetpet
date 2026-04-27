@@ -23,8 +23,8 @@ export function GlobalHeader({ activePage, pets, selectedPetId, onSelectPage, on
   const selectedPet = pets.find((pet) => pet.id === selectedPetId);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-surface">
-      <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-4 px-4 py-4 md:px-8">
+    <header className="z-40 flex-none border-b border-border bg-surface">
+      <div className="mx-auto flex w-full max-w-[1120px] min-w-0 flex-col gap-4 px-4 py-4 md:px-8">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <button
             className="w-fit rounded-lg text-left transition duration-150 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary-soft"
@@ -36,14 +36,14 @@ export function GlobalHeader({ activePage, pets, selectedPetId, onSelectPage, on
           </button>
 
           <div className="flex flex-wrap items-center gap-3">
-            <div className="grid gap-1">
+            <div className="grid min-w-0 gap-1">
               <span className="text-xs font-semibold text-text-secondary" id="pet-switcher-label">
                 현재 반려동물
               </span>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button aria-labelledby="pet-switcher-label" className="min-w-44 justify-between px-3 py-2" disabled={pets.length === 0}>
-                    <span>{selectedPet?.name ?? "반려동물 선택"}</span>
+                  <Button aria-labelledby="pet-switcher-label" className="w-full min-w-0 justify-between px-3 py-2 sm:min-w-44" disabled={pets.length === 0}>
+                    <span className="min-w-0 truncate">{selectedPet?.name ?? "반려동물 선택"}</span>
                     <ChevronDown aria-hidden="true" size={16} />
                   </Button>
                 </DropdownMenuTrigger>
@@ -61,7 +61,7 @@ export function GlobalHeader({ activePage, pets, selectedPetId, onSelectPage, on
           </div>
         </div>
 
-        <nav className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto]" aria-label="Primary navigation">
+        <nav className="grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_auto]" aria-label="Primary navigation">
           <HeaderNavGroup activePage={activePage} label="User App" items={userNavItems} onSelectPage={onSelectPage} />
           <HeaderNavGroup activePage={activePage} label="Admin Console" items={adminNavItems} onSelectPage={onSelectPage} />
         </nav>
@@ -79,9 +79,9 @@ type HeaderNavGroupProps = {
 
 function HeaderNavGroup({ activePage, label, items, onSelectPage }: HeaderNavGroupProps) {
   return (
-    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
       <span className="min-w-fit text-xs font-semibold text-text-secondary">{label}</span>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex min-w-0 flex-wrap gap-2">
         {items.map((page) => (
           <button
             className={`rounded-lg border px-3 py-2 text-sm font-semibold transition duration-150 hover:border-primary hover:bg-primary-soft hover:text-primary active:scale-[0.99] ${

@@ -12,17 +12,17 @@ export function RecordList({ records, onDeleteRecord }: RecordListProps) {
   return (
     <div className={panelClass}>
       <SectionTitle title="기록 목록" meta="최근순" />
-      <div className="grid gap-3">
+      <div className="grid min-w-0 gap-3">
         {records.map((record) => (
           <article
-            className="grid gap-4 rounded-xl border border-border bg-surface p-4 transition duration-150 hover:border-primary sm:grid-cols-[108px_minmax(0,1fr)_auto]"
+            className="grid min-w-0 gap-4 rounded-xl border border-border bg-surface p-4 transition duration-150 hover:border-primary sm:grid-cols-[108px_minmax(0,1fr)_auto]"
             key={record.id}
           >
             <div className="grid content-start gap-2">
               <time className="text-sm font-medium text-text-secondary">{record.recordDate}</time>
               <strong className="text-base text-primary">{record.weight ? `${record.weight}kg` : "-"}</strong>
             </div>
-            <div>
+            <div className="min-w-0">
               <h3 className="text-base font-bold text-text-primary">{record.condition}</h3>
               <img
                 alt={`${record.recordDate} 기록 사진`}

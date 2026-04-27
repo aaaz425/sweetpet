@@ -13,10 +13,10 @@ export function PetList({ pets, selectedPetId, onSelectPet }: PetListProps) {
   return (
     <div className={panelClass}>
       <SectionTitle title="등록된 반려동물" meta={`${pets.length}마리`} />
-      <div className="grid gap-3">
+      <div className="grid min-w-0 gap-3">
         {pets.map((pet) => (
           <button
-            className={`grid w-full gap-1 rounded-xl border p-4 text-left transition duration-150 hover:border-primary hover:bg-background active:scale-[0.99] ${
+            className={`grid w-full min-w-0 gap-1 rounded-xl border p-4 text-left transition duration-150 hover:border-primary hover:bg-background active:scale-[0.99] ${
               pet.id === selectedPetId ? "border-primary bg-primary-soft" : "border-border bg-surface"
             }`}
             key={pet.id}

@@ -11,8 +11,8 @@ type PageHeaderProps = {
 
 export function PageHeader({ activePage, selectedPet, recordCount, orderCount }: PageHeaderProps) {
   return (
-    <header className="mb-6 grid gap-4 border-b border-border pb-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-      <div>
+    <header className="mb-6 grid min-w-0 gap-4 border-b border-border pb-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+      <div className="min-w-0">
         <p className="text-sm font-medium text-text-secondary">{selectedPet ? selectedPet.name : "반려동물 선택 필요"}</p>
         <h1 className="mt-1 text-3xl font-bold leading-tight text-text-primary">{pageLabels[activePage]}</h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-text-secondary">{pageSummaries[activePage]}</p>

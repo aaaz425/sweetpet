@@ -28,7 +28,7 @@ export function Layout({
   children
 }: LayoutProps) {
   return (
-    <div className="flex min-h-screen flex-col bg-background text-text-primary">
+    <div className="flex h-dvh min-w-0 flex-col overflow-hidden bg-background text-text-primary">
       <GlobalHeader
         activePage={activePage}
         pets={pets}
@@ -36,11 +36,13 @@ export function Layout({
         onSelectPage={onSelectPage}
         onSelectPet={onSelectPet}
       />
-      <main className="mx-auto flex w-full max-w-[1120px] flex-1 flex-col px-4 py-6 md:px-8 md:py-8">
-        <PageHeader activePage={activePage} selectedPet={selectedPet} recordCount={recordCount} orderCount={orderCount} />
-        <div className="flex-1">{children}</div>
+      <main className="min-h-0 w-full flex-1 overflow-y-auto overflow-x-hidden">
+        <div className="mx-auto flex min-h-full w-full max-w-[1120px] min-w-0 flex-col px-4 py-6 md:px-8 md:py-8">
+          <PageHeader activePage={activePage} selectedPet={selectedPet} recordCount={recordCount} orderCount={orderCount} />
+          <div className="min-w-0 flex-1">{children}</div>
+          <Footer />
+        </div>
       </main>
-      <Footer />
     </div>
   );
 }

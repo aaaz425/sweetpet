@@ -14,7 +14,7 @@ type RecordsPageProps = {
 
 export function RecordsPage({ records, recordForm, selectedPetId, setRecordForm, onCreateRecord, onDeleteRecord }: RecordsPageProps) {
   return (
-    <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_380px]">
+    <section className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
       <RecordList records={records} onDeleteRecord={onDeleteRecord} />
       <RecordForm form={recordForm} setForm={setRecordForm} selectedPetId={selectedPetId} onSubmit={onCreateRecord} />
     </section>
