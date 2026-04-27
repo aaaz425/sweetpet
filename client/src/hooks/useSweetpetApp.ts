@@ -1,11 +1,18 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { FormEvent } from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createOrder, exportOrder, getOrders, updateOrderStatus } from "../api/orders";
 import { createPet, getPets } from "../api/pets";
 import { createRecord, deleteRecord, getRecords } from "../api/records";
 import { pagePaths } from "../constants";
 import type { Order, OrderFormState, OrderStatus, Pet, PetFormState, RecordFormState, RecordItem } from "../types";
+
+const queryKeys = {
+  orders: ["orders"],
+  pets: ["pets"],
+  records: ["records"]
+} as const;
 
 const initialPetForm: PetFormState = {
   name: "",
@@ -33,14 +40,20 @@ const initialOrderForm: OrderFormState = {
 
 export function useSweetpetApp() {
   const navigate = useNavigate();
-  const [pets, setPets] = useState<Pet[]>([]);
-  const [records, setRecords] = useState<RecordItem[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
+  const queryClient = useQueryClient();
   const [selectedPetId, setSelectedPetId] = useState<number | null>(null);
   const [petForm, setPetForm] = useState<PetFormState>(initialPetForm);
   const [recordForm, setRecordForm] = useState<RecordFormState>(initialRecordForm);
   const [orderForm, setOrderForm] = useState<OrderFormState>(initialOrderForm);
   const [exportJson, setExportJson] = useState("");
+
+  const petsQuery = useQuery({ queryKey: queryKeys.pets, queryFn: getPets });
+  const recordsQuery = useQuery({ queryKey: queryKeys.records, queryFn: () => getRecords() });
+  const ordersQuery = useQuery({ queryKey: queryKeys.orders, queryFn: getOrders });
+
+  const pets = petsQuery.data ?? [];
+  const records = recordsQuery.data ?? [];
+  const orders = ordersQuery.data ?? [];
 
   const selectedPet = useMemo(() => pets.find((pet) => pet.id === selectedPetId), [pets, selectedPetId]);
   const selectedRecords = useMemo(
@@ -52,67 +65,89 @@ export function useSweetpetApp() {
     [orders, selectedPetId]
   );
 
-  const loadAll = useCallback(async () => {
-    const [nextPets, nextRecords, nextOrders] = await Promise.all([getPets(), getRecords(), getOrders()]);
-    setPets(nextPets);
-    setRecords(nextRecords);
-    setOrders(nextOrders);
-    setSelectedPetId((current) => current ?? nextPets[0]?.id ?? null);
-  }, []);
-
   useEffect(() => {
-    loadAll();
-  }, [loadAll]);
+    setSelectedPetId((current) => current ?? pets[0]?.id ?? null);
+  }, [pets]);
+
+  const createPetMutation = useMutation({
+    mutationFn: createPet,
+    onSuccess: async (pet) => {
+      setPetForm(initialPetForm);
+      setSelectedPetId(pet.id);
+      await queryClient.invalidateQueries({ queryKey: queryKeys.pets });
+    }
+  });
+
+  const createRecordMutation = useMutation({
+    mutationFn: ({ petId, form }: { petId: number; form: RecordFormState }) =>
+      createRecord(petId, {
+        recordDate: form.recordDate,
+        weight: form.weight ? Number(form.weight) : null,
+        condition: form.condition,
+        memo: form.memo,
+        tags: form.tags.split(",").map((tag) => tag.trim()).filter(Boolean),
+        photo: form.photo
+      }),
+    onSuccess: async () => {
+      setRecordForm((form) => ({ ...form, memo: "", tags: "", photo: null }));
+      await queryClient.invalidateQueries({ queryKey: queryKeys.records });
+    }
+  });
+
+  const deleteRecordMutation = useMutation({
+    mutationFn: deleteRecord,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: queryKeys.records });
+    }
+  });
+
+  const createOrderMutation = useMutation({
+    mutationFn: createOrder,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: queryKeys.orders });
+      navigate(pagePaths["my-orders"]);
+    }
+  });
+
+  const updateOrderStatusMutation = useMutation({
+    mutationFn: ({ order, status }: { order: Order; status: OrderStatus }) => updateOrderStatus(order.orderUid ?? "", status),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: queryKeys.orders });
+    }
+  });
 
   async function handleCreatePet(event: FormEvent) {
     event.preventDefault();
-
-    const pet = await createPet(petForm);
-    setPetForm(initialPetForm);
-    setSelectedPetId(pet.id);
-    await loadAll();
+    await createPetMutation.mutateAsync(petForm);
   }
 
   async function handleCreateRecord(event: FormEvent) {
     event.preventDefault();
     if (!selectedPetId) return;
 
-    await createRecord(selectedPetId, {
-      recordDate: recordForm.recordDate,
-      weight: recordForm.weight ? Number(recordForm.weight) : null,
-      condition: recordForm.condition,
-      memo: recordForm.memo,
-      tags: recordForm.tags.split(",").map((tag) => tag.trim()).filter(Boolean),
-      photo: recordForm.photo
-    });
-    setRecordForm((form) => ({ ...form, memo: "", tags: "", photo: null }));
-    await loadAll();
+    await createRecordMutation.mutateAsync({ petId: selectedPetId, form: recordForm });
   }
 
   async function handleDeleteRecord(id: number) {
-    await deleteRecord(id);
-    await loadAll();
+    await deleteRecordMutation.mutateAsync(id);
   }
 
   async function handleCreateOrder(event: FormEvent) {
     event.preventDefault();
     if (!selectedPetId) return;
 
-    await createOrder({
+    await createOrderMutation.mutateAsync({
       petId: selectedPetId,
       title: orderForm.title,
       startDate: orderForm.startDate,
       endDate: orderForm.endDate
     });
-    navigate(pagePaths["my-orders"]);
-    await loadAll();
   }
 
   async function handleUpdateOrderStatus(order: Order, status: OrderStatus) {
     if (!order.orderUid) return;
 
-    await updateOrderStatus(order.orderUid, status);
-    await loadAll();
+    await updateOrderStatusMutation.mutateAsync({ order, status });
   }
 
   async function handleExportOrder(order: Order) {
