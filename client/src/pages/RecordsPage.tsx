@@ -1,22 +1,19 @@
-import type { Dispatch, FormEvent, SetStateAction } from "react";
 import { RecordForm } from "../components/records/RecordForm";
 import { RecordList } from "../components/records/RecordList";
 import type { RecordFormState, RecordItem } from "../types";
 
 type RecordsPageProps = {
   records: RecordItem[];
-  recordForm: RecordFormState;
   selectedPetId: number | null;
-  setRecordForm: Dispatch<SetStateAction<RecordFormState>>;
-  onCreateRecord: (event: FormEvent) => void;
+  onCreateRecord: (form: RecordFormState) => Promise<void>;
   onDeleteRecord: (id: number) => void;
 };
 
-export function RecordsPage({ records, recordForm, selectedPetId, setRecordForm, onCreateRecord, onDeleteRecord }: RecordsPageProps) {
+export function RecordsPage({ records, selectedPetId, onCreateRecord, onDeleteRecord }: RecordsPageProps) {
   return (
     <section className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
       <RecordList records={records} onDeleteRecord={onDeleteRecord} />
-      <RecordForm form={recordForm} setForm={setRecordForm} selectedPetId={selectedPetId} onSubmit={onCreateRecord} />
+      <RecordForm selectedPetId={selectedPetId} onSubmit={onCreateRecord} />
     </section>
   );
 }

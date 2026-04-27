@@ -1,18 +1,15 @@
-import type { Dispatch, FormEvent, SetStateAction } from "react";
 import { OrderForm } from "../components/orders/OrderForm";
 import type { OrderFormState } from "../types";
 
 type OrdersPageProps = {
-  orderForm: OrderFormState;
   selectedPetId: number | null;
-  setOrderForm: Dispatch<SetStateAction<OrderFormState>>;
-  onCreateOrder: (event: FormEvent) => void;
+  onCreateOrder: (form: OrderFormState) => Promise<void>;
 };
 
-export function OrdersPage({ orderForm, selectedPetId, setOrderForm, onCreateOrder }: OrdersPageProps) {
+export function OrdersPage({ selectedPetId, onCreateOrder }: OrdersPageProps) {
   return (
     <section className="min-w-0 max-w-[480px]">
-      <OrderForm form={orderForm} selectedPetId={selectedPetId} setForm={setOrderForm} onSubmit={onCreateOrder} />
+      <OrderForm selectedPetId={selectedPetId} onSubmit={onCreateOrder} />
     </section>
   );
 }
