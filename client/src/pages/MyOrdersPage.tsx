@@ -3,9 +3,8 @@ import type { Order } from "../types";
 
 type MyOrdersPageProps = {
   orders: Order[];
-  onExportOrder: (order: Order) => void;
 };
 
-export function MyOrdersPage({ orders, onExportOrder }: MyOrdersPageProps) {
-  return <OrderList orders={orders} onExportOrder={onExportOrder} />;
+export function MyOrdersPage({ orders }: MyOrdersPageProps) {
+  return <OrderList orders={orders} />;
 }

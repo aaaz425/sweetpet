@@ -1,5 +1,7 @@
 export type Page = "pets" | "records" | "orders" | "my-orders" | "admin-orders" | "export";
 
+export type JsonObject = Record<string, unknown>;
+
 export type Pet = {
   id: number;
   name: string;
@@ -24,6 +26,8 @@ export type RecordItem = {
   updatedAt: string;
 };
 
+export type BookStatus = "draft" | "finalized" | string;
+
 export type Book = {
   id: number;
   bookUid: string;
@@ -31,16 +35,23 @@ export type Book = {
   title: string;
   startDate: string | null;
   endDate: string | null;
-  status: string;
+  status: BookStatus;
   templateUid: string;
   bookSpecUid: string;
-  printOptions: Record<string, unknown>;
+  printOptions: JsonObject;
   finalizedAt: string | null;
   createdAt: string;
   updatedAt: string;
   recordCount: number;
   records?: RecordItem[];
 };
+
+export type BookRecord = {
+  bookId: number;
+  recordId: number;
+};
+
+export type OrderStatus = "pending" | "processing" | "completed";
 
 export type Order = {
   id: number;
@@ -50,11 +61,32 @@ export type Order = {
   title: string;
   startDate: string;
   endDate: string;
-  status: "pending" | "processing" | "completed";
-  printOptions: Record<string, unknown>;
+  status: OrderStatus;
+  printOptions: JsonObject;
   createdAt: string;
   updatedAt: string;
   recordCount: number;
+};
+
+export type OrderRecord = {
+  orderId: number;
+  recordId: number;
+};
+
+export type BookSpec = {
+  bookSpecUid: string;
+  name: string;
+  size: string;
+  binding: string;
+  minPages: number;
+  maxPages: number;
+};
+
+export type Template = {
+  templateUid: string;
+  name: string;
+  category: string;
+  bookSpecUid: string;
 };
 
 export type OrderExport = {
@@ -65,7 +97,32 @@ export type OrderExport = {
   book: Book | null;
   pet?: Pet;
   selectedRecords: RecordItem[];
-  printOptions: Record<string, unknown>;
+  printOptions: JsonObject;
+};
+
+export type CreatePetInput = {
+  name: string;
+  species: string;
+  breed?: string;
+  birthday?: string;
+  memo?: string;
+  photo?: File | null;
+};
+
+export type CreateRecordInput = {
+  recordDate: string;
+  weight?: number | null;
+  condition: string;
+  memo: string;
+  tags?: string[];
+  photo?: File | null;
+};
+
+export type CreateOrderInput = {
+  petId: number;
+  title: string;
+  startDate: string;
+  endDate: string;
 };
 
 export type PetFormState = {

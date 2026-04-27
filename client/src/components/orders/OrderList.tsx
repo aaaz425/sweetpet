@@ -1,6 +1,6 @@
 import { ChevronDown } from "lucide-react";
 import { orderStatusLabels } from "../../constants";
-import type { Order } from "../../types";
+import type { Order, OrderStatus } from "../../types";
 import { SectionTitle } from "../SectionTitle";
 import { Button } from "../ui/button";
 import {
@@ -15,11 +15,11 @@ import { badgeClass, panelClass } from "../ui";
 
 type OrderListProps = {
   orders: Order[];
-  onUpdateStatus?: (order: Order, status: Order["status"]) => void;
-  onExportOrder: (order: Order) => void;
+  onUpdateStatus?: (order: Order, status: OrderStatus) => void;
+  onExportOrder?: (order: Order) => void;
 };
 
-const orderStatuses: Order["status"][] = ["pending", "processing", "completed"];
+const orderStatuses: OrderStatus[] = ["pending", "processing", "completed"];
 
 export function OrderList({ orders, onUpdateStatus, onExportOrder }: OrderListProps) {
   return (
@@ -33,7 +33,10 @@ export function OrderList({ orders, onUpdateStatus, onExportOrder }: OrderListPr
                 <strong className="text-base text-text-primary">{order.title}</strong>
                 <span className="text-sm text-text-secondary">{order.startDate} - {order.endDate}</span>
                 <span className="text-xs text-text-secondary">
-                  {order.recordCount}개 기록 · {order.orderUid ?? `#${order.id}`}
+                  주문 {order.orderUid ?? `#${order.id}`} · 반려동물 #{order.petId}
+                </span>
+                <span className="text-xs text-text-secondary">
+                  기록 {order.recordCount}개 · 도서 {order.bookId ? `#${order.bookId}` : "없음"}
                 </span>
               </div>
               <span className={badgeClass}>{orderStatusLabels[order.status]}</span>
@@ -62,7 +65,11 @@ export function OrderList({ orders, onUpdateStatus, onExportOrder }: OrderListPr
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}
-              <Button onClick={() => onExportOrder(order)}>JSON 보기</Button>
+              {onExportOrder && (
+                <Button disabled={!order.orderUid} onClick={() => onExportOrder(order)}>
+                  JSON 보기
+                </Button>
+              )}
             </div>
           </article>
         ))}

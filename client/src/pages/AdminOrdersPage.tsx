@@ -1,9 +1,9 @@
 import { OrderList } from "../components/orders/OrderList";
-import type { Order } from "../types";
+import type { Order, OrderStatus } from "../types";
 
 type AdminOrdersPageProps = {
   orders: Order[];
-  onUpdateOrderStatus: (order: Order, status: Order["status"]) => void;
+  onUpdateOrderStatus: (order: Order, status: OrderStatus) => void;
   onExportOrder: (order: Order) => void;
 };
 

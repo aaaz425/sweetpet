@@ -49,7 +49,7 @@ export function AppRoutes({ app }: AppRoutesProps) {
   }
 
   if (app.activePage === "my-orders") {
-    return <MyOrdersPage orders={app.selectedOrders} onExportOrder={app.handleExportOrder} />;
+    return <MyOrdersPage orders={app.selectedOrders} />;
   }
 
   if (app.activePage === "admin-orders") {

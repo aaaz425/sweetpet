@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { createOrder, exportOrder, getOrders, updateOrderStatus } from "../api/orders";
 import { createPet, getPets } from "../api/pets";
 import { createRecord, deleteRecord, getRecords } from "../api/records";
-import type { Order, OrderFormState, Page, Pet, PetFormState, RecordFormState, RecordItem } from "../types";
+import type { Order, OrderFormState, OrderStatus, Page, Pet, PetFormState, RecordFormState, RecordItem } from "../types";
 
 const initialPetForm: PetFormState = {
   name: "",
@@ -75,7 +75,14 @@ export function useSweetpetApp() {
     event.preventDefault();
     if (!selectedPetId) return;
 
-    await createRecord(selectedPetId, recordForm);
+    await createRecord(selectedPetId, {
+      recordDate: recordForm.recordDate,
+      weight: recordForm.weight ? Number(recordForm.weight) : null,
+      condition: recordForm.condition,
+      memo: recordForm.memo,
+      tags: recordForm.tags.split(",").map((tag) => tag.trim()).filter(Boolean),
+      photo: recordForm.photo
+    });
     setRecordForm((form) => ({ ...form, memo: "", tags: "", photo: null }));
     await loadAll();
   }
@@ -89,18 +96,27 @@ export function useSweetpetApp() {
     event.preventDefault();
     if (!selectedPetId) return;
 
-    await createOrder(selectedPetId, orderForm);
+    await createOrder({
+      petId: selectedPetId,
+      title: orderForm.title,
+      startDate: orderForm.startDate,
+      endDate: orderForm.endDate
+    });
     setActivePage("my-orders");
     await loadAll();
   }
 
-  async function handleUpdateOrderStatus(order: Order, status: Order["status"]) {
-    await updateOrderStatus(order.orderUid ?? order.id, status);
+  async function handleUpdateOrderStatus(order: Order, status: OrderStatus) {
+    if (!order.orderUid) return;
+
+    await updateOrderStatus(order.orderUid, status);
     await loadAll();
   }
 
   async function handleExportOrder(order: Order) {
-    const exportedOrder = await exportOrder(order.orderUid ?? order.id);
+    if (!order.orderUid) return;
+
+    const exportedOrder = await exportOrder(order.orderUid);
     setExportJson(JSON.stringify(exportedOrder, null, 2));
     setActivePage("export");
   }

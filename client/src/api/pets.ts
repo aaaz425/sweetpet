@@ -1,11 +1,11 @@
-import type { Pet, PetFormState } from "../types";
+import type { CreatePetInput, Pet } from "../types";
 import { appendIfPresent, request } from "./http";
 
 export async function getPets() {
   return request<Pet[]>("/api/pets");
 }
 
-export async function createPet(payload: PetFormState) {
+export async function createPet(payload: CreatePetInput) {
   const formData = new FormData();
   appendIfPresent(formData, "name", payload.name);
   appendIfPresent(formData, "species", payload.species);
@@ -19,4 +19,3 @@ export async function createPet(payload: PetFormState) {
     body: formData
   });
 }
-

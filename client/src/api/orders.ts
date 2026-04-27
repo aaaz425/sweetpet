@@ -1,26 +1,26 @@
-import type { Order, OrderExport, OrderFormState } from "../types";
+import type { CreateOrderInput, Order, OrderExport, OrderStatus } from "../types";
 import { request } from "./http";
 
 export async function getOrders() {
   return request<Order[]>("/api/orders");
 }
 
-export async function createOrder(petId: number, payload: OrderFormState) {
+export async function createOrder(payload: CreateOrderInput) {
   return request<Order>("/api/orders", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ petId, ...payload })
+    body: JSON.stringify(payload)
   });
 }
 
-export async function updateOrderStatus(orderId: string | number, status: Order["status"]) {
-  return request<Order>(`/api/orders/${orderId}/status`, {
+export async function updateOrderStatus(orderUid: string, status: OrderStatus) {
+  return request<Order>(`/api/orders/${orderUid}/status`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ status })
   });
 }
 
-export async function exportOrder(orderId: string | number) {
-  return request<OrderExport>(`/api/orders/${orderId}/export`);
+export async function exportOrder(orderUid: string) {
+  return request<OrderExport>(`/api/orders/${orderUid}/export`);
 }

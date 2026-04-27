@@ -1,4 +1,4 @@
-import type { Order, Page } from "./types";
+import type { OrderStatus, Page } from "./types";
 
 export const pageLabels: Record<Page, string> = {
   pets: "Pets",
@@ -18,7 +18,7 @@ export const pageSummaries: Record<Page, string> = {
   export: "주문에서 생성된 구조화 JSON 데이터를 확인합니다."
 };
 
-export const orderStatusLabels: Record<Order["status"], string> = {
+export const orderStatusLabels: Record<OrderStatus, string> = {
   pending: "대기",
   processing: "진행 중",
   completed: "완료"
