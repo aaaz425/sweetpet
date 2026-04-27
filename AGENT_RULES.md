@@ -29,6 +29,19 @@ Do NOT implement:
 * Avoid over-engineering
 * Use RESTful API design
 
+## Protected Documents
+
+Do not edit the following files unless the user explicitly asks for documentation changes:
+
+* README.md
+* DESIGN.md
+* SERVICE_GUIDE.md
+* AGENT_RULES.md
+
+Agents may read these files for context, but must not modify them during implementation tasks.
+
+Before committing, check the changed file list. If any protected document is changed, ask the user before committing.
+
 ## Submission Rules
 
 * The app must run with Docker Compose
@@ -50,6 +63,12 @@ Do NOT implement:
 * Use `test:` for test additions or changes
 * Keep commit messages short and clear
 * Example: `feat: add records crud api`
+
+## Commit and Push Rules
+
+* Ask the user before creating a commit
+* Ask the user before pushing to remote
+* If the user explicitly says "commit and push", both actions are allowed for that task
 
 ## AI Usage
 
