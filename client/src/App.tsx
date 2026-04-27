@@ -1,0 +1,157 @@
+import type { FormEvent } from "react";
+import { useEffect, useMemo, useState } from "react";
+import * as api from "./api/client";
+import { Layout } from "./components/layout/Layout";
+import { ExportPage } from "./pages/ExportPage";
+import { OrdersPage } from "./pages/OrdersPage";
+import { PetsPage } from "./pages/PetsPage";
+import { RecordsPage } from "./pages/RecordsPage";
+import type { Order, OrderFormState, Page, Pet, PetFormState, RecordFormState, RecordItem } from "./types";
+
+const initialPetForm: PetFormState = {
+  name: "",
+  species: "강아지",
+  breed: "",
+  birthday: "",
+  memo: ""
+};
+
+const initialRecordForm: RecordFormState = {
+  recordDate: "2026-04-27",
+  weight: "",
+  condition: "좋음",
+  memo: "",
+  tags: ""
+};
+
+const initialOrderForm: OrderFormState = {
+  title: "몽이의 4월 앨범",
+  startDate: "2026-04-01",
+  endDate: "2026-04-30"
+};
+
+export function App() {
+  const [activePage, setActivePage] = useState<Page>("records");
+  const [pets, setPets] = useState<Pet[]>([]);
+  const [records, setRecords] = useState<RecordItem[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [selectedPetId, setSelectedPetId] = useState<number | null>(null);
+  const [petForm, setPetForm] = useState<PetFormState>(initialPetForm);
+  const [recordForm, setRecordForm] = useState<RecordFormState>(initialRecordForm);
+  const [orderForm, setOrderForm] = useState<OrderFormState>(initialOrderForm);
+  const [exportJson, setExportJson] = useState("");
+
+  const selectedPet = useMemo(() => pets.find((pet) => pet.id === selectedPetId), [pets, selectedPetId]);
+  const selectedRecords = useMemo(
+    () => records.filter((record) => !selectedPetId || record.pet_id === selectedPetId),
+    [records, selectedPetId]
+  );
+  const selectedOrders = useMemo(
+    () => orders.filter((order) => !selectedPetId || order.pet_id === selectedPetId),
+    [orders, selectedPetId]
+  );
+
+  async function loadAll() {
+    const [nextPets, nextRecords, nextOrders] = await Promise.all([api.getPets(), api.getRecords(), api.getOrders()]);
+    setPets(nextPets);
+    setRecords(nextRecords);
+    setOrders(nextOrders);
+    setSelectedPetId((current) => current ?? nextPets[0]?.id ?? null);
+  }
+
+  useEffect(() => {
+    loadAll();
+  }, []);
+
+  async function handleCreatePet(event: FormEvent) {
+    event.preventDefault();
+
+    const pet = await api.createPet(petForm);
+    setPetForm(initialPetForm);
+    setSelectedPetId(pet.id);
+    await loadAll();
+  }
+
+  async function handleCreateRecord(event: FormEvent) {
+    event.preventDefault();
+    if (!selectedPetId) return;
+
+    await api.createRecord(selectedPetId, recordForm);
+    setRecordForm((form) => ({ ...form, memo: "", tags: "" }));
+    await loadAll();
+  }
+
+  async function handleDeleteRecord(id: number) {
+    await api.deleteRecord(id);
+    await loadAll();
+  }
+
+  async function handleCreateOrder(event: FormEvent) {
+    event.preventDefault();
+    if (!selectedPetId) return;
+
+    await api.createOrder(selectedPetId, orderForm);
+    setActivePage("orders");
+    await loadAll();
+  }
+
+  async function handleUpdateOrderStatus(order: Order, status: Order["status"]) {
+    await api.updateOrderStatus(order.id, status);
+    await loadAll();
+  }
+
+  async function handleExportOrder(id: number) {
+    const exportedOrder = await api.exportOrder(id);
+    setExportJson(JSON.stringify(exportedOrder, null, 2));
+    setActivePage("export");
+  }
+
+  return (
+    <Layout
+      activePage={activePage}
+      pets={pets}
+      selectedPet={selectedPet}
+      selectedPetId={selectedPetId}
+      recordCount={selectedRecords.length}
+      orderCount={selectedOrders.length}
+      onSelectPage={setActivePage}
+      onSelectPet={setSelectedPetId}
+    >
+      {activePage === "pets" && (
+        <PetsPage
+          pets={pets}
+          selectedPetId={selectedPetId}
+          petForm={petForm}
+          setPetForm={setPetForm}
+          onSelectPet={setSelectedPetId}
+          onCreatePet={handleCreatePet}
+        />
+      )}
+
+      {activePage === "records" && (
+        <RecordsPage
+          records={selectedRecords}
+          recordForm={recordForm}
+          selectedPetId={selectedPetId}
+          setRecordForm={setRecordForm}
+          onCreateRecord={handleCreateRecord}
+          onDeleteRecord={handleDeleteRecord}
+        />
+      )}
+
+      {activePage === "orders" && (
+        <OrdersPage
+          orders={selectedOrders}
+          orderForm={orderForm}
+          selectedPetId={selectedPetId}
+          setOrderForm={setOrderForm}
+          onCreateOrder={handleCreateOrder}
+          onUpdateOrderStatus={handleUpdateOrderStatus}
+          onExportOrder={handleExportOrder}
+        />
+      )}
+
+      {activePage === "export" && <ExportPage exportJson={exportJson} />}
+    </Layout>
+  );
+}
