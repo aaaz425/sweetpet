@@ -2,10 +2,10 @@ import cors from "cors";
 import "dotenv/config";
 import express, { type ErrorRequestHandler } from "express";
 import { migrate, seed } from "./db.js";
-import { bookSpecsRouter, booksRouter, templatesRouter } from "./domains/books.js";
-import { ordersRouter } from "./domains/orders.js";
-import { petsRouter } from "./domains/pets.js";
-import { recordsRouter } from "./domains/records.js";
+import { bookSpecsRouter, booksRouter, templatesRouter } from "./domains/books/books.router.js";
+import { ordersRouter } from "./domains/orders/orders.router.js";
+import { petsRouter } from "./domains/pets/pets.router.js";
+import { recordsRouter } from "./domains/records/records.router.js";
 import { fail, ok } from "./response.js";
 import { uploadRoot } from "./uploads.js";
 

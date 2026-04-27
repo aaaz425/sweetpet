@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { db } from "../db.js";
-import { ok, fail } from "../response.js";
-import { upload, uploadedPath } from "../uploads.js";
+import { db } from "../../db.js";
+import { ok, fail } from "../../response.js";
+import { upload, uploadedPath } from "../../uploads.js";
 import { mapRecord, parseTags } from "./records-model.js";
 
 export const recordsRouter = Router();
