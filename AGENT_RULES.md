@@ -50,7 +50,6 @@ Before committing, check the changed file list. If any protected document is cha
 * Do not commit API keys, passwords, or secrets
 * Keep `.env` files out of Git and provide `.env.example` if environment variables are needed
 * Test with `docker-compose up` before submission
-* GitHub repository must be public for review
 
 ## Git Rules
 

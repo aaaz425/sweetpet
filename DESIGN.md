@@ -28,7 +28,6 @@ The UI should feel like a well-organized tool rather than an emotional journal.
   * Record creation
   * Record list
   * Order creation
-  * Export action
 * Each page should expose only the primary action relevant to that page
 * Prioritize clarity over visual decoration
 
