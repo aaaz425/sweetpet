@@ -42,11 +42,11 @@ export function useSweetpetApp() {
 
   const selectedPet = useMemo(() => pets.find((pet) => pet.id === selectedPetId), [pets, selectedPetId]);
   const selectedRecords = useMemo(
-    () => records.filter((record) => !selectedPetId || record.pet_id === selectedPetId),
+    () => records.filter((record) => !selectedPetId || record.petId === selectedPetId),
     [records, selectedPetId]
   );
   const selectedOrders = useMemo(
-    () => orders.filter((order) => !selectedPetId || order.pet_id === selectedPetId),
+    () => orders.filter((order) => !selectedPetId || order.petId === selectedPetId),
     [orders, selectedPetId]
   );
 
@@ -95,12 +95,12 @@ export function useSweetpetApp() {
   }
 
   async function handleUpdateOrderStatus(order: Order, status: Order["status"]) {
-    await updateOrderStatus(order.orderUid, status);
+    await updateOrderStatus(order.orderUid ?? order.id, status);
     await loadAll();
   }
 
-  async function handleExportOrder(orderUid: string) {
-    const exportedOrder = await exportOrder(orderUid);
+  async function handleExportOrder(order: Order) {
+    const exportedOrder = await exportOrder(order.orderUid ?? order.id);
     setExportJson(JSON.stringify(exportedOrder, null, 2));
     setActivePage("export");
   }

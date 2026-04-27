@@ -4,7 +4,7 @@ import type { Order } from "../types";
 type AdminOrdersPageProps = {
   orders: Order[];
   onUpdateOrderStatus: (order: Order, status: Order["status"]) => void;
-  onExportOrder: (orderUid: string) => void;
+  onExportOrder: (order: Order) => void;
 };
 
 export function AdminOrdersPage({ orders, onUpdateOrderStatus, onExportOrder }: AdminOrdersPageProps) {

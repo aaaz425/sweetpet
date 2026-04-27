@@ -1,4 +1,5 @@
 import { bookSpecs, mapBook, mapOrder, templates } from "../print/print-model.js";
+import { mapPet } from "../pets/pets-model.js";
 import { parseJson } from "../records/records-model.js";
 import * as repository from "../print/print-repository.js";
 
@@ -114,7 +115,7 @@ export function exportOrder(orderUid: string) {
     generatedAt: new Date().toISOString(),
     order: mapOrder(order),
     book: mapBook(book),
-    pet,
+    pet: mapPet(pet),
     selectedRecords: records,
     printOptions: parseJson(order.print_options, {})
   });

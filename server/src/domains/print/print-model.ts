@@ -30,20 +30,17 @@ export function mapBook(row: any) {
   return {
     id: row.id,
     bookUid: row.book_uid,
-    pet_id: row.pet_id,
     petId: row.pet_id,
     title: row.title,
-    start_date: row.start_date,
     startDate: row.start_date,
-    end_date: row.end_date,
     endDate: row.end_date,
     status: row.status,
     templateUid: row.template_uid,
     bookSpecUid: row.book_spec_uid,
     printOptions: parseJson(row.print_options, {}),
     finalizedAt: row.finalized_at,
-    created_at: row.created_at,
-    updated_at: row.updated_at,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
     recordCount: row.record_count ?? 0
   };
 }
@@ -54,17 +51,14 @@ export function mapOrder(row: any) {
     id: row.id,
     orderUid: row.order_uid,
     bookId: row.book_id,
-    pet_id: row.pet_id,
     petId: row.pet_id,
     title: row.title,
-    start_date: row.start_date,
     startDate: row.start_date,
-    end_date: row.end_date,
     endDate: row.end_date,
     status: row.status,
     printOptions: parseJson(row.print_options, {}),
-    created_at: row.created_at,
-    updated_at: row.updated_at,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
     recordCount: row.record_count ?? 0
   };
 }

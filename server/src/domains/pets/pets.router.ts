@@ -2,12 +2,13 @@ import { Router } from "express";
 import { db } from "../../db.js";
 import { ok, fail } from "../../response.js";
 import { upload, uploadedPath } from "../../uploads.js";
+import { mapPet } from "./pets-model.js";
 
 export const petsRouter = Router();
 
 petsRouter.get("/", (_req, res) => {
   const pets = db.prepare("SELECT * FROM pets ORDER BY id DESC").all();
-  ok(res, "Success", pets);
+  ok(res, "Success", pets.map(mapPet));
 });
 
 petsRouter.post("/", upload.single("photo"), (req, res) => {
@@ -18,5 +19,5 @@ petsRouter.post("/", upload.single("photo"), (req, res) => {
     .prepare("INSERT INTO pets (name, species, breed, birthday, memo, image_path) VALUES (?, ?, ?, ?, ?, ?)")
     .run(name, species, breed, birthday, memo, uploadedPath(req.file));
   const pet = db.prepare("SELECT * FROM pets WHERE id = ?").get(result.lastInsertRowid);
-  ok(res, "Pet created", pet, 201);
+  ok(res, "Pet created", mapPet(pet), 201);
 });

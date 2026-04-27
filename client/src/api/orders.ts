@@ -1,4 +1,4 @@
-import type { Order, OrderFormState } from "../types";
+import type { Order, OrderExport, OrderFormState } from "../types";
 import { request } from "./http";
 
 export async function getOrders() {
@@ -13,15 +13,14 @@ export async function createOrder(petId: number, payload: OrderFormState) {
   });
 }
 
-export async function updateOrderStatus(orderUid: string, status: Order["status"]) {
-  return request<Order>(`/api/orders/${orderUid}/status`, {
+export async function updateOrderStatus(orderId: string | number, status: Order["status"]) {
+  return request<Order>(`/api/orders/${orderId}/status`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ status })
   });
 }
 
-export async function exportOrder(orderUid: string) {
-  return request<unknown>(`/api/orders/${orderUid}/export`);
+export async function exportOrder(orderId: string | number) {
+  return request<OrderExport>(`/api/orders/${orderId}/export`);
 }
-

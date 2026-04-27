@@ -23,11 +23,11 @@ export function PetList({ pets, selectedPetId, onSelectPet }: PetListProps) {
             onClick={() => onSelectPet(pet.id)}
             type="button"
           >
-            {pet.image_path && (
+            {pet.imagePath && (
               <img
                 alt={`${pet.name} 대표 사진`}
                 className="mb-2 aspect-[4/3] w-full rounded-lg border border-border object-cover"
-                src={assetUrl(pet.image_path)}
+                src={assetUrl(pet.imagePath)}
               />
             )}
             <strong className="text-base text-text-primary">{pet.name}</strong>

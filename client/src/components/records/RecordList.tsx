@@ -19,16 +19,16 @@ export function RecordList({ records, onDeleteRecord }: RecordListProps) {
             key={record.id}
           >
             <div className="grid content-start gap-2">
-              <time className="text-sm font-medium text-text-secondary">{record.record_date}</time>
+              <time className="text-sm font-medium text-text-secondary">{record.recordDate}</time>
               <strong className="text-base text-primary">{record.weight ? `${record.weight}kg` : "-"}</strong>
             </div>
             <div>
               <h3 className="text-base font-bold text-text-primary">{record.condition}</h3>
-              {record.image_path && (
+              {record.imagePath && (
                 <img
-                  alt={`${record.record_date} 기록 사진`}
+                  alt={`${record.recordDate} 기록 사진`}
                   className="mt-3 aspect-[4/3] w-full max-w-sm rounded-lg border border-border object-cover"
-                  src={assetUrl(record.image_path)}
+                  src={assetUrl(record.imagePath)}
                 />
               )}
               <p className="mt-2 text-sm leading-6 text-text-secondary">{record.memo}</p>

@@ -16,7 +16,7 @@ import { badgeClass, panelClass } from "../ui";
 type OrderListProps = {
   orders: Order[];
   onUpdateStatus?: (order: Order, status: Order["status"]) => void;
-  onExportOrder: (orderUid: string) => void;
+  onExportOrder: (order: Order) => void;
 };
 
 const orderStatuses: Order["status"][] = ["pending", "processing", "completed"];
@@ -31,7 +31,10 @@ export function OrderList({ orders, onUpdateStatus, onExportOrder }: OrderListPr
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="grid gap-1">
                 <strong className="text-base text-text-primary">{order.title}</strong>
-                <span className="text-sm text-text-secondary">{order.start_date} - {order.end_date}</span>
+                <span className="text-sm text-text-secondary">{order.startDate} - {order.endDate}</span>
+                <span className="text-xs text-text-secondary">
+                  {order.recordCount}개 기록 · {order.orderUid ?? `#${order.id}`}
+                </span>
               </div>
               <span className={badgeClass}>{orderStatusLabels[order.status]}</span>
             </div>
@@ -59,7 +62,7 @@ export function OrderList({ orders, onUpdateStatus, onExportOrder }: OrderListPr
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}
-              <Button onClick={() => onExportOrder(order.orderUid)}>JSON 보기</Button>
+              <Button onClick={() => onExportOrder(order)}>JSON 보기</Button>
             </div>
           </article>
         ))}

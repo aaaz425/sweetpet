@@ -18,6 +18,8 @@ API responses are wrapped as:
 - `data`: entity data, array, object, or null
 - `errors`: string[] on failures
 
+API request and response field names use camelCase. The SQLite schema may use snake_case internally, but snake_case fields are not part of the public frontend contract.
+
 # Entities
 
 ## Pet
@@ -28,71 +30,64 @@ API responses are wrapped as:
 - `breed`: string | null
 - `birthday`: string | null
 - `memo`: string | null
-- `image_path`: string | null
-- `created_at`: string
+- `imagePath`: string | null
+- `createdAt`: string
 
 ## Record
 
 - `id`: number
-- `pet_id`: number
-- `record_date`: string
+- `petId`: number
+- `recordDate`: string
 - `weight`: number | null
 - `condition`: string
 - `memo`: string
 - `tags`: string[]
-- `image_path`: string | null
-- `created_at`: string
-- `updated_at`: string
+- `imagePath`: string | null
+- `createdAt`: string
+- `updatedAt`: string
 
 ## Book
 
 - `id`: number
-- `book_uid`: string
 - `bookUid`: string
-- `pet_id`: number
 - `petId`: number
 - `title`: string
-- `start_date`: string | null
 - `startDate`: string | null
-- `end_date`: string | null
 - `endDate`: string | null
 - `status`: string
 - `templateUid`: string
 - `bookSpecUid`: string
 - `printOptions`: object
 - `finalizedAt`: string | null
-- `created_at`: string
-- `updated_at`: string
+- `createdAt`: string
+- `updatedAt`: string
 - `recordCount`: number
 - `records`: Record[] on book detail and book content update responses
 
 ## BookRecord
 
-- `book_id`: number
-- `record_id`: number
+- `bookId`: number
+- `recordId`: number
 
 ## Order
 
 - `id`: number
 - `orderUid`: string | null
 - `bookId`: number | null
-- `pet_id`: number
 - `petId`: number
 - `title`: string
-- `start_date`: string
 - `startDate`: string
-- `end_date`: string
 - `endDate`: string
 - `status`: string
 - `printOptions`: object
-- `created_at`: string
-- `updated_at`: string
+- `createdAt`: string
+- `updatedAt`: string
 - `recordCount`: number
 
 ## OrderRecord
 
-- `order_id`: number
-- `record_id`: number
+- `orderId`: number
+- `recordId`: number
 
 ## BookSpec
 
@@ -126,7 +121,7 @@ API responses are wrapped as:
 
 # Export Structure
 
-`GET /api/orders/:id/export` returns `data` with:
+`GET /api/orders/:orderUid/export` returns `data` with:
 
 - `service`: string
 - `exportVersion`: string

@@ -14,5 +14,17 @@ export function parseJson(value: unknown, fallback: unknown) {
 }
 
 export function mapRecord(row: any) {
-  return { ...row, tags: parseJson(row.tags, []) };
+  if (!row) return undefined;
+  return {
+    id: row.id,
+    petId: row.pet_id,
+    recordDate: row.record_date,
+    weight: row.weight,
+    condition: row.condition,
+    memo: row.memo,
+    tags: parseJson(row.tags, []),
+    imagePath: row.image_path ?? null,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at
+  };
 }

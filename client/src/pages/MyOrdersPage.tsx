@@ -3,7 +3,7 @@ import type { Order } from "../types";
 
 type MyOrdersPageProps = {
   orders: Order[];
-  onExportOrder: (orderUid: string) => void;
+  onExportOrder: (order: Order) => void;
 };
 
 export function MyOrdersPage({ orders, onExportOrder }: MyOrdersPageProps) {
