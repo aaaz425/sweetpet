@@ -16,7 +16,7 @@ import { badgeClass, panelClass } from "../ui";
 type OrderListProps = {
   orders: Order[];
   onUpdateStatus: (order: Order, status: Order["status"]) => void;
-  onExportOrder: (id: number) => void;
+  onExportOrder: (orderUid: string) => void;
 };
 
 const orderStatuses: Order["status"][] = ["pending", "processing", "completed"];
@@ -57,7 +57,7 @@ export function OrderList({ orders, onUpdateStatus, onExportOrder }: OrderListPr
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
-              <Button onClick={() => onExportOrder(order.id)}>JSON 보기</Button>
+              <Button onClick={() => onExportOrder(order.orderUid)}>JSON 보기</Button>
             </div>
           </article>
         ))}

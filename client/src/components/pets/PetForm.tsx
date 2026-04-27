@@ -35,6 +35,15 @@ export function PetForm({ form, setForm, onSubmit }: PetFormProps) {
           메모
           <textarea className={`${fieldClass} min-h-28 resize-y`} value={form.memo} onChange={(event) => setForm({ ...form, memo: event.target.value })} />
         </label>
+        <label className={labelClass}>
+          대표 사진
+          <input
+            accept="image/*"
+            className={fieldClass}
+            onChange={(event) => setForm({ ...form, photo: event.target.files?.[0] ?? null })}
+            type="file"
+          />
+        </label>
         <button className={primaryButtonClass} type="submit">등록</button>
       </form>
     </div>

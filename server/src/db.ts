@@ -7,6 +7,11 @@ mkdirSync(dirname(databasePath), { recursive: true });
 
 export const db = new DatabaseSync(databasePath);
 
+function hasColumn(table: string, column: string) {
+  const columns = db.prepare(`PRAGMA table_info(${table})`).all() as Array<{ name: string }>;
+  return columns.some((item) => item.name === column);
+}
+
 export function migrate() {
   db.exec(`
     CREATE TABLE IF NOT EXISTS pets (
@@ -16,6 +21,7 @@ export function migrate() {
       breed TEXT,
       birthday TEXT,
       memo TEXT,
+      image_path TEXT,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
 
@@ -27,9 +33,35 @@ export function migrate() {
       condition TEXT NOT NULL,
       memo TEXT NOT NULL,
       tags TEXT NOT NULL DEFAULT '[]',
+      image_path TEXT,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (pet_id) REFERENCES pets(id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS books (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      book_uid TEXT NOT NULL UNIQUE,
+      pet_id INTEGER NOT NULL,
+      title TEXT NOT NULL,
+      start_date TEXT,
+      end_date TEXT,
+      status TEXT NOT NULL DEFAULT 'draft',
+      template_uid TEXT NOT NULL DEFAULT 'sweetpet-basic-template',
+      book_spec_uid TEXT NOT NULL DEFAULT 'sweetpet-a5-softcover',
+      print_options TEXT NOT NULL DEFAULT '{}',
+      finalized_at TEXT,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (pet_id) REFERENCES pets(id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS book_records (
+      book_id INTEGER NOT NULL,
+      record_id INTEGER NOT NULL,
+      PRIMARY KEY (book_id, record_id),
+      FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
+      FOREIGN KEY (record_id) REFERENCES records(id) ON DELETE CASCADE
     );
 
     CREATE TABLE IF NOT EXISTS orders (
@@ -52,6 +84,22 @@ export function migrate() {
       FOREIGN KEY (record_id) REFERENCES records(id) ON DELETE CASCADE
     );
   `);
+
+  if (!hasColumn("orders", "order_uid")) {
+    db.exec("ALTER TABLE orders ADD COLUMN order_uid TEXT");
+  }
+  if (!hasColumn("orders", "book_id")) {
+    db.exec("ALTER TABLE orders ADD COLUMN book_id INTEGER");
+  }
+  if (!hasColumn("orders", "print_options")) {
+    db.exec("ALTER TABLE orders ADD COLUMN print_options TEXT NOT NULL DEFAULT '{}'");
+  }
+  if (!hasColumn("pets", "image_path")) {
+    db.exec("ALTER TABLE pets ADD COLUMN image_path TEXT");
+  }
+  if (!hasColumn("records", "image_path")) {
+    db.exec("ALTER TABLE records ADD COLUMN image_path TEXT");
+  }
 }
 
 export function seed() {

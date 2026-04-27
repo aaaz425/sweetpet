@@ -41,6 +41,15 @@ export function RecordForm({ form, setForm, selectedPetId, onSubmit }: RecordFor
           태그
           <input className={fieldClass} placeholder="산책, 미용" value={form.tags} onChange={(event) => setForm({ ...form, tags: event.target.value })} />
         </label>
+        <label className={labelClass}>
+          사진
+          <input
+            accept="image/*"
+            className={fieldClass}
+            onChange={(event) => setForm({ ...form, photo: event.target.files?.[0] ?? null })}
+            type="file"
+          />
+        </label>
         <button className={primaryButtonClass} disabled={!selectedPetId} type="submit">기록 추가</button>
       </form>
     </div>

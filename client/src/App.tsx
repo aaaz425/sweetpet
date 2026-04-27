@@ -13,7 +13,8 @@ const initialPetForm: PetFormState = {
   species: "강아지",
   breed: "",
   birthday: "",
-  memo: ""
+  memo: "",
+  photo: null
 };
 
 const initialRecordForm: RecordFormState = {
@@ -21,7 +22,8 @@ const initialRecordForm: RecordFormState = {
   weight: "",
   condition: "좋음",
   memo: "",
-  tags: ""
+  tags: "",
+  photo: null
 };
 
 const initialOrderForm: OrderFormState = {
@@ -77,7 +79,7 @@ export function App() {
     if (!selectedPetId) return;
 
     await api.createRecord(selectedPetId, recordForm);
-    setRecordForm((form) => ({ ...form, memo: "", tags: "" }));
+    setRecordForm((form) => ({ ...form, memo: "", tags: "", photo: null }));
     await loadAll();
   }
 
@@ -96,12 +98,12 @@ export function App() {
   }
 
   async function handleUpdateOrderStatus(order: Order, status: Order["status"]) {
-    await api.updateOrderStatus(order.id, status);
+    await api.updateOrderStatus(order.orderUid, status);
     await loadAll();
   }
 
-  async function handleExportOrder(id: number) {
-    const exportedOrder = await api.exportOrder(id);
+  async function handleExportOrder(orderUid: string) {
+    const exportedOrder = await api.exportOrder(orderUid);
     setExportJson(JSON.stringify(exportedOrder, null, 2));
     setActivePage("export");
   }

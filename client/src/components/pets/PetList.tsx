@@ -1,3 +1,4 @@
+import { assetUrl } from "../../api/client";
 import type { Pet } from "../../types";
 import { SectionTitle } from "../SectionTitle";
 import { panelClass } from "../ui";
@@ -22,6 +23,13 @@ export function PetList({ pets, selectedPetId, onSelectPet }: PetListProps) {
             onClick={() => onSelectPet(pet.id)}
             type="button"
           >
+            {pet.image_path && (
+              <img
+                alt={`${pet.name} 대표 사진`}
+                className="mb-2 aspect-[4/3] w-full rounded-lg border border-border object-cover"
+                src={assetUrl(pet.image_path)}
+              />
+            )}
             <strong className="text-base text-text-primary">{pet.name}</strong>
             <span className="text-sm text-text-secondary">{pet.breed || pet.species}</span>
             <p className="mt-1 text-sm leading-6 text-text-secondary">{pet.memo || "등록된 메모가 없습니다."}</p>

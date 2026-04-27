@@ -10,7 +10,7 @@ type OrdersPageProps = {
   setOrderForm: Dispatch<SetStateAction<OrderFormState>>;
   onCreateOrder: (event: FormEvent) => void;
   onUpdateOrderStatus: (order: Order, status: Order["status"]) => void;
-  onExportOrder: (id: number) => void;
+  onExportOrder: (orderUid: string) => void;
 };
 
 export function OrdersPage({

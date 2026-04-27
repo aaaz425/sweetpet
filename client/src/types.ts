@@ -7,6 +7,7 @@ export type Pet = {
   breed: string;
   birthday: string;
   memo: string;
+  image_path: string | null;
 };
 
 export type RecordItem = {
@@ -17,15 +18,22 @@ export type RecordItem = {
   condition: string;
   memo: string;
   tags: string[];
+  image_path: string | null;
 };
 
 export type Order = {
   id: number;
+  orderUid: string;
+  bookId: number;
   pet_id: number;
+  petId: number;
   title: string;
   start_date: string;
+  startDate: string;
   end_date: string;
+  endDate: string;
   status: "pending" | "processing" | "completed";
+  recordCount: number;
 };
 
 export type PetFormState = {
@@ -34,6 +42,7 @@ export type PetFormState = {
   breed: string;
   birthday: string;
   memo: string;
+  photo: File | null;
 };
 
 export type RecordFormState = {
@@ -42,6 +51,7 @@ export type RecordFormState = {
   condition: string;
   memo: string;
   tags: string;
+  photo: File | null;
 };
 
 export type OrderFormState = {
