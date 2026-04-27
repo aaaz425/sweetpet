@@ -32,6 +32,21 @@
   * `completed`
 * 주문 데이터 JSON export
 
+### 화면 역할 구분
+
+서비스 화면은 시연 목적상 사용자 화면과 관리자 화면으로 분리합니다.
+
+* 사용자 화면
+  * 반려동물 관리
+  * 반려동물 일상 기록 작성 및 조회
+  * 특정 기간의 기록을 선택해 앨범북 주문 생성
+* 관리자 화면
+  * 접수된 주문 목록 확인
+  * 주문 상태 관리
+  * 주문 데이터 JSON export
+
+관리자 화면은 주문 관리와 export까지만 제공하며, 사용자 반려동물이나 기록을 직접 생성/수정하는 기능은 포함하지 않습니다. 로그인, 권한 관리, 결제, 배송, 실제 인쇄 API 연동은 현재 범위에 포함하지 않습니다.
+
 ---
 
 ## 2. 실행 방법 (Docker)
@@ -145,6 +160,13 @@ AI가 생성한 내용은 그대로 확정하지 않고, 과제 요구사항과 
 
 ```text
 Record → Accumulate → Select Period → Create Order → Export
+```
+
+역할 기준 흐름:
+
+```text
+User: Pet → Record → Select Period → Create Order
+Admin: Manage Orders → Update Status → Export JSON
 ```
 
 ### 아이디어 선택 이유

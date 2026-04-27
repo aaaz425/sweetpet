@@ -22,12 +22,14 @@ The UI should feel like a well-organized tool rather than an emotional journal.
 * Closer to a structured tool than a personal diary
 * Avoid decorative or emotional design elements
 * First screen must show functional UI, not a landing page or hero
-* Use sidebar navigation to separate main flows
+* Use clear navigation to separate user and admin flows
 * Clearly separate:
   * Pet management
   * Record creation
   * Record list
   * Order creation
+  * Admin order management
+  * Export
 * Each page should expose only the primary action relevant to that page
 * Prioritize clarity over visual decoration
 
@@ -78,13 +80,31 @@ The application must use a sidebar + main content layout.
 
 ---
 
-## Sidebar Rules
+## Navigation Rules
 
-* Contains main navigation:
+The application should make the active role clear and separate user-facing screens from admin-facing screens.
+
+### User Navigation
+
+User-facing navigation contains:
+
   * Pets
   * Records
   * Orders
+
+User `Orders` is for creating an order from selected records or a selected period.
+
+### Admin Navigation
+
+Admin-facing navigation contains only:
+
+  * Order Management
   * Export
+
+Admin screens must not expose pet creation, record creation, or record editing.
+
+### Shared Rules
+
 * Always visible on desktop
 * Current page must be clearly highlighted
 * Keep navigation shallow with no deep nesting
@@ -181,6 +201,13 @@ User should understand the core flow immediately:
 Record -> Review -> Select Period -> Order -> Export
 ```
 
+The role-based flow should remain explicit:
+
+```text
+User: Pet -> Record -> Select Period -> Create Order
+Admin: Manage Orders -> Update Status -> Export
+```
+
 ### 2. Visibility of Actions
 
 * Important actions must be visible without extra navigation
@@ -189,8 +216,10 @@ Record -> Review -> Select Period -> Order -> Export
 
 ### 3. Separation of Concerns
 
-* Pets, Records, Orders, and Export must be clearly separated
+* User screens and admin screens must be clearly separated
+* Pets, Records, Orders, Admin Orders, and Export must be clearly separated
 * Do not mix responsibilities in one screen
+* Admin screens should focus only on order management and export
 
 ### 4. Low Cognitive Load
 

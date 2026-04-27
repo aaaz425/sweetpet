@@ -23,6 +23,15 @@ Do NOT implement:
 3. JSON export
 4. UI polish
 
+## Role Flow Rules
+
+The app should separate user-facing screens from admin-facing screens for demonstration.
+
+* User screens: pet management, record creation/review, and book order creation.
+* Admin screens: received order management, order status updates, and JSON export only.
+* Do not add pet or record creation/editing features to the admin flow.
+* Do not add authentication, authorization, payment, shipping, or real print API integration unless explicitly requested.
+
 ## Code Rules
 
 * Keep code simple and readable
@@ -55,6 +64,7 @@ The current codebase is intentionally small, but new work should move it toward 
 * The frontend should request order creation with business inputs such as `petId`, `title`, `startDate`, and `endDate`.
 * The backend should handle book draft creation, record selection, finalization, and order creation internally.
 * Keep JSON export as structured API-ready data, but do not integrate real external print APIs.
+* Admin order management should operate on already-created orders and should not mutate source pet records.
 
 ## Protected Documents
 
