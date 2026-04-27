@@ -1,6 +1,8 @@
 import type { FormEvent } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import * as api from "../api/client";
+import { createOrder, exportOrder, getOrders, updateOrderStatus } from "../api/orders";
+import { createPet, getPets } from "../api/pets";
+import { createRecord, deleteRecord, getRecords } from "../api/records";
 import type { Order, OrderFormState, Page, Pet, PetFormState, RecordFormState, RecordItem } from "../types";
 
 const initialPetForm: PetFormState = {
@@ -49,7 +51,7 @@ export function useSweetpetApp() {
   );
 
   const loadAll = useCallback(async () => {
-    const [nextPets, nextRecords, nextOrders] = await Promise.all([api.getPets(), api.getRecords(), api.getOrders()]);
+    const [nextPets, nextRecords, nextOrders] = await Promise.all([getPets(), getRecords(), getOrders()]);
     setPets(nextPets);
     setRecords(nextRecords);
     setOrders(nextOrders);
@@ -63,7 +65,7 @@ export function useSweetpetApp() {
   async function handleCreatePet(event: FormEvent) {
     event.preventDefault();
 
-    const pet = await api.createPet(petForm);
+    const pet = await createPet(petForm);
     setPetForm(initialPetForm);
     setSelectedPetId(pet.id);
     await loadAll();
@@ -73,13 +75,13 @@ export function useSweetpetApp() {
     event.preventDefault();
     if (!selectedPetId) return;
 
-    await api.createRecord(selectedPetId, recordForm);
+    await createRecord(selectedPetId, recordForm);
     setRecordForm((form) => ({ ...form, memo: "", tags: "", photo: null }));
     await loadAll();
   }
 
   async function handleDeleteRecord(id: number) {
-    await api.deleteRecord(id);
+    await deleteRecord(id);
     await loadAll();
   }
 
@@ -87,18 +89,18 @@ export function useSweetpetApp() {
     event.preventDefault();
     if (!selectedPetId) return;
 
-    await api.createOrder(selectedPetId, orderForm);
+    await createOrder(selectedPetId, orderForm);
     setActivePage("orders");
     await loadAll();
   }
 
   async function handleUpdateOrderStatus(order: Order, status: Order["status"]) {
-    await api.updateOrderStatus(order.orderUid, status);
+    await updateOrderStatus(order.orderUid, status);
     await loadAll();
   }
 
   async function handleExportOrder(orderUid: string) {
-    const exportedOrder = await api.exportOrder(orderUid);
+    const exportedOrder = await exportOrder(orderUid);
     setExportJson(JSON.stringify(exportedOrder, null, 2));
     setActivePage("export");
   }
@@ -129,4 +131,3 @@ export function useSweetpetApp() {
     setSelectedPetId
   };
 }
-

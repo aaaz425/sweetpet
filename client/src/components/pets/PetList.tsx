@@ -1,4 +1,4 @@
-import { assetUrl } from "../../api/client";
+import { assetUrl } from "../../api/http";
 import type { Pet } from "../../types";
 import { SectionTitle } from "../SectionTitle";
 import { panelClass } from "../ui";

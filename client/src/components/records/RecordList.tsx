@@ -1,4 +1,4 @@
-import { assetUrl } from "../../api/client";
+import { assetUrl } from "../../api/http";
 import type { RecordItem } from "../../types";
 import { SectionTitle } from "../SectionTitle";
 import { badgeClass, panelClass, secondaryButtonClass } from "../ui";
