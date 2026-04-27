@@ -14,7 +14,7 @@ type RecordFormProps = {
 export function RecordForm({ form, setForm, selectedPetId, onSubmit }: RecordFormProps) {
   return (
     <div className={panelClass}>
-      <SectionTitle title="기록 작성" />
+      <SectionTitle title="일상기록 작성" />
       <form onSubmit={onSubmit} className="grid gap-3">
         <label className={labelClass}>
           날짜
@@ -50,7 +50,7 @@ export function RecordForm({ form, setForm, selectedPetId, onSubmit }: RecordFor
             type="file"
           />
         </label>
-        <button className={primaryButtonClass} disabled={!selectedPetId} type="submit">기록 추가</button>
+        <button className={primaryButtonClass} disabled={!selectedPetId} type="submit">일상기록 추가</button>
       </form>
     </div>
   );

@@ -33,10 +33,10 @@ export function OrderList({ orders, onUpdateStatus, onExportOrder }: OrderListPr
                 <strong className="text-base text-text-primary">{order.title}</strong>
                 <span className="text-sm text-text-secondary">{order.startDate} - {order.endDate}</span>
                 <span className="text-xs text-text-secondary">
-                  주문 {order.orderUid ?? `#${order.id}`} · 반려동물 #{order.petId}
+                  주문 {order.orderUid ?? `#${order.id}`} · 마이펫 #{order.petId}
                 </span>
                 <span className="text-xs text-text-secondary">
-                  기록 {order.recordCount}개 · 도서 {order.bookId ? `#${order.bookId}` : "없음"}
+                  일상기록 {order.recordCount}개 · 도서 {order.bookId ? `#${order.bookId}` : "없음"}
                 </span>
               </div>
               <span className={badgeClass}>{orderStatusLabels[order.status]}</span>

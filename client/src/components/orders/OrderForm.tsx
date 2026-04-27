@@ -14,7 +14,7 @@ type OrderFormProps = {
 export function OrderForm({ form, selectedPetId, setForm, onSubmit }: OrderFormProps) {
   return (
     <div className={panelClass}>
-      <SectionTitle title="주문 만들기" meta="기간 기준" />
+      <SectionTitle title="주문하기" meta="기간 기준" />
       <form onSubmit={onSubmit} className="grid gap-3">
         <label className={labelClass}>
           제목
@@ -28,7 +28,7 @@ export function OrderForm({ form, selectedPetId, setForm, onSubmit }: OrderFormP
           종료일
           <DatePicker value={form.endDate} onChange={(endDate) => setForm({ ...form, endDate })} />
         </label>
-        <button className={primaryButtonClass} disabled={!selectedPetId} type="submit">주문 생성</button>
+        <button className={primaryButtonClass} disabled={!selectedPetId} type="submit">주문하기</button>
       </form>
     </div>
   );

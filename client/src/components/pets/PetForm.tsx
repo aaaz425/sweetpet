@@ -13,7 +13,7 @@ type PetFormProps = {
 export function PetForm({ form, setForm, onSubmit }: PetFormProps) {
   return (
     <div className={panelClass}>
-      <SectionTitle title="새 반려동물" />
+      <SectionTitle title="새 마이펫" />
       <form className="grid gap-3" onSubmit={onSubmit}>
         <label className={labelClass}>
           이름

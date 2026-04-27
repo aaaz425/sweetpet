@@ -28,8 +28,8 @@ export function ExportPage({ exportJson }: ExportPageProps) {
               <div className="grid gap-2 text-sm text-text-secondary sm:grid-cols-2">
                 <span>주문: {exportData.order.orderUid ?? `#${exportData.order.id}`}</span>
                 <span>도서: {exportData.book?.bookUid ?? "없음"}</span>
-                <span>반려동물: {exportData.pet?.name ?? `#${exportData.order.petId}`}</span>
-                <span>선택 기록: {exportData.selectedRecords.length}개</span>
+                <span>마이펫: {exportData.pet?.name ?? `#${exportData.order.petId}`}</span>
+                <span>선택한 일상기록: {exportData.selectedRecords.length}개</span>
                 <span>기간: {exportData.order.startDate} - {exportData.order.endDate}</span>
                 <span>인쇄 옵션: {Object.keys(exportData.printOptions).length}개</span>
               </div>

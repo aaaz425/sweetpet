@@ -12,7 +12,7 @@ type PetListProps = {
 export function PetList({ pets, selectedPetId, onSelectPet }: PetListProps) {
   return (
     <div className={panelClass}>
-      <SectionTitle title="등록된 반려동물" meta={`${pets.length}마리`} />
+      <SectionTitle title="등록된 마이펫" meta={`${pets.length}마리`} />
       <div className="grid min-w-0 gap-3">
         {pets.map((pet) => (
           <button

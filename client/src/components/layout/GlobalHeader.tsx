@@ -1,4 +1,3 @@
-import { ChevronDown } from "lucide-react";
 import { adminNavItems, pageLabels, userNavItems } from "../../constants";
 import type { Page, Pet } from "../../types";
 import { Button } from "../ui/button";
@@ -21,80 +20,79 @@ type GlobalHeaderProps = {
 
 export function GlobalHeader({ activePage, pets, selectedPetId, onSelectPage, onSelectPet }: GlobalHeaderProps) {
   const selectedPet = pets.find((pet) => pet.id === selectedPetId);
+  const activeSection = activePage === "admin-orders" || activePage === "export" ? "admin" : "user";
+  const visibleNavItems = activeSection === "admin" ? adminNavItems : userNavItems;
 
   return (
     <header className="z-40 flex-none border-b border-border bg-surface">
-      <div className="mx-auto flex w-full max-w-[1120px] min-w-0 flex-col gap-4 px-4 py-4 md:px-8">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+      <div className="mx-auto flex w-full max-w-[1120px] min-w-0 flex-col gap-3 px-4 py-4 md:px-8 lg:flex-row lg:items-center lg:gap-5">
+        <div className="flex min-w-0 flex-1 flex-col gap-3 lg:flex-row lg:items-center lg:gap-5">
           <button
-            className="w-fit rounded-lg text-left transition duration-150 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary-soft"
+            className="shrink-0 rounded-lg px-1 py-2 text-left text-lg font-bold uppercase tracking-normal text-text-primary transition duration-150 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary-soft"
             onClick={() => onSelectPage("records")}
             type="button"
           >
-            <span className="block text-xs font-semibold uppercase tracking-normal text-text-secondary">Sweetpet</span>
-            <strong className="block text-lg font-bold text-text-primary">기록 관리</strong>
+            SWEETPET
           </button>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="grid min-w-0 gap-1">
-              <span className="text-xs font-semibold text-text-secondary" id="pet-switcher-label">
-                현재 반려동물
-              </span>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button aria-labelledby="pet-switcher-label" className="w-full min-w-0 justify-between px-3 py-2 sm:min-w-44" disabled={pets.length === 0}>
-                    <span className="min-w-0 truncate">{selectedPet?.name ?? "반려동물 선택"}</span>
-                    <ChevronDown aria-hidden="true" size={16} />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="min-w-[200px]">
-                  <DropdownMenuLabel>반려동물</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {pets.map((pet) => (
-                    <DropdownMenuItem disabled={pet.id === selectedPetId} key={pet.id} onSelect={() => onSelectPet(pet.id)}>
-                      {pet.name}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+          <nav className="min-w-0 flex-1" aria-label="주요 내비게이션">
+            <div className="flex min-w-0 flex-wrap gap-2 lg:flex-nowrap">
+              {visibleNavItems.map((page) => (
+                <button
+                  className={`whitespace-nowrap border-b-2 px-1 py-2 text-sm font-semibold transition duration-150 hover:border-primary hover:text-primary active:scale-[0.99] ${
+                    activePage === page ? "border-primary text-primary" : "border-transparent text-text-secondary"
+                  }`}
+                  key={page}
+                  onClick={() => onSelectPage(page)}
+                  type="button"
+                >
+                  {pageLabels[page]}
+                </button>
+              ))}
             </div>
-          </div>
+          </nav>
         </div>
 
-        <nav className="grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_auto]" aria-label="Primary navigation">
-          <HeaderNavGroup activePage={activePage} label="User App" items={userNavItems} onSelectPage={onSelectPage} />
-          <HeaderNavGroup activePage={activePage} label="Admin Console" items={adminNavItems} onSelectPage={onSelectPage} />
-        </nav>
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center lg:shrink-0">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="w-full min-w-0 justify-center px-3 py-2 hover:border-primary hover:bg-primary-soft hover:text-primary sm:w-40" disabled={pets.length === 0}>
+                <span className="min-w-0 truncate">{selectedPet?.name ?? "마이펫 선택"}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-[200px]">
+              <DropdownMenuLabel>마이펫 선택</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {pets.map((pet) => (
+                <DropdownMenuItem disabled={pet.id === selectedPetId} key={pet.id} onSelect={() => onSelectPet(pet.id)}>
+                  {pet.name}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <div className="grid grid-cols-2 rounded-lg border border-border bg-surface p-1" aria-label="앱 전환">
+            <button
+              className={`whitespace-nowrap rounded-md px-3 py-2 text-sm font-semibold transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99] ${
+                activeSection === "user" ? "bg-primary-soft text-primary" : "text-text-secondary"
+              }`}
+              onClick={() => onSelectPage("records")}
+              type="button"
+            >
+              사용자
+            </button>
+            <button
+              className={`whitespace-nowrap rounded-md px-3 py-2 text-sm font-semibold transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99] ${
+                activeSection === "admin" ? "bg-primary-soft text-primary" : "text-text-secondary"
+              }`}
+              onClick={() => onSelectPage("admin-orders")}
+              type="button"
+            >
+              관리자
+            </button>
+          </div>
+        </div>
       </div>
     </header>
-  );
-}
-
-type HeaderNavGroupProps = {
-  activePage: Page;
-  label: string;
-  items: Page[];
-  onSelectPage: (page: Page) => void;
-};
-
-function HeaderNavGroup({ activePage, label, items, onSelectPage }: HeaderNavGroupProps) {
-  return (
-    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
-      <span className="min-w-fit text-xs font-semibold text-text-secondary">{label}</span>
-      <div className="flex min-w-0 flex-wrap gap-2">
-        {items.map((page) => (
-          <button
-            className={`rounded-lg border px-3 py-2 text-sm font-semibold transition duration-150 hover:border-primary hover:bg-primary-soft hover:text-primary active:scale-[0.99] ${
-              activePage === page ? "border-primary bg-primary-soft text-primary" : "border-border bg-surface text-text-secondary"
-            }`}
-            key={page}
-            onClick={() => onSelectPage(page)}
-            type="button"
-          >
-            {pageLabels[page]}
-          </button>
-        ))}
-      </div>
-    </div>
   );
 }

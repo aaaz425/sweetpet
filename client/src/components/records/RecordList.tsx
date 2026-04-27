@@ -11,7 +11,7 @@ type RecordListProps = {
 export function RecordList({ records, onDeleteRecord }: RecordListProps) {
   return (
     <div className={panelClass}>
-      <SectionTitle title="기록 목록" meta="최근순" />
+      <SectionTitle title="일상기록 목록" meta="최근순" />
       <div className="grid min-w-0 gap-3">
         {records.map((record) => (
           <article
@@ -25,7 +25,7 @@ export function RecordList({ records, onDeleteRecord }: RecordListProps) {
             <div className="min-w-0">
               <h3 className="text-base font-bold text-text-primary">{record.condition}</h3>
               <img
-                alt={`${record.recordDate} 기록 사진`}
+                alt={`${record.recordDate} 일상기록 사진`}
                 className="mt-3 aspect-[4/3] w-full max-w-sm rounded-lg border border-border object-cover"
                 src={recordImageUrl(record)}
               />
