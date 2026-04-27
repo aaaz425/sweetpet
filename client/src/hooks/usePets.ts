@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import { createPet, getPets } from "../api/pets";
 import type { PetFormState } from "../types";
 import { queryKeys } from "./queryKeys";
@@ -21,6 +22,10 @@ export function usePets() {
     onSuccess: async (pet) => {
       setSelectedPetId(pet.id);
       await queryClient.invalidateQueries({ queryKey: queryKeys.pets });
+      toast.success("마이펫이 등록되었습니다.");
+    },
+    onError: () => {
+      toast.error("마이펫 등록 중 문제가 발생했습니다.");
     }
   });
 

@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
+import { toast } from "sonner";
 import { createRecord, deleteRecord, getRecords } from "../api/records";
 import type { RecordFormState } from "../types";
 import { queryKeys } from "./queryKeys";
@@ -30,6 +31,10 @@ export function useRecords({ selectedPetId }: UseRecordsOptions) {
       }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.records });
+      toast.success("일상기록이 추가되었습니다.");
+    },
+    onError: () => {
+      toast.error("일상기록 추가 중 문제가 발생했습니다.");
     }
   });
 
@@ -37,6 +42,10 @@ export function useRecords({ selectedPetId }: UseRecordsOptions) {
     mutationFn: deleteRecord,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.records });
+      toast.success("일상기록이 삭제되었습니다.");
+    },
+    onError: () => {
+      toast.error("일상기록 삭제 중 문제가 발생했습니다.");
     }
   });
 
