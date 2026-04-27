@@ -1,4 +1,4 @@
-import { assetUrl } from "../../api/http";
+import { recordImageUrl } from "../../lib/mockImages";
 import type { RecordItem } from "../../types";
 import { SectionTitle } from "../SectionTitle";
 import { badgeClass, panelClass, secondaryButtonClass } from "../ui";
@@ -24,13 +24,11 @@ export function RecordList({ records, onDeleteRecord }: RecordListProps) {
             </div>
             <div>
               <h3 className="text-base font-bold text-text-primary">{record.condition}</h3>
-              {record.imagePath && (
-                <img
-                  alt={`${record.recordDate} 기록 사진`}
-                  className="mt-3 aspect-[4/3] w-full max-w-sm rounded-lg border border-border object-cover"
-                  src={assetUrl(record.imagePath)}
-                />
-              )}
+              <img
+                alt={`${record.recordDate} 기록 사진`}
+                className="mt-3 aspect-[4/3] w-full max-w-sm rounded-lg border border-border object-cover"
+                src={recordImageUrl(record)}
+              />
               <p className="mt-2 text-sm leading-6 text-text-secondary">{record.memo}</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {record.tags.map((tag) => <span className={badgeClass} key={tag}>{tag}</span>)}
