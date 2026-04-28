@@ -11,6 +11,12 @@ export function GlobalHeader({ activePage, onSelectPage }: GlobalHeaderProps) {
   const activeSection = activePage === "admin-orders" || activePage === "export" ? "admin" : "user";
   const visibleNavItems = activeSection === "admin" ? adminNavItems : userNavItems;
 
+  function handleLogoClick() {
+    if (activeSection === "user") {
+      onSelectPage("records");
+    }
+  }
+
   return (
     <header className="z-40 flex-none border-b border-border bg-surface">
       <div className="mx-auto flex w-full max-w-[1120px] min-w-0 flex-col gap-3 px-4 py-4 md:px-8 lg:flex-row lg:items-center lg:gap-5">
@@ -18,7 +24,7 @@ export function GlobalHeader({ activePage, onSelectPage }: GlobalHeaderProps) {
           <button
             className="shrink-0 cursor-pointer rounded-lg px-1 py-2 text-left text-lg font-bold uppercase tracking-normal text-text-primary transition duration-150 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary-soft"
             onClick={(event) => {
-              onSelectPage("records");
+              handleLogoClick();
               event.currentTarget.blur();
             }}
             type="button"
