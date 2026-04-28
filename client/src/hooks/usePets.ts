@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { createPet, deletePet, getPets } from "../api/pets";
+import { createPet, deletePet, getPets, updatePet } from "../api/pets";
 import type { PetFormState } from "../types";
 import { queryKeys } from "./queryKeys";
 
@@ -36,8 +36,23 @@ export function usePets() {
     }
   });
 
+  const updatePetMutation = useMutation({
+    mutationFn: ({ id, form }: { id: number; form: PetFormState }) => updatePet(id, form),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: queryKeys.pets });
+      toast.success("마이펫 정보가 수정되었습니다.");
+    },
+    onError: () => {
+      toast.error("마이펫 수정 중 문제가 발생했습니다.");
+    }
+  });
+
   async function handleCreatePet(form: PetFormState) {
     await createPetMutation.mutateAsync(form);
+  }
+
+  async function handleUpdatePet(id: number, form: PetFormState) {
+    await updatePetMutation.mutateAsync({ id, form });
   }
 
   async function handleDeletePet(id: number) {
@@ -47,6 +62,7 @@ export function usePets() {
   return {
     pets,
     handleCreatePet,
+    handleUpdatePet,
     handleDeletePet
   };
 }

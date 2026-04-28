@@ -26,6 +26,7 @@ export function AppRoutes({ app }: AppRoutesProps) {
             pets={app.pets}
             onCreatePet={app.handleCreatePet}
             onDeletePet={app.handleDeletePet}
+            onUpdatePet={app.handleUpdatePet}
           />
         }
       />

@@ -1,4 +1,4 @@
-import type { CreatePetInput, Pet } from "../types";
+import type { CreatePetInput, Pet, UpdatePetInput } from "../types";
 import { appendIfPresent, request } from "./http";
 
 export async function getPets() {
@@ -6,6 +6,20 @@ export async function getPets() {
 }
 
 export async function createPet(payload: CreatePetInput) {
+  return request<Pet>("/api/pets", {
+    method: "POST",
+    body: createPetFormData(payload)
+  });
+}
+
+export async function updatePet(id: number, payload: UpdatePetInput) {
+  return request<Pet>(`/api/pets/${id}`, {
+    method: "PUT",
+    body: createPetFormData(payload)
+  });
+}
+
+function createPetFormData(payload: CreatePetInput | UpdatePetInput) {
   const formData = new FormData();
   appendIfPresent(formData, "name", payload.name);
   appendIfPresent(formData, "species", payload.species);
@@ -14,10 +28,7 @@ export async function createPet(payload: CreatePetInput) {
   appendIfPresent(formData, "memo", payload.memo);
   appendIfPresent(formData, "photo", payload.photo);
 
-  return request<Pet>("/api/pets", {
-    method: "POST",
-    body: formData
-  });
+  return formData;
 }
 
 export async function deletePet(id: number) {

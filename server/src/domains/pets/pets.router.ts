@@ -22,6 +22,22 @@ petsRouter.post("/", upload.single("photo"), (req, res) => {
   ok(res, "Pet created", mapPet(pet), 201);
 });
 
+petsRouter.put("/:id", upload.single("photo"), (req, res) => {
+  const petId = Number(req.params.id);
+  const { name, species, breed = "", birthday = "", memo = "" } = req.body;
+  if (!name || !species) return fail(res, 400, "name and species are required");
+
+  const pet = db.prepare("SELECT * FROM pets WHERE id = ?").get(petId) as { image_path?: string | null } | undefined;
+  if (!pet) return fail(res, 404, "pet not found");
+
+  db.prepare(
+    "UPDATE pets SET name = ?, species = ?, breed = ?, birthday = ?, memo = ?, image_path = ? WHERE id = ?"
+  ).run(name, species, breed, birthday, memo, uploadedPath(req.file) ?? pet.image_path ?? null, petId);
+
+  const updatedPet = db.prepare("SELECT * FROM pets WHERE id = ?").get(petId);
+  ok(res, "Pet updated", mapPet(updatedPet));
+});
+
 petsRouter.delete("/:id", (req, res) => {
   const petId = Number(req.params.id);
   const pet = db.prepare("SELECT * FROM pets WHERE id = ?").get(petId);

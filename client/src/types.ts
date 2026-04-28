@@ -93,6 +93,8 @@ export type CreatePetInput = {
   photo?: File | null;
 };
 
+export type UpdatePetInput = CreatePetInput;
+
 export type CreateRecordInput = {
   recordDate: string;
   weight?: number | null;
