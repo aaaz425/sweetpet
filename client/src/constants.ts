@@ -16,12 +16,12 @@ export const pagePaths: Record<Page, string> = {
   export: "/export"
 };
 
-export function getPageFromPath(pathname: string): Page {
+export function getPageFromPath(pathname: string): Page | null {
   const normalizedPath = pathname.replace(/\/+$/, "") || "/";
   if (normalizedPath === "/") return "records";
 
   const matchingPage = Object.entries(pagePaths).find(([, path]) => path === normalizedPath)?.[0];
-  return matchingPage ? (matchingPage as Page) : "records";
+  return matchingPage ? (matchingPage as Page) : null;
 }
 
 export const orderStatusLabels: Record<OrderStatus, string> = {

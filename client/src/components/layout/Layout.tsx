@@ -5,7 +5,7 @@ import { Footer } from "./Footer";
 import { GlobalHeader } from "./GlobalHeader";
 
 type LayoutProps = {
-  activePage: Page;
+  activePage: Page | null;
   onSelectPage: (page: Page) => void;
   children: ReactNode;
 };

@@ -28,6 +28,10 @@ app.use("/api/records", recordsRouter);
 app.use("/api/books", booksRouter);
 app.use("/api/orders", ordersRouter);
 
+app.use("/api", (req, res) => {
+  fail(res, 404, `API 경로를 찾을 수 없습니다: ${req.path}`);
+});
+
 const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
   fail(res, 400, error.message || "request failed");
 };

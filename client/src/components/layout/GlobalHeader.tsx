@@ -3,7 +3,7 @@ import type { Page } from "../../types";
 import { SectionToggle } from "./SectionToggle";
 
 type GlobalHeaderProps = {
-  activePage: Page;
+  activePage: Page | null;
   onSelectPage: (page: Page) => void;
 };
 

@@ -1,4 +1,5 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { NotFoundState } from "../components/feedback/PageState";
 import { AdminOrdersPage } from "../pages/AdminOrdersPage";
 import { AlbumsPage } from "../pages/AlbumsPage";
 import { ExportPage } from "../pages/ExportPage";
@@ -12,6 +13,8 @@ type AppRoutesProps = {
 };
 
 export function AppRoutes({ app }: AppRoutesProps) {
+  const navigate = useNavigate();
+
   return (
     <Routes>
       <Route path="/" element={<Navigate to={pagePaths.records} replace />} />
@@ -56,7 +59,7 @@ export function AppRoutes({ app }: AppRoutesProps) {
         }
       />
       <Route path={pagePaths.export} element={<ExportPage exportJson={app.exportJson} />} />
-      <Route path="*" element={<Navigate to={pagePaths.records} replace />} />
+      <Route path="*" element={<NotFoundState onGoHome={() => navigate(pagePaths.records)} />} />
     </Routes>
   );
 }
