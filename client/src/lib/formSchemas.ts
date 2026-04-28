@@ -14,11 +14,6 @@ export const petFormSchema = z.object({
 
 export const recordFormSchema = z.object({
   recordDate: z.string().trim().min(1, "날짜를 선택해주세요."),
-  weight: z
-    .string()
-    .trim()
-    .refine((value) => value === "" || !Number.isNaN(Number(value)), "몸무게는 숫자로 입력해주세요.")
-    .refine((value) => value === "" || Number(value) >= 0, "몸무게는 0 이상이어야 합니다."),
   condition: z.string().trim().min(1, "컨디션을 선택해주세요."),
   memo: z.string().trim().min(1, "메모를 입력해주세요."),
   tags: textField,

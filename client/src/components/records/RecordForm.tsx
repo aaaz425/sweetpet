@@ -27,7 +27,6 @@ type RecordFormProps = {
 
 const initialRecordForm: RecordFormState = {
   recordDate: "2026-04-27",
-  weight: "",
   condition: "보통",
   memo: "",
   tags: "",
@@ -241,11 +240,6 @@ export function RecordForm({ selectedPetId, onSubmit, isFramed = true, showTitle
           <span>날짜</span>
           <Controller control={control} name="recordDate" render={({ field }) => <DatePicker value={field.value} onChange={field.onChange} />} />
           {errors.recordDate && <span className="text-xs font-medium text-primary">{errors.recordDate.message}</span>}
-        </div>
-        <div className={labelClass}>
-          <span>몸무게 (kg)</span>
-          <input className={fieldClass} id="record-weight" inputMode="decimal" {...register("weight")} />
-          {errors.weight && <span className="text-xs font-medium text-primary">{errors.weight.message}</span>}
         </div>
         <div className={labelClass}>
           <span>컨디션</span>

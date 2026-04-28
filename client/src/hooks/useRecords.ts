@@ -14,7 +14,6 @@ export function useRecords() {
     mutationFn: ({ petId, form }: { petId: number; form: RecordFormState }) =>
       createRecord(petId, {
         recordDate: form.recordDate,
-        weight: form.weight ? Number(form.weight) : null,
         condition: form.condition,
         memo: form.memo,
         tags: form.tags.split(",").map((tag) => tag.trim()).filter(Boolean),

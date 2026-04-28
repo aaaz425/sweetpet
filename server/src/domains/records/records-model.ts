@@ -19,7 +19,6 @@ export function mapRecord(row: any) {
     id: row.id,
     petId: row.pet_id,
     recordDate: row.record_date,
-    weight: row.weight,
     condition: row.condition,
     memo: row.memo,
     tags: parseJson(row.tags, []),

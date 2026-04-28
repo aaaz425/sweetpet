@@ -35,7 +35,6 @@ API request and response field names use camelCase. The SQLite schema may use sn
 - `id`: number
 - `petId`: number
 - `recordDate`: string
-- `weight`: number | null
 - `condition`: string
 - `memo`: string
 - `tags`: string[]

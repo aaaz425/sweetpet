@@ -10,7 +10,6 @@ export async function createRecord(petId: number, payload: CreateRecordInput) {
   const formData = new FormData();
   appendIfPresent(formData, "petId", petId);
   appendIfPresent(formData, "recordDate", payload.recordDate);
-  appendIfPresent(formData, "weight", payload.weight);
   appendIfPresent(formData, "condition", payload.condition);
   appendIfPresent(formData, "memo", payload.memo);
   appendIfPresent(formData, "tags", payload.tags?.join(", "));

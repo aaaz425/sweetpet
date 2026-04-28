@@ -18,7 +18,7 @@ const landingSlides = [
     icon: ClipboardList,
     eyebrow: "일상기록",
     title: "오늘의 표정이 내일의 이야기가 되도록",
-    body: "사진, 컨디션, 몸무게, 메모를 날짜별로 남겨 마이펫의 일상을 차곡차곡 쌓습니다.",
+    body: "사진, 컨디션, 메모를 날짜별로 남겨 마이펫의 일상을 차곡차곡 쌓습니다.",
     image: "/landing-images/records.jpg",
     alt: "소파 위에서 쉬고 있는 반려묘",
     actionLabel: "기록 시작",

@@ -125,13 +125,12 @@ export function seed() {
   const petId = Number(pet.lastInsertRowid);
 
   const insertRecord = db.prepare(
-    "INSERT INTO records (pet_id, record_date, weight, condition, memo, tags) VALUES (?, ?, ?, ?, ?, ?)"
+    "INSERT INTO records (pet_id, record_date, condition, memo, tags) VALUES (?, ?, ?, ?, ?)"
   );
 
   insertRecord.run(
     petId,
     "2026-04-01",
-    4.2,
     "좋음",
     "아침 산책을 천천히 다녀왔고 밥도 잘 먹었습니다.",
     JSON.stringify(["산책", "아침"])
@@ -139,7 +138,6 @@ export function seed() {
   insertRecord.run(
     petId,
     "2026-04-10",
-    4.3,
     "보통",
     "미용실에 다녀왔습니다. 조금 피곤해 보였지만 집에서는 편하게 쉬었습니다.",
     JSON.stringify(["미용"])
@@ -147,7 +145,6 @@ export function seed() {
   insertRecord.run(
     petId,
     "2026-04-20",
-    4.4,
     "아주 좋음",
     "간식 앞에서 기다리기를 배웠습니다. 작지만 기억하고 싶은 성장 순간입니다.",
     JSON.stringify(["훈련", "성장"])

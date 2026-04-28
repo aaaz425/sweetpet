@@ -24,7 +24,6 @@ export type RecordItem = {
   id: number;
   petId: number;
   recordDate: string;
-  weight: number | null;
   condition: string;
   memo: string;
   tags: string[];
@@ -97,7 +96,6 @@ export type UpdatePetInput = CreatePetInput;
 
 export type CreateRecordInput = {
   recordDate: string;
-  weight?: number | null;
   condition: string;
   memo: string;
   tags?: string[];
@@ -123,7 +121,6 @@ export type PetFormState = {
 
 export type RecordFormState = {
   recordDate: string;
-  weight: string;
   condition: string;
   memo: string;
   tags: string;
