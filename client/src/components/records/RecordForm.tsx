@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, X } from "lucide-react";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { recordFormSchema } from "../../lib/formSchemas";
 import { cn } from "../../lib/utils";
@@ -25,17 +25,26 @@ type RecordFormProps = {
   showTitle?: boolean;
 };
 
-const initialRecordForm: RecordFormState = {
-  recordDate: "2026-04-27",
-  condition: "보통",
-  memo: "",
-  tags: "",
-  photo: null
-};
-
 const conditionOptions = ["최고", "신남", "보통", "안좋음", "피곤함", "아픔"];
 const tagOptions = ["산책", "식사", "간식", "놀이", "훈련", "미용", "병원", "수면"];
 const maxSelectedTagCount = 5;
+
+function formatDate(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function getInitialRecordForm(): RecordFormState {
+  return {
+    recordDate: formatDate(new Date()),
+    condition: "보통",
+    memo: "",
+    tags: "",
+    photo: null
+  };
+}
 
 function parseTags(value: string) {
   return value
@@ -205,6 +214,7 @@ function TagCombobox({ id, value, onChange }: { id: string; value: string; onCha
 
 export function RecordForm({ selectedPetId, onSubmit, isFramed = true, showTitle = true }: RecordFormProps) {
   const photoInputRef = useRef<HTMLInputElement | null>(null);
+  const initialRecordForm = useMemo(() => getInitialRecordForm(), []);
   const {
     control,
     formState: { errors, isSubmitting },

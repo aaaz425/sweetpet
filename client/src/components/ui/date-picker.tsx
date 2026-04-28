@@ -1,5 +1,5 @@
 import { CalendarIcon, ChevronDown } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "./button";
 import { Calendar } from "./calendar";
 import {
@@ -16,6 +16,7 @@ type DatePickerProps = {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  maxDate?: Date;
 };
 
 function formatDate(date: Date) {
@@ -36,24 +37,42 @@ function startOfMonth(date: Date) {
   return new Date(date.getFullYear(), date.getMonth(), 1);
 }
 
-const currentYear = new Date().getFullYear();
-const years = Array.from({ length: 100 }, (_, index) => currentYear - index);
+function startOfDay(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function isAfterDate(date: Date, maxDate: Date) {
+  return startOfDay(date) > startOfDay(maxDate);
+}
+
+function isAfterMonth(date: Date, maxDate: Date) {
+  return startOfMonth(date) > startOfMonth(maxDate);
+}
+
 const months = Array.from({ length: 12 }, (_, index) => index);
 
 export function DatePicker({
   value,
   onChange,
   placeholder = "날짜 선택",
+  maxDate,
 }: DatePickerProps) {
+  const maxSelectableDate = useMemo(() => maxDate ?? new Date(), [maxDate]);
+  const years = useMemo(
+    () => Array.from({ length: 100 }, (_, index) => maxSelectableDate.getFullYear() - index),
+    [maxSelectableDate],
+  );
+  const getVisibleMonth = (date: Date) =>
+    isAfterMonth(date, maxSelectableDate) ? startOfMonth(maxSelectableDate) : startOfMonth(date);
   const [open, setOpen] = useState(false);
   const selectedDate = parseDate(value);
   const [month, setMonth] = useState(() =>
-    startOfMonth(selectedDate ?? new Date()),
+    getVisibleMonth(selectedDate ?? maxSelectableDate),
   );
 
   useEffect(() => {
     if (selectedDate) {
-      setMonth(startOfMonth(selectedDate));
+      setMonth(getVisibleMonth(selectedDate));
     }
   }, [value]);
 
@@ -118,7 +137,10 @@ export function DatePicker({
                   {months.map((monthIndex) => (
                     <DropdownMenuItem
                       className="justify-center px-2"
-                      disabled={monthIndex === month.getMonth()}
+                      disabled={
+                        monthIndex === month.getMonth() ||
+                        isAfterMonth(new Date(month.getFullYear(), monthIndex, 1), maxSelectableDate)
+                      }
                       key={monthIndex}
                       onSelect={() =>
                         setMonth(
@@ -136,12 +158,14 @@ export function DatePicker({
           </div>
         </div>
         <Calendar
+          disabled={{ after: maxSelectableDate }}
           hideNavigation
           mode="single"
           month={month}
           onMonthChange={setMonth}
           selected={selectedDate}
           onDayClick={(date) => {
+            if (isAfterDate(date, maxSelectableDate)) return;
             onChange(formatDate(date));
             setOpen(false);
           }}
