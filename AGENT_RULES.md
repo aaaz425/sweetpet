@@ -38,6 +38,51 @@ The app should separate user-facing screens from admin-facing screens for demons
 * Avoid over-engineering
 * Use RESTful API design
 
+## Maintainability Rules
+
+New or changed code should preserve clear file responsibilities.
+
+### File Responsibility
+
+* Do not put page logic, API calls, UI components, and state logic in the same file.
+* Keep API client functions outside React components.
+* Split files by responsibility before adding substantial new logic.
+
+### File Size
+
+* If a file exceeds 200 lines, consider splitting it before adding more logic.
+* If a component contains more than one major UI section, extract subcomponents.
+
+### Naming
+
+* Use descriptive variable and function names.
+* Avoid vague names like `data`, `item`, `temp`, or `handleClick` when the meaning is specific.
+* Prefer names such as `selectedPet`, `petRecords`, `createOrderPayload`, `handlePetSelect`, and `isAdminSection`.
+
+### Frontend Structure
+
+* Keep layout components separate from page components.
+* Keep header/navigation logic separate from page-specific logic.
+* Reusable UI components should live in the existing shared UI area, currently `client/src/components/ui`.
+* Feature-specific components should live near their domain, currently `client/src/components/{domain}`.
+* API client functions should live in `client/src/api` or a clearly named feature API module.
+* Do not define API calls directly inside React components.
+
+### Component Extraction
+
+Extract components when:
+
+* The JSX block is repeated.
+* The component becomes hard to scan.
+* A section has its own state or interaction.
+* A page contains multiple independent UI sections.
+
+### State Rules
+
+* Keep state close to where it is used.
+* Lift shared state only when multiple features need it.
+* Do not introduce global state unless necessary.
+
 ## Architecture Rules
 
 The current codebase is intentionally small, but new work should move it toward clearer boundaries.
