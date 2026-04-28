@@ -6,7 +6,7 @@ export const pageLabels: Record<Page, string> = {
   records: "일상기록",
   albums: "앨범북",
   "admin-orders": "주문 관리",
-  export: "내보내기"
+  export: "JSON 결과"
 };
 
 export const pagePaths: Record<Page, string> = {

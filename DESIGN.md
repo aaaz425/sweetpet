@@ -29,7 +29,7 @@ The UI should feel like a modern production tool for organizing pet records and 
   * Record list
   * Order creation
   * Admin order management
-  * Export
+  * JSON result viewer
 * Each page should expose only the primary action relevant to that page
 * Prioritize clarity over visual decoration
 
@@ -165,7 +165,7 @@ User `Orders` is for creating an order from selected records or a selected perio
 Admin-facing navigation contains only:
 
   * Order Management
-  * Export
+  * JSON Result
 
 Admin screens must not expose pet creation, record creation, or record editing.
 
@@ -275,14 +275,14 @@ Style:
 User should understand the core flow immediately:
 
 ```text
-Record -> Review -> Select Period -> Order -> Export
+Record -> Review -> Select Period -> Order -> JSON Result
 ```
 
 The role-based flow should remain explicit:
 
 ```text
 User: Pet -> Record -> Select Period -> Create Order
-Admin: Manage Orders -> Update Status -> Export
+Admin: Manage Orders -> Update Status -> View JSON Result
 ```
 
 ### 2. Visibility of Actions
@@ -294,7 +294,7 @@ Admin: Manage Orders -> Update Status -> Export
 ### 3. Separation of Concerns
 
 * User screens and admin screens must be clearly separated
-* Pets, Records, Orders, Admin Orders, and Export must be clearly separated
+* Pets, Records, Orders, Admin Orders, and JSON Result must be clearly separated
 * Do not mix responsibilities in one screen
 * Admin screens should focus only on order management and export
 
