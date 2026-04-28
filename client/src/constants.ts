@@ -1,6 +1,7 @@
 import type { OrderStatus, Page, PrintOptions } from "./types";
 
 export const pageLabels: Record<Page, string> = {
+  home: "홈",
   pets: "마이펫",
   records: "일상기록",
   albums: "앨범북",
@@ -9,6 +10,7 @@ export const pageLabels: Record<Page, string> = {
 };
 
 export const pagePaths: Record<Page, string> = {
+  home: "/",
   pets: "/pets",
   records: "/records",
   albums: "/albums",
@@ -18,7 +20,7 @@ export const pagePaths: Record<Page, string> = {
 
 export function getPageFromPath(pathname: string): Page | null {
   const normalizedPath = pathname.replace(/\/+$/, "") || "/";
-  if (normalizedPath === "/") return "records";
+  if (normalizedPath === "/") return "home";
 
   const matchingPage = Object.entries(pagePaths).find(([, path]) => path === normalizedPath)?.[0];
   return matchingPage ? (matchingPage as Page) : null;
@@ -30,7 +32,7 @@ export const orderStatusLabels: Record<OrderStatus, string> = {
   completed: "완료"
 };
 
-export const userNavItems: Page[] = ["pets", "records", "albums"];
+export const userNavItems: Page[] = ["home", "pets", "records", "albums"];
 
 export const adminNavItems: Page[] = ["admin-orders"];
 

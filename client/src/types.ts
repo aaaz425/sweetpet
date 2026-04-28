@@ -1,4 +1,4 @@
-export type Page = "pets" | "records" | "albums" | "admin-orders" | "export";
+export type Page = "home" | "pets" | "records" | "albums" | "admin-orders" | "export";
 
 export type JsonObject = Record<string, unknown>;
 

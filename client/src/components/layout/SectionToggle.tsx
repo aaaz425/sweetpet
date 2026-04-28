@@ -7,7 +7,7 @@ type SectionToggleProps = {
 };
 
 const sectionOptions = [
-  { key: "user", label: "사용자", page: "records" },
+  { key: "user", label: "사용자", page: "home" },
   { key: "admin", label: "관리자", page: "admin-orders" }
 ] as const;
 
@@ -18,7 +18,7 @@ export function SectionToggle({ activeSection, onSelectSection }: SectionToggleP
       return;
     }
 
-    onSelectSection(activeSection === "user" ? "admin-orders" : "records");
+    onSelectSection(activeSection === "user" ? "admin-orders" : "home");
   }
 
   return (
