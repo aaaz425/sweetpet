@@ -41,7 +41,8 @@ export function useOrders() {
       petId,
       title: form.title,
       startDate: form.startDate,
-      endDate: form.endDate
+      endDate: form.endDate,
+      printOptions: form.printOptions
     });
   }
 

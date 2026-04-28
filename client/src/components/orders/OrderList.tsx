@@ -1,6 +1,6 @@
 import { ChevronDown } from "lucide-react";
 import type { ReactNode } from "react";
-import { orderStatusLabels } from "../../constants";
+import { getPrintOptionLabel, orderStatusLabels } from "../../constants";
 import type { Order, OrderStatus } from "../../types";
 import { SectionTitle } from "../SectionTitle";
 import { Button } from "../ui/button";
@@ -50,6 +50,12 @@ export function OrderList({ orders, title = "주문 목록", headerAction, onUpd
                 </span>
                 <span className="text-xs text-text-secondary">
                   일상기록 {order.recordCount}개 · 도서 {order.bookId ? `#${order.bookId}` : "없음"}
+                </span>
+                <span className="text-xs text-text-secondary">
+                  {getPrintOptionLabel("size", order.printOptions.size)} · {getPrintOptionLabel("binding", order.printOptions.binding)} · {getPrintOptionLabel("paper", order.printOptions.paper)}
+                </span>
+                <span className="text-xs text-text-secondary">
+                  주문 수량 {typeof order.printOptions.quantity === "number" ? order.printOptions.quantity : 1}권
                 </span>
               </div>
               <span className={badgeClass}>{orderStatusLabels[order.status]}</span>

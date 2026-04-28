@@ -2,6 +2,13 @@ export type Page = "pets" | "records" | "albums" | "admin-orders" | "export";
 
 export type JsonObject = Record<string, unknown>;
 
+export type PrintOptions = {
+  size: "a5" | "b5";
+  binding: "softcover" | "hardcover";
+  paper: "matte" | "glossy";
+  quantity: number;
+};
+
 export type Pet = {
   id: number;
   name: string;
@@ -100,6 +107,7 @@ export type CreateOrderInput = {
   title: string;
   startDate: string;
   endDate: string;
+  printOptions: PrintOptions;
 };
 
 export type PetFormState = {
@@ -124,4 +132,5 @@ export type OrderFormState = {
   title: string;
   startDate: string;
   endDate: string;
+  printOptions: PrintOptions;
 };

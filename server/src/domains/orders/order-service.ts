@@ -25,12 +25,47 @@ type CreateOrderInput = {
   printOptions?: unknown;
 };
 
+type PrintOptions = {
+  size: "a5" | "b5";
+  binding: "softcover" | "hardcover";
+  paper: "matte" | "glossy";
+  quantity: number;
+};
+
+const defaultPrintOptions: PrintOptions = {
+  size: "a5",
+  binding: "softcover",
+  paper: "matte",
+  quantity: 1
+};
+
 function success<T>(status: number, message: string, data: T): ServiceResult<T> {
   return { ok: true, status, message, data };
 }
 
 function failure<T>(status: number, message: string): ServiceResult<T> {
   return { ok: false, status, message };
+}
+
+function normalizePrintOptions(printOptions: unknown): PrintOptions {
+  if (!printOptions || typeof printOptions !== "object" || Array.isArray(printOptions)) {
+    return defaultPrintOptions;
+  }
+
+  const options = printOptions as Partial<Record<keyof PrintOptions, unknown>>;
+
+  return {
+    size: options.size === "b5" ? "b5" : defaultPrintOptions.size,
+    binding: options.binding === "hardcover" ? "hardcover" : defaultPrintOptions.binding,
+    paper: options.paper === "glossy" ? "glossy" : defaultPrintOptions.paper,
+    quantity: normalizeQuantity(options.quantity)
+  };
+}
+
+function normalizeQuantity(quantity: unknown) {
+  const numericQuantity = Number(quantity);
+  if (!Number.isInteger(numericQuantity)) return defaultPrintOptions.quantity;
+  return Math.min(Math.max(numericQuantity, 1), 20);
 }
 
 function createOrderFromFinalizedBook(bookUid: string) {
@@ -67,7 +102,7 @@ export function createOrder(input: CreateOrderInput) {
     title: input.title,
     startDate: input.startDate,
     endDate: input.endDate,
-    printOptions: input.printOptions ?? {}
+    printOptions: normalizePrintOptions(input.printOptions)
   });
 
   repository.replaceBookContents(book.id, records);
