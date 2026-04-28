@@ -26,7 +26,9 @@ export function AlbumsPage({ pets, orders, onCreateOrder }: AlbumsPageProps) {
   return (
     <section className="grid min-w-0 gap-4">
       <OrderList
+        displayMode="album"
         orders={orders}
+        pets={pets}
         title="주문 내역"
         headerAction={
           <button
