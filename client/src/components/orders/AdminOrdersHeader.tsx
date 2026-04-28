@@ -1,5 +1,5 @@
-import { ChevronDown, X } from "lucide-react";
-import { fieldClass, secondaryButtonClass } from "../ui";
+import { ChevronDown } from "lucide-react";
+import type { ReactNode } from "react";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,
@@ -21,12 +21,11 @@ type AdminOrdersHeaderProps = {
   selectedFilter: OrderStatusFilter;
   searchKeyword: string;
   sortOrder: OrderSortOrder;
-  hasActiveFilters: boolean;
+  summary?: ReactNode;
   getCount: (statusFilter: OrderStatusFilter) => number;
   onSelectFilter: (statusFilter: OrderStatusFilter) => void;
   onChangeSearchKeyword: (value: string) => void;
   onChangeSortOrder: (value: OrderSortOrder) => void;
-  onResetFilters: () => void;
 };
 
 export function AdminOrdersHeader({
@@ -35,12 +34,11 @@ export function AdminOrdersHeader({
   selectedFilter,
   searchKeyword,
   sortOrder,
-  hasActiveFilters,
+  summary,
   getCount,
   onSelectFilter,
   onChangeSearchKeyword,
-  onChangeSortOrder,
-  onResetFilters
+  onChangeSortOrder
 }: AdminOrdersHeaderProps) {
   const sortLabel = sortOrder === "newest" ? "최신순" : "오래된순";
 
@@ -65,7 +63,7 @@ export function AdminOrdersHeader({
           <label className="grid gap-1.5 text-sm font-semibold text-text-secondary">
             주문명 검색
             <input
-              className={fieldClass}
+              className="min-h-10 w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm font-semibold leading-5 text-text-primary shadow-[0_1px_2px_rgba(25,23,20,0.04)] outline-none transition duration-150 placeholder:font-medium placeholder:text-text-secondary hover:border-border-strong hover:bg-surface-muted focus:border-primary focus:ring-2 focus:ring-primary-soft"
               placeholder="주문 제목을 입력하세요"
               value={searchKeyword}
               onChange={(event) => onChangeSearchKeyword(event.target.value)}
@@ -93,15 +91,7 @@ export function AdminOrdersHeader({
             </DropdownMenu>
           </label>
         </div>
-        {hasActiveFilters ? (
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <span className="text-sm font-medium text-text-secondary">필터가 적용된 주문을 보고 있습니다.</span>
-            <button className={`${secondaryButtonClass} min-h-9 px-3 py-2`} onClick={onResetFilters} type="button">
-              <X className="h-4 w-4" aria-hidden="true" />
-              필터 초기화
-            </button>
-          </div>
-        ) : null}
+        {summary}
       </div>
     </div>
   );

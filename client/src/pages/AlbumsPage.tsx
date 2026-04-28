@@ -39,8 +39,13 @@ function orderToFormState(order: Order): OrderFormState {
   };
 }
 
-function filterOrders(orders: Order[], selectedStatus: OrderStatusFilter) {
-  return orders.filter((order) => selectedStatus === "all" || order.status === selectedStatus);
+function filterOrders(orders: Order[], selectedStatus: OrderStatusFilter, selectedFilterPetId: number | null) {
+  return orders.filter((order) => {
+    if (selectedFilterPetId !== null && order.petId !== selectedFilterPetId) return false;
+    if (selectedStatus !== "all" && order.status !== selectedStatus) return false;
+
+    return true;
+  });
 }
 
 function sortOrders(orders: Order[], sortOrder: OrderSortOrder) {
@@ -65,16 +70,19 @@ export function AlbumsPage({
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [selectedPetId, setSelectedPetId] = useState<number | null>(null);
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
+  const [selectedFilterPetId, setSelectedFilterPetId] = useState<number | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<OrderStatusFilter>("all");
   const [sortOrder, setSortOrder] = useState<OrderSortOrder>("newest");
-  const filteredOrders = useMemo(() => filterOrders(orders, selectedStatus), [orders, selectedStatus]);
+  const filteredOrders = useMemo(
+    () => filterOrders(orders, selectedStatus, selectedFilterPetId),
+    [orders, selectedFilterPetId, selectedStatus]
+  );
   const sortedOrders = useMemo(() => sortOrders(filteredOrders, sortOrder), [filteredOrders, sortOrder]);
-  const hasActiveOrderFilters = selectedStatus !== "all" || sortOrder !== "newest";
   const emptyOrderTitle = orders.length === 0 ? "생성된 앨범북 주문이 없습니다" : "조건에 맞는 주문이 없습니다";
   const emptyOrderDescription =
     orders.length === 0
       ? "일상기록을 남긴 뒤 기간을 선택해 앨범북 주문을 만들 수 있습니다."
-      : "선택한 주문 상태 조건에 맞는 주문이 없습니다.";
+      : "선택한 마이펫 또는 주문 상태 조건에 맞는 주문이 없습니다.";
 
   function openCreateOrderModal() {
     setEditingOrder(null);
@@ -104,11 +112,6 @@ export function AlbumsPage({
     closeOrderModal();
   }
 
-  function resetOrderFilters() {
-    setSelectedStatus("all");
-    setSortOrder("newest");
-  }
-
   return (
     <section className="grid min-w-0 gap-4">
       {isOrdersError ? (
@@ -125,12 +128,13 @@ export function AlbumsPage({
           onEditOrder={openEditOrderModal}
           filters={(
             <OrderFilters
+              pets={pets}
+              selectedPetId={selectedFilterPetId}
               selectedStatus={selectedStatus}
               sortOrder={sortOrder}
-              hasActiveFilters={hasActiveOrderFilters}
+              onChangePetId={setSelectedFilterPetId}
               onChangeStatus={setSelectedStatus}
               onChangeSortOrder={setSortOrder}
-              onResetFilters={resetOrderFilters}
             />
           )}
           headerAction={

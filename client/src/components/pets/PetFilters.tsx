@@ -1,6 +1,5 @@
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import type { ReactNode } from "react";
-import { secondaryButtonClass } from "../ui";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,
@@ -14,19 +13,15 @@ import {
 type PetFiltersProps = {
   speciesOptions: string[];
   selectedSpecies: string;
-  hasActiveFilters: boolean;
   summary?: ReactNode;
   onChangeSpecies: (value: string) => void;
-  onResetFilters: () => void;
 };
 
 export function PetFilters({
   speciesOptions,
   selectedSpecies,
-  hasActiveFilters,
   summary,
-  onChangeSpecies,
-  onResetFilters
+  onChangeSpecies
 }: PetFiltersProps) {
   const selectedSpeciesLabel = selectedSpecies === "all" ? "전체" : selectedSpecies;
 
@@ -55,15 +50,6 @@ export function PetFilters({
           </DropdownMenuContent>
         </DropdownMenu>
       </label>
-      {hasActiveFilters ? (
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <span className="text-sm font-medium text-text-secondary">필터가 적용된 마이펫을 보고 있습니다.</span>
-          <button className={`${secondaryButtonClass} min-h-9 px-3 py-2`} onClick={onResetFilters} type="button">
-            <X className="h-4 w-4" aria-hidden="true" />
-            필터 초기화
-          </button>
-        </div>
-      ) : null}
       {summary}
     </div>
   );

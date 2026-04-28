@@ -1,22 +1,20 @@
 import { X } from "lucide-react";
 
-export type RecordFilterSummaryItem = {
+export type AdminOrderFilterSummaryItem = {
   label: string;
   value: string;
   onRemove?: () => void;
 };
 
-type RecordFilterSummaryProps = {
-  filters: RecordFilterSummaryItem[];
+type AdminOrderFilterSummaryProps = {
+  filters: AdminOrderFilterSummaryItem[];
   resultCount: number;
 };
 
 const summaryBadgeClass =
   "box-border inline-flex h-6 appearance-none items-center rounded-full border border-border-strong bg-primary-soft px-2.5 py-0 font-sans !text-xs font-semibold !leading-none text-primary";
 
-export function RecordFilterSummary({ filters, resultCount }: RecordFilterSummaryProps) {
-  if (filters.length === 0) return null;
-
+export function AdminOrderFilterSummary({ filters, resultCount }: AdminOrderFilterSummaryProps) {
   const sortedFilters = [...filters].sort((firstFilter, secondFilter) => {
     if (Boolean(firstFilter.onRemove) === Boolean(secondFilter.onRemove)) return 0;
     return firstFilter.onRemove ? 1 : -1;
@@ -46,7 +44,7 @@ export function RecordFilterSummary({ filters, resultCount }: RecordFilterSummar
         )}
       </div>
       <div className="flex shrink-0 items-center gap-2">
-        <span className="text-sm font-medium text-text-secondary">{resultCount}개</span>
+        <span className="text-sm font-medium text-text-secondary">{resultCount}건</span>
       </div>
     </div>
   );

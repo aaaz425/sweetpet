@@ -1,6 +1,5 @@
-import { ChevronDown, X } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import type { ReactNode } from "react";
-import { secondaryButtonClass } from "../ui";
 import { Button } from "../ui/button";
 import { DatePicker } from "../ui/date-picker";
 import {
@@ -25,16 +24,15 @@ type RecordFiltersProps = {
   startDate: string;
   endDate: string;
   selectedCondition: string;
-  selectedTag: string;
+  selectedTags: string[];
   sortOrder: RecordSortOrder;
-  hasActiveFilters: boolean;
   summary?: ReactNode;
   onChangeStartDate: (value: string) => void;
   onChangeEndDate: (value: string) => void;
   onChangeCondition: (value: string) => void;
-  onChangeTag: (value: string) => void;
+  onToggleTag: (value: string) => void;
+  onClearTags: () => void;
   onChangeSortOrder: (value: RecordSortOrder) => void;
-  onResetFilters: () => void;
 };
 
 function FilterDropdown({
@@ -74,30 +72,78 @@ function FilterDropdown({
   );
 }
 
+function TagFilterDropdown({
+  selectedTags,
+  tagOptions,
+  onToggleTag,
+  onClearTags
+}: {
+  selectedTags: string[];
+  tagOptions: string[];
+  onToggleTag: (value: string) => void;
+  onClearTags: () => void;
+}) {
+  const selectedLabel =
+    selectedTags.length === 0 ? "전체" : selectedTags.length === 1 ? selectedTags[0] : `${selectedTags.length}개 선택`;
+
+  return (
+    <label className="grid gap-1.5 text-sm font-semibold text-text-secondary">
+      태그
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button className="w-full justify-between px-3" variant="secondary">
+            <span className="truncate">{selectedLabel}</span>
+            <ChevronDown aria-hidden="true" size={16} />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="max-h-72 w-[var(--radix-dropdown-menu-trigger-width)] overflow-y-auto">
+          <DropdownMenuLabel>태그</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem disabled={selectedTags.length === 0} onSelect={onClearTags}>
+            전체
+          </DropdownMenuItem>
+          {tagOptions.map((tag) => {
+            const isSelected = selectedTags.includes(tag);
+
+            return (
+              <DropdownMenuItem
+                className="justify-between gap-2"
+                key={tag}
+                onSelect={(event) => {
+                  event.preventDefault();
+                  onToggleTag(tag);
+                }}
+              >
+                <span className="truncate">{tag}</span>
+                {isSelected ? <Check className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" /> : null}
+              </DropdownMenuItem>
+            );
+          })}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </label>
+  );
+}
+
 export function RecordFilters({
   conditionOptions,
   tagOptions,
   startDate,
   endDate,
   selectedCondition,
-  selectedTag,
+  selectedTags,
   sortOrder,
-  hasActiveFilters,
   summary,
   onChangeStartDate,
   onChangeEndDate,
   onChangeCondition,
-  onChangeTag,
-  onChangeSortOrder,
-  onResetFilters
+  onToggleTag,
+  onClearTags,
+  onChangeSortOrder
 }: RecordFiltersProps) {
   const conditionFilterOptions = [
     { value: "all", label: "전체" },
     ...conditionOptions.map((condition) => ({ value: condition, label: condition }))
-  ];
-  const tagFilterOptions = [
-    { value: "all", label: "전체" },
-    ...tagOptions.map((tag) => ({ value: tag, label: tag }))
   ];
   const sortOptions = [
     { value: "newest", label: "최신순" },
@@ -116,7 +162,12 @@ export function RecordFilters({
           <DatePicker placeholder="종료일 선택" value={endDate} onChange={onChangeEndDate} />
         </label>
         <FilterDropdown label="컨디션" value={selectedCondition} options={conditionFilterOptions} onChange={onChangeCondition} />
-        <FilterDropdown label="태그" value={selectedTag} options={tagFilterOptions} onChange={onChangeTag} />
+        <TagFilterDropdown
+          selectedTags={selectedTags}
+          tagOptions={tagOptions}
+          onToggleTag={onToggleTag}
+          onClearTags={onClearTags}
+        />
         <FilterDropdown
           label="정렬"
           value={sortOrder}
@@ -124,15 +175,6 @@ export function RecordFilters({
           onChange={(value) => onChangeSortOrder(value as RecordSortOrder)}
         />
       </div>
-      {hasActiveFilters ? (
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <span className="text-sm font-medium text-text-secondary">필터가 적용된 기록을 보고 있습니다.</span>
-          <button className={`${secondaryButtonClass} min-h-9 px-3 py-2`} onClick={onResetFilters} type="button">
-            <X className="h-4 w-4" aria-hidden="true" />
-            필터 초기화
-          </button>
-        </div>
-      ) : null}
       {summary}
     </div>
   );

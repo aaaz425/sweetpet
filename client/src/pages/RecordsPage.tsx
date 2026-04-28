@@ -34,21 +34,21 @@ function filterRecords({
   startDate,
   endDate,
   selectedCondition,
-  selectedTag
+  selectedTags
 }: {
   records: RecordItem[];
   selectedPetId: number | null;
   startDate: string;
   endDate: string;
   selectedCondition: string;
-  selectedTag: string;
+  selectedTags: string[];
 }) {
   return records.filter((record) => {
     if (selectedPetId !== null && record.petId !== selectedPetId) return false;
     if (startDate && record.recordDate < startDate) return false;
     if (endDate && record.recordDate > endDate) return false;
     if (selectedCondition !== "all" && record.condition !== selectedCondition) return false;
-    if (selectedTag !== "all" && !record.tags.includes(selectedTag)) return false;
+    if (selectedTags.length > 0 && !selectedTags.some((tag) => record.tags.includes(tag))) return false;
 
     return true;
   });
@@ -88,7 +88,7 @@ export function RecordsPage({
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [selectedCondition, setSelectedCondition] = useState("all");
-  const [selectedTag, setSelectedTag] = useState("all");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<RecordSortOrder>("newest");
   const petRecords = useMemo(
     () => records.filter((record) => selectedPetId === null || record.petId === selectedPetId),
@@ -103,8 +103,8 @@ export function RecordsPage({
     [petRecords]
   );
   const filteredRecords = useMemo(
-    () => filterRecords({ records, selectedPetId, startDate, endDate, selectedCondition, selectedTag }),
-    [endDate, records, selectedCondition, selectedPetId, selectedTag, startDate]
+    () => filterRecords({ records, selectedPetId, startDate, endDate, selectedCondition, selectedTags }),
+    [endDate, records, selectedCondition, selectedPetId, selectedTags, startDate]
   );
   const sortedRecords = useMemo(() => sortRecords(filteredRecords, sortOrder), [filteredRecords, sortOrder]);
   const selectedRecord = useMemo(
@@ -119,20 +119,25 @@ export function RecordsPage({
       nextFilters.push({ label: "마이펫", value: selectedPet.name });
     }
     if (startDate || endDate) {
-      nextFilters.push({ label: "기간", value: getDateRangeLabel(startDate, endDate) });
+      nextFilters.push({ label: "기간", value: getDateRangeLabel(startDate, endDate), onRemove: () => {
+        setStartDate("");
+        setEndDate("");
+      } });
     }
     if (selectedCondition !== "all") {
-      nextFilters.push({ label: "컨디션", value: selectedCondition });
+      nextFilters.push({ label: "컨디션", value: selectedCondition, onRemove: () => setSelectedCondition("all") });
     }
-    if (selectedTag !== "all") {
-      nextFilters.push({ label: "태그", value: selectedTag });
+    nextFilters.push({
+      label: "정렬",
+      value: sortOrder === "newest" ? "최신순" : "오래된순",
+      onRemove: sortOrder === "oldest" ? () => setSortOrder("newest") : undefined
+    });
+    if (selectedTags.length > 0) {
+      nextFilters.push({ label: "태그", value: selectedTags.join(", "), onRemove: () => setSelectedTags([]) });
     }
-    nextFilters.push({ label: "정렬", value: sortOrder === "newest" ? "최신순" : "오래된순" });
 
     return nextFilters;
-  }, [endDate, selectedCondition, selectedPet, selectedTag, sortOrder, startDate]);
-  const hasActiveFilters = Boolean(startDate || endDate || selectedCondition !== "all" || selectedTag !== "all");
-  const isFilteringResult = hasActiveFilters || sortOrder !== "newest";
+  }, [endDate, selectedCondition, selectedPet, selectedTags, sortOrder, startDate]);
   const emptyTitle = petRecords.length === 0 ? "작성된 일상기록이 없습니다" : "조건에 맞는 일상기록이 없습니다";
   const emptyDescription =
     petRecords.length === 0
@@ -150,10 +155,14 @@ export function RecordsPage({
     if (selectedCondition !== "all" && !conditionOptions.includes(selectedCondition)) {
       setSelectedCondition("all");
     }
-    if (selectedTag !== "all" && !tagOptions.includes(selectedTag)) {
-      setSelectedTag("all");
-    }
-  }, [conditionOptions, selectedCondition, selectedTag, tagOptions]);
+    setSelectedTags((currentTags) => currentTags.filter((tag) => tagOptions.includes(tag)));
+  }, [conditionOptions, selectedCondition, tagOptions]);
+
+  function toggleSelectedTag(tag: string) {
+    setSelectedTags((currentTags) =>
+      currentTags.includes(tag) ? currentTags.filter((selectedTag) => selectedTag !== tag) : [...currentTags, tag]
+    );
+  }
 
   async function handleCreateRecord(form: RecordFormState) {
     if (selectedPetId === null) return;
@@ -169,14 +178,6 @@ export function RecordsPage({
   function handleEditRecord(record: RecordItem) {
     setShouldEditSelectedRecord(true);
     setSelectedRecordId(record.id);
-  }
-
-  function resetRecordFilters() {
-    setStartDate("");
-    setEndDate("");
-    setSelectedCondition("all");
-    setSelectedTag("all");
-    setSortOrder("newest");
   }
 
   return (
@@ -218,9 +219,8 @@ export function RecordsPage({
               startDate={startDate}
               endDate={endDate}
               selectedCondition={selectedCondition}
-              selectedTag={selectedTag}
+              selectedTags={selectedTags}
               sortOrder={sortOrder}
-              hasActiveFilters={isFilteringResult}
               summary={(
                 <RecordFilterSummary
                   filters={activeFilterSummaryItems}
@@ -230,9 +230,9 @@ export function RecordsPage({
               onChangeStartDate={setStartDate}
               onChangeEndDate={setEndDate}
               onChangeCondition={setSelectedCondition}
-              onChangeTag={setSelectedTag}
+              onToggleTag={toggleSelectedTag}
+              onClearTags={() => setSelectedTags([])}
               onChangeSortOrder={setSortOrder}
-              onResetFilters={resetRecordFilters}
             />
           )}
           onDeleteRecord={onDeleteRecord}

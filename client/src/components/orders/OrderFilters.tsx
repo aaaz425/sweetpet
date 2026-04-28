@@ -1,7 +1,6 @@
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { orderStatusLabels } from "../../constants";
-import type { OrderStatus } from "../../types";
-import { secondaryButtonClass } from "../ui";
+import type { OrderStatus, Pet } from "../../types";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,
@@ -16,12 +15,13 @@ export type OrderStatusFilter = "all" | OrderStatus;
 export type OrderSortOrder = "newest" | "oldest";
 
 type OrderFiltersProps = {
+  pets: Pet[];
+  selectedPetId: number | null;
   selectedStatus: OrderStatusFilter;
   sortOrder: OrderSortOrder;
-  hasActiveFilters: boolean;
+  onChangePetId: (value: number | null) => void;
   onChangeStatus: (value: OrderStatusFilter) => void;
   onChangeSortOrder: (value: OrderSortOrder) => void;
-  onResetFilters: () => void;
 };
 
 const userStatusFilters: OrderStatusFilter[] = ["all", "pending", "processing", "completed"];
@@ -68,14 +68,19 @@ function FilterDropdown<Value extends string>({
 }
 
 export function OrderFilters({
+  pets,
+  selectedPetId,
   selectedStatus,
   sortOrder,
-  hasActiveFilters,
+  onChangePetId,
   onChangeStatus,
-  onChangeSortOrder,
-  onResetFilters
+  onChangeSortOrder
 }: OrderFiltersProps) {
   const statusOptions = userStatusFilters.map((status) => ({ value: status, label: getOrderStatusFilterLabel(status) }));
+  const petOptions = [
+    { value: "all", label: "전체" },
+    ...pets.map((pet) => ({ value: String(pet.id), label: pet.name }))
+  ];
   const sortOptions: Array<{ value: OrderSortOrder; label: string }> = [
     { value: "newest", label: "최신순" },
     { value: "oldest", label: "오래된순" }
@@ -83,19 +88,16 @@ export function OrderFilters({
 
   return (
     <div className="grid gap-3 rounded-xl border border-border bg-surface p-3">
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-3">
+        <FilterDropdown
+          label="마이펫"
+          value={selectedPetId === null ? "all" : String(selectedPetId)}
+          options={petOptions}
+          onChange={(value) => onChangePetId(value === "all" ? null : Number(value))}
+        />
         <FilterDropdown label="주문 상태" value={selectedStatus} options={statusOptions} onChange={onChangeStatus} />
         <FilterDropdown label="정렬" value={sortOrder} options={sortOptions} onChange={onChangeSortOrder} />
       </div>
-      {hasActiveFilters ? (
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <span className="text-sm font-medium text-text-secondary">필터가 적용된 주문을 보고 있습니다.</span>
-          <button className={`${secondaryButtonClass} min-h-9 px-3 py-2`} onClick={onResetFilters} type="button">
-            <X className="h-4 w-4" aria-hidden="true" />
-            필터 초기화
-          </button>
-        </div>
-      ) : null}
     </div>
   );
 }

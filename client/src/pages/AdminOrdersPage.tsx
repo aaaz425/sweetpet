@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { AdminOrderBulkActions } from "../components/orders/AdminOrderBulkActions";
 import { AdminOrderDetailModal } from "../components/orders/AdminOrderDetailModal";
 import { AdminOrderExportModal } from "../components/orders/AdminOrderExportModal";
+import { AdminOrderFilterSummary, type AdminOrderFilterSummaryItem } from "../components/orders/AdminOrderFilterSummary";
 import { AdminOrderPagination } from "../components/orders/AdminOrderPagination";
 import { getStatusFilterLabel, type OrderStatusFilter } from "../components/orders/AdminOrderStatusFilter";
 import { AdminOrderTable } from "../components/orders/AdminOrderTable";
@@ -110,7 +111,27 @@ export function AdminOrdersPage({
     orders.length === 0
       ? "사용자가 앨범북 주문을 만들면 이곳에서 상태 변경과 JSON export를 진행할 수 있습니다."
       : `${getStatusFilterLabel(selectedStatus)} 상태 또는 검색 조건에 맞는 주문이 없습니다.`;
-  const hasActiveAdminFilters = selectedStatus !== "all" || searchKeyword.trim() !== "" || sortOrder !== "newest";
+  const activeFilterSummaryItems = useMemo(() => {
+    const nextFilters: AdminOrderFilterSummaryItem[] = [
+      {
+        label: "상태",
+        value: getStatusFilterLabel(selectedStatus),
+        onRemove: selectedStatus !== "all" ? () => handleSelectStatusFilter("all") : undefined
+      }
+    ];
+    const trimmedSearchKeyword = searchKeyword.trim();
+
+    if (trimmedSearchKeyword) {
+      nextFilters.push({ label: "검색어", value: trimmedSearchKeyword, onRemove: () => handleChangeSearchKeyword("") });
+    }
+    nextFilters.push({
+      label: "정렬",
+      value: sortOrder === "newest" ? "최신순" : "오래된순",
+      onRemove: sortOrder === "oldest" ? () => handleChangeSortOrder("newest") : undefined
+    });
+
+    return nextFilters;
+  }, [searchKeyword, selectedStatus, sortOrder]);
 
   async function handleExportOrder(order: Order) {
     setExportingOrderId(order.id);
@@ -205,13 +226,6 @@ export function AdminOrdersPage({
     setCurrentPage(1);
   }
 
-  function resetAdminOrderFilters() {
-    setSelectedStatus("all");
-    setSearchKeyword("");
-    setSortOrder("newest");
-    setCurrentPage(1);
-  }
-
   function handleToggleOrder(orderId: number) {
     setSelectedOrderIds((currentIds) =>
       currentIds.includes(orderId) ? currentIds.filter((selectedId) => selectedId !== orderId) : [...currentIds, orderId]
@@ -263,12 +277,16 @@ export function AdminOrdersPage({
         selectedFilter={selectedStatus}
         searchKeyword={searchKeyword}
         sortOrder={sortOrder}
-        hasActiveFilters={hasActiveAdminFilters}
+        summary={
+          <AdminOrderFilterSummary
+            filters={activeFilterSummaryItems}
+            resultCount={sortedOrders.length}
+          />
+        }
         getCount={getStatusFilterCount}
         onSelectFilter={handleSelectStatusFilter}
         onChangeSearchKeyword={handleChangeSearchKeyword}
         onChangeSortOrder={handleChangeSortOrder}
-        onResetFilters={resetAdminOrderFilters}
       />
 
       <AdminOrderTable

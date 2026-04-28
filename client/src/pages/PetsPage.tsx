@@ -97,10 +97,14 @@ export function PetsPage({ pets, isPetsError, onCreatePet, onDeletePet, onUpdate
               <PetFilters
                 speciesOptions={speciesOptions}
                 selectedSpecies={selectedSpecies}
-                hasActiveFilters={hasActiveFilters}
-                summary={<PetFilterSummary selectedSpecies={selectedSpecies} resultCount={filteredPets.length} />}
+                summary={
+                  <PetFilterSummary
+                    selectedSpecies={selectedSpecies}
+                    resultCount={filteredPets.length}
+                    onRemoveSpecies={hasActiveFilters ? () => setSelectedSpecies("all") : undefined}
+                  />
+                }
                 onChangeSpecies={setSelectedSpecies}
-                onResetFilters={() => setSelectedSpecies("all")}
               />
             ) : null
           }
