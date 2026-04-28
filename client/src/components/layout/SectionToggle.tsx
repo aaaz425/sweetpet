@@ -23,13 +23,13 @@ export function SectionToggle({ activeSection, onSelectSection }: SectionToggleP
 
   return (
     <div
-      className="relative grid grid-cols-2 rounded-full border border-border bg-background p-0.5"
+      className="relative grid grid-cols-2 rounded-full border border-white/50 bg-white/60 p-0.5 shadow-sm backdrop-blur-xl"
       aria-label="앱 전환"
       role="tablist"
     >
       <span
         className={cn(
-          "absolute left-0.5 top-0.5 h-[calc(100%-0.25rem)] w-[calc(50%-0.125rem)] rounded-full bg-primary shadow-sm transition-transform duration-[180ms] ease-out",
+          "absolute left-0.5 top-0.5 h-[calc(100%-0.25rem)] w-[calc(50%-0.125rem)] rounded-full bg-primary shadow transition-transform duration-200 ease-out",
           activeSection === "admin" && "translate-x-full"
         )}
         aria-hidden="true"

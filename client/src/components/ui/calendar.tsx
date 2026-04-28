@@ -19,16 +19,16 @@ export function Calendar({ className, classNames, ...props }: CalendarProps) {
         caption_label: "text-sm font-semibold text-text-primary",
         nav: "flex items-center justify-between",
         button_previous:
-          "inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-surface text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary disabled:pointer-events-none disabled:opacity-40",
+          "inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-surface text-text-secondary transition duration-150 hover:border-border-strong hover:bg-surface-muted hover:text-primary disabled:pointer-events-none disabled:opacity-40",
         button_next:
-          "inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-surface text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary disabled:pointer-events-none disabled:opacity-40",
+          "inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-surface text-text-secondary transition duration-150 hover:border-border-strong hover:bg-surface-muted hover:text-primary disabled:pointer-events-none disabled:opacity-40",
         month_grid: "border-collapse",
         weekdays: "",
         weekday: "h-8 text-center text-xs font-medium text-text-secondary",
         week: "",
         day: "h-9 w-9 p-0 text-center align-middle",
         day_button:
-          "mx-auto flex h-9 w-9 items-center justify-center rounded-lg text-sm text-text-primary transition duration-150 hover:bg-primary-soft hover:text-primary focus:bg-primary-soft focus:text-primary focus:outline-none",
+          "mx-auto flex h-9 w-9 items-center justify-center rounded-lg text-sm text-text-primary transition duration-150 hover:bg-surface-muted hover:text-primary focus:bg-surface-muted focus:text-primary focus:outline-none",
         selected: "[&>button]:bg-primary [&>button]:text-surface [&>button]:hover:bg-primary [&>button]:hover:text-surface [&>button]:focus:bg-primary [&>button]:focus:text-surface",
         today: "[&>button]:font-bold [&>button]:text-primary",
         outside: "[&>button]:text-text-secondary [&>button]:opacity-40",

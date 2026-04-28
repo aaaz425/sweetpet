@@ -111,7 +111,7 @@ export function OrderForm({ selectedPetId, records, initialValues, submitLabel =
   }
 
   return (
-    <form onSubmit={handleSubmit(submitOrderForm, handleInvalidSubmit)} className="grid gap-3">
+    <form onSubmit={handleSubmit(submitOrderForm, handleInvalidSubmit)} className="grid gap-3.5">
       <label className={labelClass}>
         제목
         <input className={fieldClass} placeholder="제목을 입력하세요" {...register("title")} />
@@ -150,7 +150,7 @@ export function OrderForm({ selectedPetId, records, initialValues, submitLabel =
           <strong className="text-sm font-bold text-text-primary">{selectedRecordCount}개</strong>
         </div>
       </div>
-      <fieldset className="grid gap-2 rounded-xl border border-border bg-background p-3">
+      <fieldset className="grid gap-3 rounded-xl border border-border bg-surface-muted p-4">
         <legend className="px-1 text-sm font-semibold text-text-primary">프린트 옵션</legend>
         <div className="grid gap-3 sm:grid-cols-3">
           {printOptionFields.map((field) => (

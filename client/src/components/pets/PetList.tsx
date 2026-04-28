@@ -6,7 +6,7 @@ import type { Pet } from "../../types";
 import { DeleteConfirmModal } from "../feedback/DeleteConfirmModal";
 import { EmptyState } from "../feedback/EmptyState";
 import { SectionTitle } from "../SectionTitle";
-import { panelClass } from "../ui";
+import { cardSurfaceClass, panelClass } from "../ui";
 
 type PetListProps = {
   pets: Pet[];
@@ -67,7 +67,7 @@ export function PetList({ pets, headerAction, onEditPet, onDeletePet }: PetListP
   return (
     <div className={panelClass}>
       {headerAction ? (
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-2">
             <h2 className="text-lg font-bold text-text-primary">등록된 마이펫</h2>
             <span className="text-sm font-medium text-text-secondary">{pets.length}마리</span>
@@ -83,10 +83,10 @@ export function PetList({ pets, headerAction, onEditPet, onDeletePet }: PetListP
           description="먼저 반려동물을 등록하면 일상기록과 앨범북 주문을 이어서 만들 수 있습니다."
         />
       ) : (
-        <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid min-w-0 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
           {pets.map((pet) => (
             <article
-              className="relative grid w-full min-w-0 cursor-pointer gap-1 rounded-xl border border-border bg-surface p-3 text-left transition duration-150 hover:border-primary hover:bg-primary-soft/30 active:scale-[0.99]"
+              className={`relative grid w-full min-w-0 cursor-pointer gap-1 p-3.5 text-left transition duration-150 hover:border-border-strong hover:bg-surface-muted/45 active:scale-[0.99] ${cardSurfaceClass}`}
               key={pet.id}
               onClick={() => setSelectedDetailPet(pet)}
               onKeyDown={(event) => {
@@ -100,7 +100,7 @@ export function PetList({ pets, headerAction, onEditPet, onDeletePet }: PetListP
             >
               <img
                 alt={`${pet.name} 대표 사진`}
-                className="mb-2 aspect-[5/3] w-full rounded-lg border border-border object-cover"
+                className="mb-2.5 aspect-[5/3] w-full rounded-lg border border-border object-cover"
                 src={petImageUrl(pet)}
               />
               <div className="flex min-w-0 items-center justify-between gap-2">
@@ -138,7 +138,7 @@ export function PetList({ pets, headerAction, onEditPet, onDeletePet }: PetListP
               </div>
               <span className="text-sm text-text-secondary">{pet.breed || pet.species}</span>
               <span className="text-xs font-medium text-text-secondary">{formatPetAge(pet.birthday)}</span>
-              <p className="mt-1 line-clamp-2 text-sm leading-6 text-text-secondary">{pet.memo || "등록된 메모가 없습니다."}</p>
+              <p className="mt-1.5 line-clamp-2 text-sm leading-6 text-text-secondary">{pet.memo || "등록된 메모가 없습니다."}</p>
             </article>
           ))}
         </div>
@@ -149,7 +149,7 @@ export function PetList({ pets, headerAction, onEditPet, onDeletePet }: PetListP
           onClick={() => setSelectedDetailPet(null)}
         >
           <div
-            className="grid max-h-full w-full max-w-[640px] gap-4 overflow-y-auto rounded-xl border border-border bg-background px-6 py-6 shadow-lg sm:px-8 sm:py-7"
+            className="grid max-h-full w-full max-w-[640px] gap-4 overflow-y-auto rounded-xl border border-border bg-surface px-6 py-6 shadow-[0_18px_44px_rgba(31,41,51,0.16)] sm:px-8 sm:py-7"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-3">

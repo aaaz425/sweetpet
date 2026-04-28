@@ -15,7 +15,7 @@ import {
 } from "../ui/dropdown-menu";
 import { DeleteConfirmModal } from "../feedback/DeleteConfirmModal";
 import { EmptyState } from "../feedback/EmptyState";
-import { badgeClass, panelClass } from "../ui";
+import { badgeClass, cardSurfaceClass, panelClass } from "../ui";
 
 type OrderListProps = {
   orders: Order[];
@@ -48,7 +48,7 @@ function OrderDetailModal({ order, petName, onClose }: { order: Order; petName: 
       onClick={onClose}
     >
       <div
-        className="grid max-h-full w-full max-w-[520px] gap-4 overflow-y-auto rounded-xl border border-border bg-background p-4 shadow-lg"
+        className="grid max-h-full w-full max-w-[520px] gap-5 overflow-y-auto rounded-xl border border-border bg-surface px-6 py-6 shadow-[0_18px_44px_rgba(31,41,51,0.16)]"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-3">
@@ -65,8 +65,8 @@ function OrderDetailModal({ order, petName, onClose }: { order: Order; petName: 
             <X className="h-4 w-4" aria-hidden="true" />
           </button>
         </div>
-        <div className="grid gap-3">
-          <section className="grid gap-2 rounded-xl border border-border bg-surface p-3">
+        <div className="grid gap-3.5">
+          <section className="grid gap-2.5 rounded-xl border border-border bg-surface p-4">
             <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
               <span className="text-text-secondary">마이펫</span>
               <strong className="text-text-primary">{petName}</strong>
@@ -85,18 +85,18 @@ function OrderDetailModal({ order, petName, onClose }: { order: Order; petName: 
             </div>
           </section>
 
-          <section className="grid grid-cols-2 gap-2">
-            <div className="rounded-xl border border-border bg-surface p-3">
+          <section className="grid grid-cols-2 gap-2.5">
+            <div className="rounded-xl border border-border bg-surface p-4">
               <p className="text-xs font-medium text-text-secondary">일상기록</p>
               <strong className="mt-1 block text-base text-text-primary">{order.recordCount}개</strong>
             </div>
-            <div className="rounded-xl border border-border bg-surface p-3">
+            <div className="rounded-xl border border-border bg-surface p-4">
               <p className="text-xs font-medium text-text-secondary">주문 수량</p>
               <strong className="mt-1 block text-base text-text-primary">{getOrderQuantity(order)}권</strong>
             </div>
           </section>
 
-          <section className="rounded-xl border border-border bg-surface p-3">
+          <section className="rounded-xl border border-border bg-surface p-4">
             <p className="text-xs font-medium text-text-secondary">인쇄 옵션</p>
             {hasSavedPrintOptions ? (
               <p className="mt-1 text-sm font-medium text-text-primary">
@@ -156,7 +156,7 @@ export function OrderList({
   return (
     <div className={panelClass}>
       {headerAction ? (
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-2">
             <h2 className="text-lg font-bold text-text-primary">{title}</h2>
             <span className="text-sm font-medium text-text-secondary">{orders.length}건</span>
@@ -176,11 +176,11 @@ export function OrderList({
           }
         />
       ) : (
-        <div className="grid min-w-0 gap-3">
+        <div className="grid min-w-0 gap-3.5">
           {orders.map((order) =>
             isAlbumDisplay ? (
               <article
-                className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4 transition duration-150 hover:border-primary"
+                className={`grid min-w-0 gap-3 p-4 transition duration-150 hover:border-border-strong hover:bg-surface-muted/45 md:p-5 ${cardSurfaceClass}`}
                 key={order.id}
               >
                 <button
@@ -211,7 +211,7 @@ export function OrderList({
                 ) : null}
               </article>
             ) : (
-              <article className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4 transition duration-150 hover:border-primary" key={order.id}>
+              <article className={`grid min-w-0 gap-3.5 p-4 transition duration-150 hover:border-border-strong hover:bg-surface-muted/45 md:p-5 ${cardSurfaceClass}`} key={order.id}>
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="grid min-w-0 gap-1 break-words">
                     <strong className="text-base text-text-primary">{order.title}</strong>

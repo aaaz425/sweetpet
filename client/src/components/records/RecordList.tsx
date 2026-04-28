@@ -7,7 +7,7 @@ import type { RecordItem } from "../../types";
 import { DeleteConfirmModal } from "../feedback/DeleteConfirmModal";
 import { DataLoadErrorState } from "../feedback/PageState";
 import { EmptyState } from "../feedback/EmptyState";
-import { badgeClass, panelClass } from "../ui";
+import { badgeClass, cardSurfaceClass, panelClass } from "../ui";
 import { RecordCalendarView } from "./RecordCalendarView";
 
 type RecordListProps = {
@@ -81,11 +81,11 @@ export function RecordList({
   }
 
   return (
-    <div className={`${panelClass} grid min-w-0 gap-4`}>
-      <div className="grid min-w-0 gap-3 lg:grid-cols-[minmax(220px,1fr)_auto_auto] lg:items-end">
+    <div className={`${panelClass} grid min-w-0 gap-5`}>
+      <div className={`grid min-w-0 gap-3.5 p-3 lg:grid-cols-[minmax(220px,1fr)_auto_auto] lg:items-end ${cardSurfaceClass}`}>
         <div className="min-w-0">{toolbarStart}</div>
         <div
-          className="grid grid-cols-2 rounded-xl border border-border bg-background p-1"
+          className="grid grid-cols-2 rounded-xl border border-border bg-surface-muted p-1"
           aria-label="일상기록 보기 방식"
           role="tablist"
         >
@@ -120,7 +120,7 @@ export function RecordList({
       </div>
 
       {isLoading ? (
-        <div className="rounded-xl border border-border bg-background px-4 py-8 text-center text-sm font-medium text-text-secondary">
+        <div className="rounded-xl border border-border bg-surface-muted px-4 py-8 text-center text-sm font-medium text-text-secondary">
           일상기록을 불러오는 중입니다
         </div>
       ) : isError ? (
@@ -131,12 +131,12 @@ export function RecordList({
           description="선택한 반려동물의 사진, 컨디션, 메모를 남기면 이곳에서 날짜순으로 확인할 수 있습니다."
         />
       ) : (
-        <div className="grid min-w-0 gap-3">
+        <div className="grid min-w-0 gap-3.5">
           {viewMode === "list" ? (
             <>
               {records.map((record) => (
                 <article
-                  className="grid min-w-0 cursor-pointer gap-4 rounded-xl border border-border bg-surface p-4 transition duration-150 hover:border-primary hover:bg-primary-soft/30 active:scale-[0.99] md:grid-cols-[176px_minmax(0,1fr)_auto]"
+                  className={`grid min-w-0 cursor-pointer gap-3.5 p-4 transition duration-150 hover:border-border-strong hover:bg-surface-muted/45 active:scale-[0.99] md:grid-cols-[168px_minmax(0,1fr)_auto] md:gap-5 md:p-5 ${cardSurfaceClass}`}
                   key={record.id}
                   onClick={() => onSelectRecord(record)}
                   onKeyDown={(event) => {
@@ -148,16 +148,16 @@ export function RecordList({
                   role="button"
                   tabIndex={0}
                 >
-                  <div className="grid content-start gap-3">
-                    <time className="text-sm font-medium text-text-secondary">{record.recordDate}</time>
-                    <h3 className="text-base font-bold text-text-primary">{record.condition}</h3>
+                  <div className="grid content-start gap-2.5">
+                    <time className="text-sm font-medium leading-5 text-text-secondary">{record.recordDate}</time>
+                    <h3 className="text-base font-bold leading-6 text-text-primary">{record.condition}</h3>
                     {record.tags.length > 0 ? (
                       <div className="flex flex-wrap gap-2">
                         {record.tags.map((tag) => <span className={badgeClass} key={tag}>{tag}</span>)}
                       </div>
                     ) : null}
                   </div>
-                  <div className="grid min-w-0 gap-3 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-start">
+                  <div className="grid min-w-0 gap-3 sm:grid-cols-[172px_minmax(0,1fr)] sm:items-start">
                     <button
                       className="w-full max-w-sm text-left sm:max-w-none"
                       onClick={(event) => {
@@ -211,7 +211,7 @@ export function RecordList({
               ))}
               {hasNextPage ? <div ref={loadMoreRef} className="h-1" aria-hidden="true" /> : null}
               {isFetchingNextPage ? (
-                <div className="rounded-xl border border-border bg-background px-4 py-3 text-center text-sm font-medium text-text-secondary">
+                <div className="rounded-xl border border-border bg-surface-muted px-4 py-3 text-center text-sm font-medium text-text-secondary">
                   일상기록을 더 불러오는 중입니다
                 </div>
               ) : null}

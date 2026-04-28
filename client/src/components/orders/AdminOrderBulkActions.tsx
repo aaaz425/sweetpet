@@ -1,6 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import { orderStatusLabels } from "../../constants";
 import type { OrderStatus } from "../../types";
+import { glassSurfaceClass } from "../ui";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,
@@ -29,8 +30,8 @@ export function AdminOrderBulkActions({
   if (selectedCount === 0) return null;
 
   return (
-    <div className="fixed bottom-20 left-1/2 z-40 flex max-w-[calc(100vw-40px)] -translate-x-1/2 flex-wrap items-center gap-2 rounded-xl border-2 border-primary bg-surface p-3 shadow-xl sm:bottom-28 sm:left-auto sm:right-32 sm:translate-x-0">
-      <span className="rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-surface">{selectedCount}건 선택</span>
+    <div className={`fixed bottom-20 left-1/2 z-40 flex max-w-[calc(100vw-40px)] -translate-x-1/2 flex-wrap items-center gap-2 rounded-xl p-3 sm:bottom-28 sm:left-auto sm:right-32 sm:translate-x-0 ${glassSurfaceClass}`}>
+      <span className="rounded-lg bg-primary px-3 py-2 text-sm font-semibold leading-5 text-surface">{selectedCount}건 선택</span>
       <div className="flex gap-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { cardSurfaceClass } from "../ui";
 import { Button } from "../ui/button";
 
 type AdminOrderPaginationProps = {
@@ -31,7 +32,7 @@ export function AdminOrderPagination({
   const visiblePages = getVisiblePages(currentPage, totalPages);
 
   return (
-    <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-background px-4 py-3">
+    <div className={`flex flex-wrap items-center justify-between gap-3 px-4 py-3 ${cardSurfaceClass}`}>
       <span className="text-sm font-medium text-text-secondary">
         {startItem}-{endItem} / {totalCount}건
       </span>
@@ -47,10 +48,10 @@ export function AdminOrderPagination({
         </Button>
         {visiblePages.map((page) => (
           <button
-            className={`h-9 min-w-9 rounded-lg border px-3 text-sm font-semibold transition duration-150 active:scale-[0.99] ${
+            className={`h-9 min-w-9 rounded-lg border px-3 text-sm font-semibold transition duration-150 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-soft ${
               currentPage === page
                 ? "border-primary bg-primary text-surface"
-                : "border-border bg-surface text-text-secondary hover:border-primary hover:bg-primary-soft hover:text-primary"
+                : "border-border bg-surface text-text-secondary hover:border-border-strong hover:bg-surface-muted hover:text-primary"
             }`}
             key={page}
             onClick={() => onPageChange(page)}

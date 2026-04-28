@@ -1,7 +1,7 @@
 import { orderStatusLabels } from "../../constants";
 import type { Order } from "../../types";
 import { EmptyState } from "../feedback/EmptyState";
-import { badgeClass } from "../ui";
+import { badgeClass, cardSurfaceClass } from "../ui";
 import { getOrderPrintOptions, getOrderQuantity } from "./orderViewUtils";
 
 type AdminOrderTableProps = {
@@ -35,7 +35,7 @@ export function AdminOrderTable({
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+    <div className={`overflow-x-auto ${cardSurfaceClass}`}>
       <table className="w-full min-w-[960px] table-fixed border-collapse text-left text-sm">
         <colgroup>
           <col className="w-[48px]" />
@@ -46,9 +46,9 @@ export function AdminOrderTable({
           <col className="w-[14%]" />
           <col className="w-[10%]" />
         </colgroup>
-        <thead className="bg-background text-xs font-semibold text-text-secondary">
+        <thead className="bg-surface/30 text-xs font-bold text-text-secondary">
           <tr>
-            <th className="border-b border-border px-4 py-3">
+            <th className="border-b border-border px-4 py-3.5">
               <input
                 aria-label="현재 목록 주문 전체 선택"
                 checked={areAllVisibleOrdersSelected}
@@ -57,12 +57,12 @@ export function AdminOrderTable({
                 type="checkbox"
               />
             </th>
-            <th className="border-b border-border px-4 py-3">주문 요약</th>
-            <th className="border-b border-border px-4 py-3">상태</th>
-            <th className="border-b border-border px-4 py-3">기간</th>
-            <th className="border-b border-border px-4 py-3">기록/수량</th>
-            <th className="border-b border-border px-4 py-3">인쇄 옵션</th>
-            <th className="border-b border-border px-4 py-3">주문일</th>
+            <th className="border-b border-border px-4 py-3.5">주문 요약</th>
+            <th className="border-b border-border px-4 py-3.5">상태</th>
+            <th className="border-b border-border px-4 py-3.5">기간</th>
+            <th className="border-b border-border px-4 py-3.5">기록/수량</th>
+            <th className="border-b border-border px-4 py-3.5">인쇄 옵션</th>
+            <th className="border-b border-border px-4 py-3.5">주문일</th>
           </tr>
         </thead>
         <tbody>
@@ -71,10 +71,10 @@ export function AdminOrderTable({
 
             return (
               <tr
-                className={`transition duration-150 hover:bg-primary-soft/50 ${isSelected ? "bg-primary-soft/70" : "odd:bg-surface even:bg-background/60"}`}
+                className={`transition duration-150 hover:bg-surface/60 ${isSelected ? "bg-primary-soft/55" : "odd:bg-surface/30 even:bg-surface/15"}`}
                 key={order.id}
               >
-                <td className="border-b border-border px-4 py-4 align-middle">
+                <td className="border-b border-border px-4 py-3.5 align-middle">
                   <input
                     aria-label={`${order.title} 선택`}
                     checked={isSelected}
@@ -85,24 +85,24 @@ export function AdminOrderTable({
                   />
                 </td>
                 <td
-                  className="min-w-0 cursor-pointer border-b border-border px-4 py-4 align-middle"
+                  className="min-w-0 cursor-pointer border-b border-border px-4 py-3.5 align-middle"
                   onClick={() => onOpenOrder(order)}
                 >
                   <div className="grid min-w-0 gap-1">
-                    <strong className="truncate text-sm text-text-primary" title={order.title}>{order.title}</strong>
+                    <strong className="truncate text-sm font-bold text-text-primary" title={order.title}>{order.title}</strong>
                     <span className="truncate text-xs text-text-secondary" title={order.orderUid ?? `#${order.id}`}>
                       {order.orderUid ?? `#${order.id}`} · 마이펫 #{order.petId}
                     </span>
                   </div>
                 </td>
                 <td
-                  className="cursor-pointer border-b border-border px-4 py-4 align-middle"
+                  className="cursor-pointer border-b border-border px-4 py-3.5 align-middle"
                   onClick={() => onOpenOrder(order)}
                 >
                   <span className={badgeClass}>{orderStatusLabels[order.status]}</span>
                 </td>
                 <td
-                  className="min-w-0 cursor-pointer border-b border-border px-4 py-4 align-middle text-text-secondary"
+                  className="min-w-0 cursor-pointer border-b border-border px-4 py-3.5 align-middle text-text-secondary"
                   onClick={() => onOpenOrder(order)}
                 >
                   <span className="block truncate" title={`${order.startDate} - ${order.endDate}`}>
@@ -110,13 +110,13 @@ export function AdminOrderTable({
                   </span>
                 </td>
                 <td
-                  className="min-w-0 cursor-pointer border-b border-border px-4 py-4 align-middle text-text-secondary"
+                  className="min-w-0 cursor-pointer border-b border-border px-4 py-3.5 align-middle text-text-secondary"
                   onClick={() => onOpenOrder(order)}
                 >
                   <span className="block truncate">기록 {order.recordCount}개 · {getOrderQuantity(order)}권</span>
                 </td>
                 <td
-                  className="min-w-0 cursor-pointer border-b border-border px-4 py-4 align-middle text-text-secondary"
+                  className="min-w-0 cursor-pointer border-b border-border px-4 py-3.5 align-middle text-text-secondary"
                   onClick={() => onOpenOrder(order)}
                 >
                   <span className="block truncate" title={getOrderPrintOptions(order)}>
@@ -124,7 +124,7 @@ export function AdminOrderTable({
                   </span>
                 </td>
                 <td
-                  className="min-w-0 cursor-pointer border-b border-border px-4 py-4 align-middle text-text-secondary"
+                  className="min-w-0 cursor-pointer border-b border-border px-4 py-3.5 align-middle text-text-secondary"
                   onClick={() => onOpenOrder(order)}
                 >
                   <span className="block truncate" title={order.createdAt}>{order.createdAt}</span>

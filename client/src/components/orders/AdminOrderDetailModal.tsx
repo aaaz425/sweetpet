@@ -36,7 +36,7 @@ export function AdminOrderDetailModal({
       onClick={onClose}
     >
       <div
-        className="grid max-h-full w-full max-w-[600px] gap-4 overflow-y-auto rounded-xl border border-border bg-background p-4 shadow-lg"
+        className="grid max-h-full w-full max-w-[600px] gap-4 overflow-y-auto rounded-xl border border-border bg-surface p-4 shadow-[0_18px_44px_rgba(31,41,51,0.16)]"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex min-w-0 items-start justify-between gap-3">

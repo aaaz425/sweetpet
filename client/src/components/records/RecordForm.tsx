@@ -7,7 +7,7 @@ import { recordFormSchema } from "../../lib/formSchemas";
 import { cn } from "../../lib/utils";
 import type { RecordFormState } from "../../types";
 import { SectionTitle } from "../SectionTitle";
-import { fieldClass, labelClass, panelClass, primaryButtonClass, secondaryButtonClass } from "../ui";
+import { cardSurfaceClass, fieldClass, labelClass, primaryButtonClass, secondaryButtonClass } from "../ui";
 import {
   Command,
   CommandEmpty,
@@ -264,12 +264,14 @@ export function RecordForm({
     toast.error("입력 내용을 확인해주세요.");
   }
 
-  const containerClass = isFramed ? panelClass : "min-w-0";
+  const containerClass = isFramed
+    ? `min-w-0 p-5 md:p-6 ${cardSurfaceClass}`
+    : "min-w-0";
 
   return (
     <div className={containerClass}>
       {showTitle ? <SectionTitle title="일상기록 작성" /> : null}
-      <form onSubmit={handleSubmit(submitForm, handleInvalidSubmit)} className="grid gap-3">
+      <form onSubmit={handleSubmit(submitForm, handleInvalidSubmit)} className="grid gap-3.5">
         <div className={labelClass}>
           <span>날짜</span>
           <Controller control={control} name="recordDate" render={({ field }) => <DatePicker value={field.value} onChange={field.onChange} />} />
@@ -301,8 +303,8 @@ export function RecordForm({
         </div>
         <div className={labelClass}>
           <span>사진</span>
-          <div className="flex min-w-0 flex-wrap items-center gap-2 rounded-xl border border-border bg-surface p-2">
-            <label className="inline-flex min-h-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-text-primary transition duration-150 hover:border-primary hover:bg-primary-soft active:scale-[0.99]">
+          <div className="flex min-w-0 flex-wrap items-center gap-2 rounded-xl border border-border bg-surface p-2.5">
+            <label className="inline-flex min-h-9 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-text-primary transition duration-150 hover:border-border-strong hover:bg-surface-muted active:scale-[0.99]">
               사진 선택
               <input
                 accept="image/*"

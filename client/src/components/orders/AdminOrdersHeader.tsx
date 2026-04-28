@@ -19,7 +19,7 @@ export function AdminOrdersHeader({
   onSelectFilter
 }: AdminOrdersHeaderProps) {
   return (
-    <div className="mb-4 grid gap-4">
+    <div className="grid gap-3.5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2">
           <h2 className="text-lg font-bold text-text-primary">주문 관리</h2>

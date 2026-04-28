@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { recordImageUrl } from "../../lib/mockImages";
 import { cn } from "../../lib/utils";
 import type { RecordItem } from "../../types";
-import { secondaryButtonClass } from "../ui";
+import { cardSurfaceClass, secondaryButtonClass } from "../ui";
 
 type RecordCalendarViewProps = {
   records: RecordItem[];
@@ -82,8 +82,8 @@ export function RecordCalendarView({ records, onSelectRecord }: RecordCalendarVi
   }, [records]);
 
   return (
-    <div className="grid min-w-0 gap-3">
-      <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background px-3 py-2">
+    <div className="grid min-w-0 gap-3.5">
+      <div className={`flex items-center justify-between gap-3 px-3 py-2 ${cardSurfaceClass}`}>
         <button
           aria-label="이전 달"
           className={`${secondaryButtonClass} inline-flex h-9 w-9 items-center justify-center rounded-lg p-0`}
@@ -102,10 +102,10 @@ export function RecordCalendarView({ records, onSelectRecord }: RecordCalendarVi
           <ChevronRight className="h-4 w-4" aria-hidden="true" />
         </button>
       </div>
-      <div className="grid grid-cols-7 overflow-hidden rounded-xl border border-border bg-surface">
+      <div className={`grid grid-cols-7 overflow-hidden ${cardSurfaceClass}`}>
         {calendarWeekdays.map((weekday) => (
           <div
-            className="border-b border-border bg-background px-2 py-2 text-center text-xs font-bold text-text-secondary"
+            className="border-b border-border bg-surface-muted px-2 py-2 text-center text-xs font-bold text-text-secondary"
             key={weekday}
           >
             {weekday}
@@ -120,36 +120,36 @@ export function RecordCalendarView({ records, onSelectRecord }: RecordCalendarVi
           return (
             <div
               className={cn(
-                "min-h-[112px] border-b border-r border-border p-2 sm:min-h-[148px]",
-                !isActiveMonth && "bg-background text-text-secondary"
+                "min-h-[112px] border-b border-r border-border p-2.5 sm:min-h-[148px]",
+                !isActiveMonth && "bg-surface-muted text-text-secondary"
               )}
               key={dateKey}
             >
               <time className="text-xs font-bold text-text-secondary">{calendarDay.getDate()}</time>
               {representativeRecord ? (
-                        <button
-                          className="mt-2 grid min-w-0 text-left transition duration-150 hover:opacity-80"
-                          onClick={() => onSelectRecord(representativeRecord)}
-                          type="button"
-                        >
-                          <img
-                            alt={`${representativeRecord.recordDate} 대표 사진`}
-                            className="aspect-[4/3] w-full rounded-lg border border-border object-cover"
+                <button
+                  className="mt-2 grid min-w-0 rounded-lg text-left transition duration-150 hover:bg-primary-soft/30 hover:opacity-90 active:scale-[0.99]"
+                  onClick={() => onSelectRecord(representativeRecord)}
+                  type="button"
+                >
+                  <img
+                    alt={`${representativeRecord.recordDate} 대표 사진`}
+                    className="aspect-[4/3] w-full rounded-lg border border-border object-cover"
                     src={recordImageUrl(representativeRecord)}
                   />
-                  <p className="mt-1 truncate text-xs font-semibold text-text-primary">
+                  <p className="mt-1.5 truncate px-1 text-xs font-semibold text-text-primary">
                     {representativeRecord.condition}
                   </p>
-                  <p className="line-clamp-2 text-xs leading-5 text-text-secondary">
+                  <p className="line-clamp-2 px-1 text-xs leading-5 text-text-secondary">
                     {representativeRecord.memo}
                   </p>
-                          {dailyRecords.length > 1 ? (
-                            <span className="mt-1 inline-flex rounded-full bg-primary-soft px-2 py-0.5 text-[11px] font-semibold text-primary">
-                              +{dailyRecords.length - 1}
-                            </span>
-                          ) : null}
-                        </button>
-                      ) : null}
+                  {dailyRecords.length > 1 ? (
+                    <span className="mx-1 mb-1 mt-1 inline-flex w-fit rounded-full bg-primary-soft px-2 py-0.5 text-[11px] font-semibold text-primary">
+                      +{dailyRecords.length - 1}
+                    </span>
+                  ) : null}
+                </button>
+              ) : null}
             </div>
           );
         })}

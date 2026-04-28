@@ -80,7 +80,7 @@ export function PetSelectField({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
-            className="flex min-h-12 w-full min-w-0 cursor-pointer items-center justify-between gap-3 rounded-xl border border-border bg-surface px-3 py-2 text-left transition duration-150 hover:border-primary hover:bg-primary-soft active:scale-[0.99]"
+            className="flex min-h-12 w-full min-w-0 cursor-pointer items-center justify-between gap-3 rounded-xl border border-white/50 bg-white/70 px-3 py-2 text-left shadow-sm backdrop-blur-xl transition-all duration-200 hover:bg-white/85 active:scale-[0.99]"
             aria-labelledby={labelId}
             disabled={pets.length === 0}
             type="button"
@@ -97,7 +97,10 @@ export function PetSelectField({
             <ChevronDown className="h-4 w-4 shrink-0 text-text-secondary" aria-hidden="true" />
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-[min(22rem,calc(100vw-2rem))]">
+        <DropdownMenuContent
+          align="start"
+          className="w-[min(22rem,calc(100vw-2rem))] border-white/50 bg-white/80 shadow-sm backdrop-blur-md"
+        >
           <DropdownMenuLabel>반려동물 선택</DropdownMenuLabel>
           <DropdownMenuSeparator />
           {pets.map((pet) => {

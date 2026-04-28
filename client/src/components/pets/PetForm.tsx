@@ -126,7 +126,7 @@ export function PetForm({ initialValues = initialPetForm, submitLabel = "등록"
   }
 
   return (
-    <form className="grid gap-3" onSubmit={handleSubmit(submitForm, handleInvalidSubmit)}>
+    <form className="grid gap-3.5" onSubmit={handleSubmit(submitForm, handleInvalidSubmit)}>
       <div className={labelClass}>
         <label htmlFor="pet-name">이름</label>
         <input className={fieldClass} id="pet-name" {...register("name")} />
@@ -155,7 +155,7 @@ export function PetForm({ initialValues = initialPetForm, submitLabel = "등록"
       </div>
       <div className={labelClass}>
         <span>대표 사진</span>
-        <div className="flex min-w-0 flex-wrap items-center gap-2 rounded-xl border border-border bg-surface p-2">
+        <div className="flex min-w-0 flex-wrap items-center gap-2 rounded-xl border border-border bg-surface p-2.5">
           <label className={`${secondaryButtonClass} inline-flex min-h-9 shrink-0 items-center justify-center px-3 py-1.5 text-xs`}>
             사진 선택
             <input

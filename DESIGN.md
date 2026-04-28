@@ -2,17 +2,17 @@
 
 ## Concept
 
-A clean and structured interface focused on usability and clear user flow.
+A refined workspace interface focused on usability and clear user flow.
 
-The UI should feel like a well-organized tool rather than an emotional journal.
+The UI should feel like a modern production tool for organizing pet records and album orders.
 
 ---
 
 ## Tone
 
-* Clean and minimal
+* Refined and modern
 * Functional and structured
-* Slightly warm but not emotional
+* Warm neutral, not cute or sentimental
 * Focused on usability over aesthetics
 
 ---
@@ -35,18 +35,79 @@ The UI should feel like a well-organized tool rather than an emotional journal.
 
 ---
 
+## Reference Direction
+
+Use references as product-quality guidance, not as visual templates.
+
+### Airtable
+
+Reference for:
+
+* Practical data density
+* Clear record/card organization
+* Tool-like surfaces with simple borders
+* Filters and controls that stay close to the data they affect
+
+Apply to Sweetpet by making pet, record, and order lists feel organized and scannable.
+
+### Linear
+
+Reference for:
+
+* Precise alignment
+* Calm navigation
+* Strong text hierarchy without decorative styling
+* Compact admin workflows
+
+Apply to Sweetpet by keeping admin order management tight, readable, and action-oriented.
+
+### Albumko
+
+Reference for:
+
+* Photo-book production flow
+* Order and export-oriented structure
+* Clear transition from selected content to final output
+
+Apply to Sweetpet by making the flow from daily records to album order to export feel intentional.
+
+### Reference Rules
+
+* Do not copy visual identity from reference sites
+* Do not add decorative gradients, illustrations, or marketing sections
+* Prefer structured cards, rows, tables, and compact controls
+* Prioritize practical grouping over perfectly even spacing
+
+---
+
 ## Colors
 
-* Background: #F9FAFB
-* Surface: #FFFFFF
-* Primary: #6B4F3A
-* Primary Soft: #F1EBE5
-* Accent: #A78B6D
-* Text Primary: #111827
-* Text Secondary: #6B7280
-* Border: #E5E7EB
+* Background: #F3F0EA
+* Surface: #FFFDF9
+* Surface Muted: #EEE8DE
+* Primary: #2F2923
+* Primary Soft: #E9DFD1
+* Accent: #6F6255
+* Text Primary: #191714
+* Text Secondary: #6F6A62
+* Border: #E4DDD2
+* Border Strong: #CFC3B5
 
-Do not introduce additional UI colors unless explicitly requested.
+Use these colors to make the app feel more polished and product-like while keeping the warm, structured tone.
+Avoid saturated colors, decorative gradients, and high-contrast novelty accents.
+
+Large page areas should not be wrapped in heavy white panels. Use the page background as the workspace, and reserve raised surfaces for actual records, forms, tables, modals, and controls.
+
+### Glass Treatment
+
+Use subtle Apple-like glass only for interface chrome and floating controls:
+
+* GlobalHeader
+* SectionToggle
+* Pet selector trigger and dropdown
+* Floating overlay controls such as bulk actions
+
+Do not apply glass to every content card. Pet cards, record cards, order cards, tables, forms, and export content should remain mostly solid for readability.
 
 ---
 
@@ -245,7 +306,7 @@ Admin: Manage Orders -> Update Status -> Export
 
 ## Rules
 
-* Do not introduce new colors
+* Use only the color tokens defined in this document
 * Do not add emotional or decorative UI
 * Do not increase visual complexity
 * Maintain consistency across all pages

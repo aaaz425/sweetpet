@@ -28,7 +28,7 @@ export function Layout({
         onSelectPage={onSelectPage}
       />
       <main ref={mainRef} className="min-h-0 w-full flex-1 overflow-y-auto overflow-x-hidden">
-        <div className="mx-auto flex min-h-full w-full max-w-[1120px] min-w-0 flex-col px-4 py-6 md:px-8 md:py-8">
+        <div className="mx-auto flex min-h-full w-full max-w-[1120px] min-w-0 flex-col px-4 py-5 md:px-8 md:py-7">
           <div className="min-w-0 flex-1">{children}</div>
           <Footer />
         </div>

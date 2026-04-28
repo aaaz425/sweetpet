@@ -80,7 +80,7 @@ export function DatePicker({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
-          className="flex min-h-10 w-full items-center justify-between rounded-xl border border-border bg-surface px-3 py-2.5 text-left text-sm text-text-primary outline-none transition duration-150 hover:border-primary hover:bg-primary-soft focus:border-primary focus:ring-2 focus:ring-primary-soft"
+          className="flex min-h-10 w-full items-center justify-between rounded-xl border border-border bg-surface px-3 py-2.5 text-left text-sm text-text-primary outline-none transition duration-150 hover:border-border-strong hover:bg-surface-muted focus:border-primary focus:ring-2 focus:ring-primary-soft"
           type="button"
         >
           <span>{value || placeholder}</span>

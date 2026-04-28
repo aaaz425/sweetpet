@@ -205,7 +205,7 @@ export function AdminOrdersPage({
   }
 
   return (
-    <section className={panelClass}>
+    <section className={`${panelClass} grid gap-5`}>
       <AdminOrdersHeader
         filters={orderStatusFilters}
         orderCount={filteredOrders.length}
