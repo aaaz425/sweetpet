@@ -3,20 +3,15 @@ import { useEffect, useRef } from "react";
 import type { Page } from "../../types";
 import { Footer } from "./Footer";
 import { GlobalHeader } from "./GlobalHeader";
-import { PageHeader } from "./PageHeader";
 
 type LayoutProps = {
   activePage: Page;
-  recordCount: number;
-  orderCount: number;
   onSelectPage: (page: Page) => void;
   children: ReactNode;
 };
 
 export function Layout({
   activePage,
-  recordCount,
-  orderCount,
   onSelectPage,
   children
 }: LayoutProps) {
@@ -34,7 +29,6 @@ export function Layout({
       />
       <main ref={mainRef} className="min-h-0 w-full flex-1 overflow-y-auto overflow-x-hidden">
         <div className="mx-auto flex min-h-full w-full max-w-[1120px] min-w-0 flex-col px-4 py-6 md:px-8 md:py-8">
-          <PageHeader activePage={activePage} recordCount={recordCount} orderCount={orderCount} />
           <div className="min-w-0 flex-1">{children}</div>
           <Footer />
         </div>

@@ -18,8 +18,6 @@ export function App() {
   return (
     <Layout
       activePage={activePage}
-      recordCount={app.records.length}
-      orderCount={app.orders.length}
       onSelectPage={handleSelectPage}
     >
       <AppRoutes app={app} />
