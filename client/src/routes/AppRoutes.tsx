@@ -59,7 +59,9 @@ export function AppRoutes({ app }: AppRoutesProps) {
         element={
           <AdminOrdersPage
             orders={app.orders}
+            onExportOrders={app.handleExportOrders}
             onUpdateOrderStatus={app.handleUpdateOrderStatus}
+            onUpdateOrdersStatus={app.handleUpdateOrdersStatus}
             onExportOrder={app.handleExportOrder}
           />
         }

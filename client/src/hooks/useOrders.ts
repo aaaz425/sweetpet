@@ -36,6 +36,18 @@ export function useOrders() {
     }
   });
 
+  const updateOrdersStatusMutation = useMutation({
+    mutationFn: ({ orders, status }: { orders: Order[]; status: OrderStatus }) =>
+      Promise.all(orders.filter((order) => order.orderUid).map((order) => updateOrderStatus(order.orderUid ?? "", status))),
+    onSuccess: async (_updatedOrders, variables) => {
+      await queryClient.invalidateQueries({ queryKey: queryKeys.orders });
+      toast.success(`${variables.orders.length}건의 주문 상태가 변경되었습니다.`);
+    },
+    onError: () => {
+      toast.error("주문 상태 일괄 변경 중 문제가 발생했습니다.");
+    }
+  });
+
   const updateOrderMutation = useMutation({
     mutationFn: ({ order, form }: { order: Order; form: OrderFormState }) =>
       updateOrder(order.orderUid ?? "", {
@@ -70,6 +82,13 @@ export function useOrders() {
     await updateOrderStatusMutation.mutateAsync({ order, status });
   }
 
+  async function handleUpdateOrdersStatus(orders: Order[], status: OrderStatus) {
+    const updatableOrders = orders.filter((order) => order.orderUid);
+    if (updatableOrders.length === 0) return;
+
+    await updateOrdersStatusMutation.mutateAsync({ orders: updatableOrders, status });
+  }
+
   async function handleUpdateOrder(order: Order, form: OrderFormState) {
     if (!order.orderUid) return;
 
@@ -80,6 +99,7 @@ export function useOrders() {
     orders,
     handleCreateOrder,
     handleUpdateOrder,
+    handleUpdateOrdersStatus,
     handleUpdateOrderStatus
   };
 }

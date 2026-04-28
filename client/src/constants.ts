@@ -15,7 +15,7 @@ export const pagePaths: Record<Page, string> = {
   records: "/records",
   albums: "/albums",
   "admin-orders": "/admin/orders",
-  export: "/export"
+  export: "/admin/export"
 };
 
 export function getPageFromPath(pathname: string): Page | null {
@@ -35,7 +35,7 @@ export const orderStatusLabels: Record<OrderStatus, string> = {
 
 export const userNavItems: Page[] = ["home", "pets", "records", "albums"];
 
-export const adminNavItems: Page[] = ["admin-orders"];
+export const adminNavItems: Page[] = ["admin-orders", "export"];
 
 export const defaultPrintOptions: PrintOptions = {
   size: "a5",

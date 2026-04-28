@@ -21,7 +21,9 @@ export function useSweetpetApp() {
     handleCreateRecord: records.handleCreateRecord,
     handleDeleteRecord: records.handleDeleteRecord,
     handleExportOrder: orderExport.handleExportOrder,
+    handleExportOrders: orderExport.handleExportOrders,
     handleUpdateOrder: orders.handleUpdateOrder,
+    handleUpdateOrdersStatus: orders.handleUpdateOrdersStatus,
     handleUpdateOrderStatus: orders.handleUpdateOrderStatus
   };
 }

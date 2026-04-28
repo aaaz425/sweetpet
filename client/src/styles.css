@@ -84,6 +84,10 @@ textarea {
   cursor: text;
 }
 
+input[type="checkbox"] {
+  cursor: pointer;
+}
+
 button:disabled,
 select:disabled,
 [role="button"][aria-disabled="true"] {
