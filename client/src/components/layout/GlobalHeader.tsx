@@ -17,7 +17,10 @@ export function GlobalHeader({ activePage, onSelectPage }: GlobalHeaderProps) {
         <div className="flex min-w-0 flex-1 flex-col gap-3 lg:flex-row lg:items-center lg:gap-5">
           <button
             className="shrink-0 cursor-pointer rounded-lg px-1 py-2 text-left text-lg font-bold uppercase tracking-normal text-text-primary transition duration-150 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary-soft"
-            onClick={() => onSelectPage("records")}
+            onClick={(event) => {
+              onSelectPage("records");
+              event.currentTarget.blur();
+            }}
             type="button"
           >
             SWEETPET
