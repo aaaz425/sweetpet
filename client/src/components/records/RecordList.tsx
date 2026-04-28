@@ -1,6 +1,5 @@
 import { recordImageUrl } from "../../lib/mockImages";
 import type { RecordItem } from "../../types";
-import { SectionTitle } from "../SectionTitle";
 import { badgeClass, panelClass, secondaryButtonClass } from "../ui";
 
 type RecordListProps = {
@@ -11,7 +10,6 @@ type RecordListProps = {
 export function RecordList({ records, onDeleteRecord }: RecordListProps) {
   return (
     <div className={panelClass}>
-      <SectionTitle title="일상기록 목록" meta="최근순" />
       <div className="grid min-w-0 gap-3">
         {records.map((record) => (
           <article

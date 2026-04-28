@@ -1,28 +1,210 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { X } from "lucide-react";
-import { useRef } from "react";
+import { Check, X } from "lucide-react";
+import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { recordFormSchema } from "../../lib/formSchemas";
+import { cn } from "../../lib/utils";
 import type { RecordFormState } from "../../types";
 import { SectionTitle } from "../SectionTitle";
-import { fieldClass, labelClass, panelClass, primaryButtonClass } from "../ui";
+import { fieldClass, labelClass, panelClass, primaryButtonClass, secondaryButtonClass } from "../ui";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList
+} from "../ui/command";
 import { DatePicker } from "../ui/date-picker";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 type RecordFormProps = {
   selectedPetId: number | null;
   onSubmit: (form: RecordFormState) => Promise<void>;
+  isFramed?: boolean;
+  showTitle?: boolean;
 };
 
 const initialRecordForm: RecordFormState = {
   recordDate: "2026-04-27",
   weight: "",
-  condition: "좋음",
+  condition: "보통",
   memo: "",
   tags: "",
   photo: null
 };
 
-export function RecordForm({ selectedPetId, onSubmit }: RecordFormProps) {
+const conditionOptions = ["최고", "신남", "보통", "안좋음", "피곤함", "아픔"];
+const tagOptions = ["산책", "식사", "간식", "놀이", "훈련", "미용", "병원", "수면"];
+const maxSelectedTagCount = 5;
+
+function parseTags(value: string) {
+  return value
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter(Boolean);
+}
+
+function stringifyTags(tags: string[]) {
+  return tags.join(", ");
+}
+
+function ConditionCombobox({ id, value, onChange }: { id: string; value: string; onChange: (value: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const trimmedSearch = search.trim();
+  const canUseCustomCondition = trimmedSearch.length > 0 && !conditionOptions.includes(trimmedSearch);
+
+  function selectCondition(condition: string) {
+    onChange(condition);
+    setSearch("");
+    setOpen(false);
+  }
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          aria-label="컨디션 선택"
+          className={cn(secondaryButtonClass, "min-h-11 w-full justify-between px-3 py-2.5 text-left font-normal")}
+          id={id}
+          role="combobox"
+          type="button"
+        >
+          <span className={cn("truncate", !value && "text-text-secondary")}>{value || "선택안함"}</span>
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+        <Command>
+          <CommandInput
+            placeholder="컨디션 검색 또는 직접 입력"
+            value={search}
+            onValueChange={setSearch}
+          />
+          <CommandList>
+            <CommandEmpty>입력한 값으로 직접 입력하세요.</CommandEmpty>
+            <CommandGroup>
+              {conditionOptions.map((condition) => (
+                <CommandItem key={condition} value={condition} onSelect={() => selectCondition(condition)}>
+                  <Check className={cn("h-4 w-4", value === condition ? "opacity-100" : "opacity-0")} aria-hidden="true" />
+                  {condition}
+                </CommandItem>
+              ))}
+              {canUseCustomCondition ? (
+                <CommandItem value={trimmedSearch} onSelect={() => selectCondition(trimmedSearch)}>
+                  <Check className="h-4 w-4 opacity-0" aria-hidden="true" />
+                  "{trimmedSearch}" 직접 입력
+                </CommandItem>
+              ) : null}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+function TagCombobox({ id, value, onChange }: { id: string; value: string; onChange: (value: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const selectedTags = parseTags(value);
+  const trimmedSearch = search.trim();
+  const hasReachedTagLimit = selectedTags.length >= maxSelectedTagCount;
+  const canUseCustomTag =
+    trimmedSearch.length > 0 &&
+    !hasReachedTagLimit &&
+    !selectedTags.includes(trimmedSearch) &&
+    !tagOptions.includes(trimmedSearch);
+
+  function updateTags(nextTags: string[]) {
+    onChange(stringifyTags(nextTags));
+  }
+
+  function selectTag(tag: string) {
+    if (selectedTags.includes(tag)) {
+      updateTags(selectedTags.filter((selectedTag) => selectedTag !== tag));
+    } else if (!hasReachedTagLimit) {
+      updateTags([...selectedTags, tag]);
+    }
+    setSearch("");
+  }
+
+  function removeTag(tag: string) {
+    updateTags(selectedTags.filter((selectedTag) => selectedTag !== tag));
+  }
+
+  return (
+    <div className="grid gap-2">
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <button
+            aria-label="태그 선택"
+            className={cn(secondaryButtonClass, "min-h-11 w-full justify-between px-3 py-2.5 text-left font-normal")}
+            id={id}
+            role="combobox"
+            type="button"
+          >
+            <span className="truncate text-text-secondary">태그를 선택하세요 (최대 5개)</span>
+          </button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+          <Command>
+            <CommandInput
+              placeholder="태그 검색 또는 직접 입력"
+              value={search}
+              onValueChange={setSearch}
+            />
+            <CommandList>
+              <CommandEmpty>입력한 값으로 직접 입력하세요.</CommandEmpty>
+              <CommandGroup>
+                {tagOptions.map((tag) => {
+                  const isSelected = selectedTags.includes(tag);
+                  const isDisabled = !isSelected && hasReachedTagLimit;
+
+                  return (
+                    <CommandItem disabled={isDisabled} key={tag} value={tag} onSelect={() => selectTag(tag)}>
+                      <Check className={cn("h-4 w-4", isSelected ? "opacity-100" : "opacity-0")} aria-hidden="true" />
+                      {tag}
+                    </CommandItem>
+                  );
+                })}
+                {canUseCustomTag ? (
+                  <CommandItem value={trimmedSearch} onSelect={() => selectTag(trimmedSearch)}>
+                    <Check className="h-4 w-4 opacity-0" aria-hidden="true" />
+                    "{trimmedSearch}" 직접 입력
+                  </CommandItem>
+                ) : null}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+
+      {selectedTags.length > 0 ? (
+        <div className="flex min-w-0 flex-wrap gap-2">
+          {selectedTags.map((tag) => (
+            <span
+              className="inline-flex min-h-8 items-center gap-1 rounded-full bg-primary-soft px-2.5 py-1 text-xs font-semibold text-primary"
+              key={tag}
+            >
+              {tag}
+              <button
+                aria-label={`${tag} 태그 제거`}
+                className="inline-flex h-5 w-5 items-center justify-center rounded-full transition duration-150 hover:bg-surface active:scale-[0.99]"
+                onClick={() => removeTag(tag)}
+                type="button"
+              >
+                <X className="h-3 w-3" aria-hidden="true" />
+              </button>
+            </span>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+export function RecordForm({ selectedPetId, onSubmit, isFramed = true, showTitle = true }: RecordFormProps) {
   const photoInputRef = useRef<HTMLInputElement | null>(null);
   const {
     control,
@@ -49,9 +231,11 @@ export function RecordForm({ selectedPetId, onSubmit }: RecordFormProps) {
     reset({ ...initialRecordForm, recordDate: form.recordDate, condition: form.condition });
   }
 
+  const containerClass = isFramed ? panelClass : "min-w-0";
+
   return (
-    <div className={panelClass}>
-      <SectionTitle title="일상기록 작성" />
+    <div className={containerClass}>
+      {showTitle ? <SectionTitle title="일상기록 작성" /> : null}
       <form onSubmit={handleSubmit(submitForm)} className="grid gap-3">
         <div className={labelClass}>
           <span>날짜</span>
@@ -59,28 +243,33 @@ export function RecordForm({ selectedPetId, onSubmit }: RecordFormProps) {
           {errors.recordDate && <span className="text-xs font-medium text-primary">{errors.recordDate.message}</span>}
         </div>
         <div className={labelClass}>
-          <label htmlFor="record-weight">몸무게</label>
-          <input className={fieldClass} id="record-weight" inputMode="decimal" placeholder="4.5" {...register("weight")} />
+          <span>몸무게 (kg)</span>
+          <input className={fieldClass} id="record-weight" inputMode="decimal" {...register("weight")} />
           {errors.weight && <span className="text-xs font-medium text-primary">{errors.weight.message}</span>}
         </div>
         <div className={labelClass}>
-          <label htmlFor="record-condition">컨디션</label>
-          <select className={fieldClass} id="record-condition" {...register("condition")}>
-            <option value="아주 좋음">아주 좋음</option>
-            <option value="좋음">좋음</option>
-            <option value="보통">보통</option>
-            <option value="피곤함">피곤함</option>
-          </select>
+          <span>컨디션</span>
+          <Controller
+            control={control}
+            name="condition"
+            render={({ field }) => (
+              <ConditionCombobox id="record-condition-trigger" value={field.value} onChange={field.onChange} />
+            )}
+          />
           {errors.condition && <span className="text-xs font-medium text-primary">{errors.condition.message}</span>}
         </div>
         <div className={labelClass}>
-          <label htmlFor="record-memo">메모</label>
-          <textarea className={`${fieldClass} min-h-28 resize-none`} id="record-memo" placeholder="오늘 있었던 일을 적어주세요." {...register("memo")} />
+          <span>메모</span>
+          <textarea className={`${fieldClass} min-h-28 resize-none`} id="record-memo" placeholder="이날 있었던 일을 적어주세요." {...register("memo")} />
           {errors.memo && <span className="text-xs font-medium text-primary">{errors.memo.message}</span>}
         </div>
         <div className={labelClass}>
-          <label htmlFor="record-tags">태그</label>
-          <input className={fieldClass} id="record-tags" placeholder="산책, 미용" {...register("tags")} />
+          <span>태그</span>
+          <Controller
+            control={control}
+            name="tags"
+            render={({ field }) => <TagCombobox id="record-tags-trigger" value={field.value} onChange={field.onChange} />}
+          />
         </div>
         <div className={labelClass}>
           <span>사진</span>

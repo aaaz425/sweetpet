@@ -18,6 +18,7 @@ type PetSelectFieldProps = {
   onSelectPet: (petId: number) => void;
   label?: string;
   helperText?: string;
+  hideHeader?: boolean;
 };
 
 type PetAvatarProps = {
@@ -58,19 +59,24 @@ export function PetSelectField({
   selectedPetId,
   onSelectPet,
   label = "대상 반려동물",
-  helperText
+  helperText,
+  hideHeader = false
 }: PetSelectFieldProps) {
   const labelId = useId();
   const selectedPet = pets.find((pet) => pet.id === selectedPetId);
 
   return (
     <div className="grid min-w-0 gap-2">
-      <div className="flex flex-wrap items-end justify-between gap-2">
-        <label className="text-sm font-semibold text-text-secondary" id={labelId}>
-          {label}
-        </label>
-        {helperText ? <span className="text-xs font-medium text-text-secondary">{helperText}</span> : null}
-      </div>
+      {hideHeader ? (
+        <span className="sr-only" id={labelId}>{label}</span>
+      ) : (
+        <div className="flex flex-wrap items-end justify-between gap-2">
+          <label className="text-sm font-semibold text-text-secondary" id={labelId}>
+            {label}
+          </label>
+          {helperText ? <span className="text-xs font-medium text-text-secondary">{helperText}</span> : null}
+        </div>
+      )}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button

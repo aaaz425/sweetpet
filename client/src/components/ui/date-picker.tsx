@@ -141,8 +141,7 @@ export function DatePicker({
           month={month}
           onMonthChange={setMonth}
           selected={selectedDate}
-          onSelect={(date) => {
-            if (!date) return;
+          onDayClick={(date) => {
             onChange(formatDate(date));
             setOpen(false);
           }}
