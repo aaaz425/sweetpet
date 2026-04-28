@@ -6,6 +6,7 @@ ENV VITE_API_URL=$VITE_API_URL
 COPY package*.json ./
 RUN npm install
 COPY index.html tsconfig.json vite.config.ts ./
+COPY public ./public
 COPY src ./src
 RUN npm run build
 
