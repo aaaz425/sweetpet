@@ -15,16 +15,17 @@ import { badgeClass, panelClass } from "../ui";
 
 type OrderListProps = {
   orders: Order[];
+  title?: string;
   onUpdateStatus?: (order: Order, status: OrderStatus) => void;
   onExportOrder?: (order: Order) => void;
 };
 
 const orderStatuses: OrderStatus[] = ["pending", "processing", "completed"];
 
-export function OrderList({ orders, onUpdateStatus, onExportOrder }: OrderListProps) {
+export function OrderList({ orders, title = "주문 목록", onUpdateStatus, onExportOrder }: OrderListProps) {
   return (
     <div className={panelClass}>
-      <SectionTitle title="주문 목록" meta={`${orders.length}건`} />
+      <SectionTitle title={title} meta={`${orders.length}건`} />
       <div className="grid min-w-0 gap-3">
         {orders.map((order) => (
           <article className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4 transition duration-150 hover:border-primary" key={order.id}>

@@ -3,8 +3,7 @@ import type { OrderStatus, Page } from "./types";
 export const pageLabels: Record<Page, string> = {
   pets: "마이펫",
   records: "일상기록",
-  orders: "주문하기",
-  "my-orders": "내 주문",
+  albums: "앨범북",
   "admin-orders": "주문 관리",
   export: "내보내기"
 };
@@ -12,8 +11,7 @@ export const pageLabels: Record<Page, string> = {
 export const pagePaths: Record<Page, string> = {
   pets: "/pets",
   records: "/records",
-  orders: "/orders",
-  "my-orders": "/my-orders",
+  albums: "/albums",
   "admin-orders": "/admin/orders",
   export: "/export"
 };
@@ -32,6 +30,6 @@ export const orderStatusLabels: Record<OrderStatus, string> = {
   completed: "완료"
 };
 
-export const userNavItems: Page[] = ["pets", "records", "orders", "my-orders"];
+export const userNavItems: Page[] = ["pets", "records", "albums"];
 
 export const adminNavItems: Page[] = ["admin-orders"];

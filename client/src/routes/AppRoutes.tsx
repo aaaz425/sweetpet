@@ -1,8 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AdminOrdersPage } from "../pages/AdminOrdersPage";
+import { AlbumsPage } from "../pages/AlbumsPage";
 import { ExportPage } from "../pages/ExportPage";
-import { MyOrdersPage } from "../pages/MyOrdersPage";
-import { OrdersPage } from "../pages/OrdersPage";
 import { PetsPage } from "../pages/PetsPage";
 import { RecordsPage } from "../pages/RecordsPage";
 import type { useSweetpetApp } from "../hooks/useSweetpetApp";
@@ -37,15 +36,15 @@ export function AppRoutes({ app }: AppRoutesProps) {
         }
       />
       <Route
-        path={pagePaths.orders}
+        path={pagePaths.albums}
         element={
-          <OrdersPage
+          <AlbumsPage
             pets={app.pets}
+            orders={app.orders}
             onCreateOrder={app.handleCreateOrder}
           />
         }
       />
-      <Route path={pagePaths["my-orders"]} element={<MyOrdersPage orders={app.orders} />} />
       <Route
         path={pagePaths["admin-orders"]}
         element={

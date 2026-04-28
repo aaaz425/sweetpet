@@ -18,7 +18,7 @@ export function useOrders() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.orders });
       toast.success("주문이 생성되었습니다.");
-      navigate(pagePaths["my-orders"]);
+      navigate(pagePaths.albums);
     },
     onError: () => {
       toast.error("주문 생성 중 문제가 발생했습니다.");
