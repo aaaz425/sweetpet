@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { useState } from "react";
 import { petImageUrl } from "../../lib/mockImages";
 import type { Pet } from "../../types";
+import { EmptyState } from "../feedback/EmptyState";
 import { SectionTitle } from "../SectionTitle";
 import { panelClass, primaryButtonClass, secondaryButtonClass } from "../ui";
 
@@ -75,65 +76,72 @@ export function PetList({ pets, headerAction, onEditPet, onDeletePet }: PetListP
       ) : (
         <SectionTitle title="등록된 마이펫" meta={`${pets.length}마리`} />
       )}
-      <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {pets.map((pet) => (
-          <article
-            className="relative grid w-full min-w-0 cursor-pointer gap-1 rounded-xl border border-border bg-surface p-3 text-left transition duration-150 hover:border-primary hover:bg-primary-soft/30 active:scale-[0.99]"
-            key={pet.id}
-            onClick={() => setSelectedDetailPet(pet)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                setSelectedDetailPet(pet);
-              }
-            }}
-            role="button"
-            tabIndex={0}
-          >
-            <img
-              alt={`${pet.name} 대표 사진`}
-              className="mb-2 aspect-[5/3] w-full rounded-lg border border-border object-cover"
-              src={petImageUrl(pet)}
-            />
-            <div className="flex min-w-0 items-center justify-between gap-2">
-              <strong className="min-w-0 truncate text-base text-text-primary">{pet.name}</strong>
-              {onEditPet || onDeletePet ? (
-                <div className="flex shrink-0 gap-1">
-                  {onEditPet ? (
-                    <button
-                      aria-label={`${pet.name} 편집`}
-                      className="inline-flex h-8 w-8 items-center justify-center rounded-full text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99]"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        handleEditPet(pet);
-                      }}
-                      type="button"
-                    >
-                      <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
-                    </button>
-                  ) : null}
-                  {onDeletePet ? (
-                    <button
-                      aria-label={`${pet.name} 삭제`}
-                      className="inline-flex h-8 w-8 items-center justify-center rounded-full text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99]"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        handleDeletePet(pet);
-                      }}
-                      type="button"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
-                    </button>
-                  ) : null}
-                </div>
-              ) : null}
-            </div>
-            <span className="text-sm text-text-secondary">{pet.breed || pet.species}</span>
-            <span className="text-xs font-medium text-text-secondary">{formatPetAge(pet.birthday)}</span>
-            <p className="mt-1 line-clamp-2 text-sm leading-6 text-text-secondary">{pet.memo || "등록된 메모가 없습니다."}</p>
-          </article>
-        ))}
-      </div>
+      {pets.length === 0 ? (
+        <EmptyState
+          title="등록된 마이펫이 없습니다"
+          description="먼저 반려동물을 등록하면 일상기록과 앨범북 주문을 이어서 만들 수 있습니다."
+        />
+      ) : (
+        <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {pets.map((pet) => (
+            <article
+              className="relative grid w-full min-w-0 cursor-pointer gap-1 rounded-xl border border-border bg-surface p-3 text-left transition duration-150 hover:border-primary hover:bg-primary-soft/30 active:scale-[0.99]"
+              key={pet.id}
+              onClick={() => setSelectedDetailPet(pet)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  setSelectedDetailPet(pet);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+            >
+              <img
+                alt={`${pet.name} 대표 사진`}
+                className="mb-2 aspect-[5/3] w-full rounded-lg border border-border object-cover"
+                src={petImageUrl(pet)}
+              />
+              <div className="flex min-w-0 items-center justify-between gap-2">
+                <strong className="min-w-0 truncate text-base text-text-primary">{pet.name}</strong>
+                {onEditPet || onDeletePet ? (
+                  <div className="flex shrink-0 gap-1">
+                    {onEditPet ? (
+                      <button
+                        aria-label={`${pet.name} 편집`}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99]"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleEditPet(pet);
+                        }}
+                        type="button"
+                      >
+                        <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
+                      </button>
+                    ) : null}
+                    {onDeletePet ? (
+                      <button
+                        aria-label={`${pet.name} 삭제`}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99]"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleDeletePet(pet);
+                        }}
+                        type="button"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                      </button>
+                    ) : null}
+                  </div>
+                ) : null}
+              </div>
+              <span className="text-sm text-text-secondary">{pet.breed || pet.species}</span>
+              <span className="text-xs font-medium text-text-secondary">{formatPetAge(pet.birthday)}</span>
+              <p className="mt-1 line-clamp-2 text-sm leading-6 text-text-secondary">{pet.memo || "등록된 메모가 없습니다."}</p>
+            </article>
+          ))}
+        </div>
+      )}
       {selectedDetailPet ? (
         <div
           className="fixed inset-0 z-50 grid place-items-center bg-text-primary/35 px-4 py-6"
