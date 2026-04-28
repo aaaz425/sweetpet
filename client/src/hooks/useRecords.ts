@@ -1,23 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo } from "react";
 import { toast } from "sonner";
 import { createRecord, deleteRecord, getRecords } from "../api/records";
 import type { RecordFormState } from "../types";
 import { queryKeys } from "./queryKeys";
 
-type UseRecordsOptions = {
-  selectedPetId: number | null;
-};
-
-export function useRecords({ selectedPetId }: UseRecordsOptions) {
+export function useRecords() {
   const queryClient = useQueryClient();
 
   const recordsQuery = useQuery({ queryKey: queryKeys.records, queryFn: () => getRecords() });
   const records = recordsQuery.data ?? [];
-  const selectedRecords = useMemo(
-    () => records.filter((record) => !selectedPetId || record.petId === selectedPetId),
-    [records, selectedPetId]
-  );
 
   const createRecordMutation = useMutation({
     mutationFn: ({ petId, form }: { petId: number; form: RecordFormState }) =>
@@ -49,10 +40,8 @@ export function useRecords({ selectedPetId }: UseRecordsOptions) {
     }
   });
 
-  async function handleCreateRecord(form: RecordFormState) {
-    if (!selectedPetId) return;
-
-    await createRecordMutation.mutateAsync({ petId: selectedPetId, form });
+  async function handleCreateRecord(petId: number, form: RecordFormState) {
+    await createRecordMutation.mutateAsync({ petId, form });
   }
 
   async function handleDeleteRecord(id: number) {
@@ -61,7 +50,6 @@ export function useRecords({ selectedPetId }: UseRecordsOptions) {
 
   return {
     records,
-    selectedRecords,
     handleCreateRecord,
     handleDeleteRecord
   };

@@ -5,8 +5,8 @@ import { useRecords } from "./useRecords";
 
 export function useSweetpetApp() {
   const pets = usePets();
-  const records = useRecords({ selectedPetId: pets.selectedPetId });
-  const orders = useOrders({ selectedPetId: pets.selectedPetId });
+  const records = useRecords();
+  const orders = useOrders();
   const orderExport = useOrderExport();
 
   return {
@@ -14,16 +14,11 @@ export function useSweetpetApp() {
     orders: orders.orders,
     pets: pets.pets,
     records: records.records,
-    selectedOrders: orders.selectedOrders,
-    selectedPet: pets.selectedPet,
-    selectedPetId: pets.selectedPetId,
-    selectedRecords: records.selectedRecords,
     handleCreateOrder: orders.handleCreateOrder,
     handleCreatePet: pets.handleCreatePet,
     handleCreateRecord: records.handleCreateRecord,
     handleDeleteRecord: records.handleDeleteRecord,
     handleExportOrder: orderExport.handleExportOrder,
-    handleUpdateOrderStatus: orders.handleUpdateOrderStatus,
-    setSelectedPetId: pets.setSelectedPetId
+    handleUpdateOrderStatus: orders.handleUpdateOrderStatus
   };
 }

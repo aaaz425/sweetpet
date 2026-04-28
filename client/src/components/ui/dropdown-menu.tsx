@@ -34,7 +34,7 @@ export function DropdownMenuItem({ className, ...props }: ComponentPropsWithoutR
     <DropdownMenuPrimitive.Item
       className={cn(
         "relative flex cursor-pointer select-none items-center rounded-lg px-3 py-2 text-sm outline-none transition duration-150",
-        "focus:bg-primary-soft focus:text-primary data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+        "hover:bg-primary-soft hover:text-primary focus:bg-primary-soft focus:text-primary data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         className
       )}
       {...props}

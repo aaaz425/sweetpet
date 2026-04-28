@@ -18,13 +18,9 @@ export function App() {
   return (
     <Layout
       activePage={activePage}
-      pets={app.pets}
-      selectedPet={app.selectedPet}
-      selectedPetId={app.selectedPetId}
-      recordCount={app.selectedRecords.length}
-      orderCount={app.selectedOrders.length}
+      recordCount={app.records.length}
+      orderCount={app.orders.length}
       onSelectPage={handleSelectPage}
-      onSelectPet={app.setSelectedPetId}
     >
       <AppRoutes app={app} />
     </Layout>

@@ -21,8 +21,6 @@ export function AppRoutes({ app }: AppRoutesProps) {
         element={
           <PetsPage
             pets={app.pets}
-            selectedPetId={app.selectedPetId}
-            onSelectPet={app.setSelectedPetId}
             onCreatePet={app.handleCreatePet}
           />
         }
@@ -31,8 +29,8 @@ export function AppRoutes({ app }: AppRoutesProps) {
         path={pagePaths.records}
         element={
           <RecordsPage
-            records={app.selectedRecords}
-            selectedPetId={app.selectedPetId}
+            pets={app.pets}
+            records={app.records}
             onCreateRecord={app.handleCreateRecord}
             onDeleteRecord={app.handleDeleteRecord}
           />
@@ -42,12 +40,12 @@ export function AppRoutes({ app }: AppRoutesProps) {
         path={pagePaths.orders}
         element={
           <OrdersPage
-            selectedPetId={app.selectedPetId}
+            pets={app.pets}
             onCreateOrder={app.handleCreateOrder}
           />
         }
       />
-      <Route path={pagePaths["my-orders"]} element={<MyOrdersPage orders={app.selectedOrders} />} />
+      <Route path={pagePaths["my-orders"]} element={<MyOrdersPage orders={app.orders} />} />
       <Route
         path={pagePaths["admin-orders"]}
         element={

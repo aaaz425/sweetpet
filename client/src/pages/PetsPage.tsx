@@ -4,15 +4,13 @@ import type { Pet, PetFormState } from "../types";
 
 type PetsPageProps = {
   pets: Pet[];
-  selectedPetId: number | null;
-  onSelectPet: (petId: number) => void;
   onCreatePet: (form: PetFormState) => Promise<void>;
 };
 
-export function PetsPage({ pets, selectedPetId, onSelectPet, onCreatePet }: PetsPageProps) {
+export function PetsPage({ pets, onCreatePet }: PetsPageProps) {
   return (
     <section className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
-      <PetList pets={pets} selectedPetId={selectedPetId} onSelectPet={onSelectPet} />
+      <PetList pets={pets} />
       <PetForm onSubmit={onCreatePet} />
     </section>
   );

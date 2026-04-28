@@ -5,23 +5,17 @@ import { panelClass } from "../ui";
 
 type PetListProps = {
   pets: Pet[];
-  selectedPetId: number | null;
-  onSelectPet: (petId: number) => void;
 };
 
-export function PetList({ pets, selectedPetId, onSelectPet }: PetListProps) {
+export function PetList({ pets }: PetListProps) {
   return (
     <div className={panelClass}>
       <SectionTitle title="등록된 마이펫" meta={`${pets.length}마리`} />
       <div className="grid min-w-0 gap-3">
         {pets.map((pet) => (
-          <button
-            className={`grid w-full min-w-0 gap-1 rounded-xl border p-4 text-left transition duration-150 hover:border-primary hover:bg-background active:scale-[0.99] ${
-              pet.id === selectedPetId ? "border-primary bg-primary-soft" : "border-border bg-surface"
-            }`}
+          <article
+            className="grid w-full min-w-0 gap-1 rounded-xl border border-border bg-surface p-4 text-left transition duration-150 hover:border-primary"
             key={pet.id}
-            onClick={() => onSelectPet(pet.id)}
-            type="button"
           >
             <img
               alt={`${pet.name} 대표 사진`}
@@ -31,7 +25,7 @@ export function PetList({ pets, selectedPetId, onSelectPet }: PetListProps) {
             <strong className="text-base text-text-primary">{pet.name}</strong>
             <span className="text-sm text-text-secondary">{pet.breed || pet.species}</span>
             <p className="mt-1 text-sm leading-6 text-text-secondary">{pet.memo || "등록된 메모가 없습니다."}</p>
-          </button>
+          </article>
         ))}
       </div>
     </div>

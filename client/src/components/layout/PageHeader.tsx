@@ -1,19 +1,18 @@
 import { pageLabels, pageSummaries } from "../../constants";
-import type { Page, Pet } from "../../types";
+import type { Page } from "../../types";
 import { SummaryStat } from "./SummaryStat";
 
 type PageHeaderProps = {
   activePage: Page;
-  selectedPet?: Pet;
   recordCount: number;
   orderCount: number;
 };
 
-export function PageHeader({ activePage, selectedPet, recordCount, orderCount }: PageHeaderProps) {
+export function PageHeader({ activePage, recordCount, orderCount }: PageHeaderProps) {
   return (
     <header className="mb-6 grid min-w-0 gap-4 border-b border-border pb-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
       <div className="min-w-0">
-        <p className="text-sm font-medium text-text-secondary">{selectedPet ? selectedPet.name : "마이펫 선택 필요"}</p>
+        <p className="text-sm font-medium text-text-secondary">sweetpet</p>
         <h1 className="mt-1 text-3xl font-bold leading-tight text-text-primary">{pageLabels[activePage]}</h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-text-secondary">{pageSummaries[activePage]}</p>
       </div>
