@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { recordImageUrl } from "../../lib/mockImages";
 import { cn } from "../../lib/utils";
 import type { RecordItem } from "../../types";
+import { DeleteConfirmModal } from "../feedback/DeleteConfirmModal";
 import { EmptyState } from "../feedback/EmptyState";
 import { badgeClass, panelClass } from "../ui";
 import { RecordCalendarView } from "./RecordCalendarView";
@@ -16,7 +17,7 @@ type RecordListProps = {
   isFetchingNextPage: boolean;
   toolbarAction: ReactNode;
   toolbarStart: ReactNode;
-  onDeleteRecord: (id: number) => void;
+  onDeleteRecord: (id: number) => Promise<void>;
   onEditRecord: (record: RecordItem) => void;
   onSelectRecord: (record: RecordItem) => void;
 };
@@ -36,6 +37,8 @@ export function RecordList({
   onSelectRecord
 }: RecordListProps) {
   const [viewMode, setViewMode] = useState<RecordViewMode>("list");
+  const [deleteTargetRecord, setDeleteTargetRecord] = useState<RecordItem | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -61,6 +64,18 @@ export function RecordList({
     if (viewMode !== "calendar" || !hasNextPage || isFetchingNextPage) return;
     void fetchNextPage();
   }, [fetchNextPage, hasNextPage, isFetchingNextPage, viewMode]);
+
+  async function handleConfirmDeleteRecord() {
+    if (!deleteTargetRecord) return;
+
+    setIsDeleting(true);
+    try {
+      await onDeleteRecord(deleteTargetRecord.id);
+      setDeleteTargetRecord(null);
+    } finally {
+      setIsDeleting(false);
+    }
+  }
 
   return (
     <div className={`${panelClass} grid min-w-0 gap-4`}>
@@ -180,7 +195,7 @@ export function RecordList({
                       className="inline-flex h-8 w-8 items-center justify-center rounded-full text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99]"
                       onClick={(event) => {
                         event.stopPropagation();
-                        onDeleteRecord(record.id);
+                        setDeleteTargetRecord(record);
                       }}
                       type="button"
                     >
@@ -199,6 +214,15 @@ export function RecordList({
           ) : <RecordCalendarView records={records} onSelectRecord={onSelectRecord} />}
         </div>
       )}
+      {deleteTargetRecord ? (
+        <DeleteConfirmModal
+          title="일상기록 삭제"
+          description={`${deleteTargetRecord.recordDate}의 일상기록을 삭제하시겠습니까? 삭제한 기록은 되돌릴 수 없습니다.`}
+          isDeleting={isDeleting}
+          onCancel={() => setDeleteTargetRecord(null)}
+          onConfirm={handleConfirmDeleteRecord}
+        />
+      ) : null}
     </div>
   );
 }

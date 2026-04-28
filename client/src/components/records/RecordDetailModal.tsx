@@ -2,6 +2,7 @@ import { Pencil, Trash2, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { recordImageUrl } from "../../lib/mockImages";
 import type { RecordFormState, RecordItem } from "../../types";
+import { DeleteConfirmModal } from "../feedback/DeleteConfirmModal";
 import { badgeClass } from "../ui";
 import { RecordForm } from "./RecordForm";
 
@@ -9,7 +10,7 @@ type RecordDetailModalProps = {
   record: RecordItem;
   initialIsEditing?: boolean;
   onClose: () => void;
-  onDeleteRecord: (id: number) => void;
+  onDeleteRecord: (id: number) => Promise<void>;
   onUpdateRecord: (id: number, form: RecordFormState) => Promise<void>;
 };
 
@@ -31,6 +32,8 @@ export function RecordDetailModal({
   onUpdateRecord
 }: RecordDetailModalProps) {
   const [isEditing, setIsEditing] = useState(initialIsEditing);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const initialValues = useMemo(() => toRecordFormState(record), [record]);
 
   useEffect(() => {
@@ -42,8 +45,14 @@ export function RecordDetailModal({
     setIsEditing(false);
   }
 
-  function handleDeleteRecord() {
-    onDeleteRecord(record.id);
+  async function handleConfirmDeleteRecord() {
+    setIsDeleting(true);
+    try {
+      await onDeleteRecord(record.id);
+      setIsDeleteConfirmOpen(false);
+    } finally {
+      setIsDeleting(false);
+    }
     onClose();
   }
 
@@ -72,7 +81,7 @@ export function RecordDetailModal({
             </button>
             <button
               className="inline-flex h-9 w-9 items-center justify-center rounded-full text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99]"
-              onClick={handleDeleteRecord}
+              onClick={() => setIsDeleteConfirmOpen(true)}
               aria-label="일상기록 삭제"
               type="button"
             >
@@ -122,6 +131,15 @@ export function RecordDetailModal({
           </div>
         )}
       </div>
+      {isDeleteConfirmOpen ? (
+        <DeleteConfirmModal
+          title="일상기록 삭제"
+          description={`${record.recordDate}의 일상기록을 삭제하시겠습니까? 삭제한 기록은 되돌릴 수 없습니다.`}
+          isDeleting={isDeleting}
+          onCancel={() => setIsDeleteConfirmOpen(false)}
+          onConfirm={handleConfirmDeleteRecord}
+        />
+      ) : null}
     </div>
   );
 }

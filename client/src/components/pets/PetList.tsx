@@ -3,9 +3,10 @@ import type { ReactNode } from "react";
 import { useState } from "react";
 import { petImageUrl } from "../../lib/mockImages";
 import type { Pet } from "../../types";
+import { DeleteConfirmModal } from "../feedback/DeleteConfirmModal";
 import { EmptyState } from "../feedback/EmptyState";
 import { SectionTitle } from "../SectionTitle";
-import { panelClass, primaryButtonClass, secondaryButtonClass } from "../ui";
+import { panelClass } from "../ui";
 
 type PetListProps = {
   pets: Pet[];
@@ -220,54 +221,13 @@ export function PetList({ pets, headerAction, onEditPet, onDeletePet }: PetListP
         </div>
       ) : null}
       {deleteTargetPet ? (
-        <div
-          className="fixed inset-0 z-50 grid place-items-center bg-text-primary/35 px-4 py-6"
-          onClick={() => {
-            if (!isDeleting) setDeleteTargetPet(null);
-          }}
-        >
-          <div
-            className="grid w-full max-w-[420px] gap-4 rounded-xl border border-border bg-background p-4 shadow-lg"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="grid min-w-0 gap-1">
-                <h2 className="break-words text-lg font-bold text-text-primary">마이펫 삭제</h2>
-                <p className="text-sm leading-6 text-text-secondary">
-                  {deleteTargetPet.name}을(를) 삭제하면 연결된 일상기록과 주문도 함께 삭제됩니다.
-                </p>
-              </div>
-              <button
-                aria-label="닫기"
-                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
-                disabled={isDeleting}
-                onClick={() => setDeleteTargetPet(null)}
-                type="button"
-              >
-                <X className="h-4 w-4" aria-hidden="true" />
-              </button>
-            </div>
-            <div className="flex flex-wrap justify-end gap-2">
-              <button
-                className={secondaryButtonClass}
-                disabled={isDeleting}
-                onClick={() => setDeleteTargetPet(null)}
-                type="button"
-              >
-                취소
-              </button>
-              <button
-                className={`${primaryButtonClass} inline-flex items-center justify-center gap-2`}
-                disabled={isDeleting}
-                onClick={handleConfirmDeletePet}
-                type="button"
-              >
-                <Trash2 className="h-4 w-4" aria-hidden="true" />
-                {isDeleting ? "삭제 중" : "삭제"}
-              </button>
-            </div>
-          </div>
-        </div>
+        <DeleteConfirmModal
+          title="마이펫 삭제"
+          description={`${deleteTargetPet.name}을(를) 삭제하면 연결된 일상기록과 주문도 함께 삭제됩니다.`}
+          isDeleting={isDeleting}
+          onCancel={() => setDeleteTargetPet(null)}
+          onConfirm={handleConfirmDeletePet}
+        />
       ) : null}
     </div>
   );

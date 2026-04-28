@@ -7,12 +7,13 @@ import { AdminOrderPagination } from "../components/orders/AdminOrderPagination"
 import { getStatusFilterLabel, type OrderStatusFilter } from "../components/orders/AdminOrderStatusFilter";
 import { AdminOrderTable } from "../components/orders/AdminOrderTable";
 import { AdminOrdersHeader } from "../components/orders/AdminOrdersHeader";
+import { DeleteConfirmModal } from "../components/feedback/DeleteConfirmModal";
 import { panelClass } from "../components/ui";
 import type { Order, OrderStatus } from "../types";
 
 type AdminOrdersPageProps = {
   orders: Order[];
-  onUpdateOrderStatus: (order: Order, status: OrderStatus) => void;
+  onUpdateOrderStatus: (order: Order, status: OrderStatus) => Promise<void>;
   onUpdateOrdersStatus: (orders: Order[], status: OrderStatus) => Promise<void>;
   onExportOrder: (order: Order) => Promise<string | null>;
   onExportOrders: (orders: Order[]) => Promise<string | null>;
@@ -38,6 +39,9 @@ export function AdminOrdersPage({
   const [isBatchExporting, setIsBatchExporting] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [cancelTargetOrder, setCancelTargetOrder] = useState<Order | null>(null);
+  const [cancelTargetOrders, setCancelTargetOrders] = useState<Order[]>([]);
+  const [isCanceling, setIsCanceling] = useState(false);
 
   const filteredOrders = useMemo(
     () => orders.filter((order) => selectedStatusFilter === "all" || order.status === selectedStatusFilter),
@@ -102,13 +106,51 @@ export function AdminOrdersPage({
   async function handleBatchUpdateStatus(status: OrderStatus) {
     if (selectedOrders.length === 0) return;
 
+    if (status === "canceled") {
+      setCancelTargetOrders(selectedOrders);
+      return;
+    }
+
     await onUpdateOrdersStatus(selectedOrders, status);
     setSelectedOrderIds([]);
   }
 
   async function handleDetailUpdateStatus(order: Order, status: OrderStatus) {
+    if (status === "canceled") {
+      setCancelTargetOrder(order);
+      return;
+    }
+
     await onUpdateOrderStatus(order, status);
     setDetailOrder((currentOrder) => (currentOrder?.id === order.id ? { ...currentOrder, status } : currentOrder));
+  }
+
+  async function handleConfirmCancelOrder() {
+    if (!cancelTargetOrder) return;
+
+    setIsCanceling(true);
+    try {
+      await onUpdateOrderStatus(cancelTargetOrder, "canceled");
+      setDetailOrder((currentOrder) =>
+        currentOrder?.id === cancelTargetOrder.id ? { ...currentOrder, status: "canceled" } : currentOrder
+      );
+      setCancelTargetOrder(null);
+    } finally {
+      setIsCanceling(false);
+    }
+  }
+
+  async function handleConfirmCancelOrders() {
+    if (cancelTargetOrders.length === 0) return;
+
+    setIsCanceling(true);
+    try {
+      await onUpdateOrdersStatus(cancelTargetOrders, "canceled");
+      setSelectedOrderIds([]);
+      setCancelTargetOrders([]);
+    } finally {
+      setIsCanceling(false);
+    }
   }
 
   function handleSelectStatusFilter(statusFilter: OrderStatusFilter) {
@@ -207,6 +249,32 @@ export function AdminOrdersPage({
           title={exportModalTitle}
           onClose={handleCloseExportModal}
           onCopy={handleCopyExportJson}
+        />
+      ) : null}
+
+      {cancelTargetOrder ? (
+        <DeleteConfirmModal
+          title="주문 취소"
+          description={`${cancelTargetOrder.title} 주문을 취소 상태로 변경하시겠습니까?`}
+          confirmLabel="주문 취소"
+          loadingLabel="취소 중"
+          isDeleting={isCanceling}
+          onCancel={() => setCancelTargetOrder(null)}
+          onConfirm={handleConfirmCancelOrder}
+          variant="cancel"
+        />
+      ) : null}
+
+      {cancelTargetOrders.length > 0 ? (
+        <DeleteConfirmModal
+          title="주문 일괄 취소"
+          description={`선택한 ${cancelTargetOrders.length}건의 주문을 취소 상태로 변경하시겠습니까?`}
+          confirmLabel="일괄 취소"
+          loadingLabel="취소 중"
+          isDeleting={isCanceling}
+          onCancel={() => setCancelTargetOrders([])}
+          onConfirm={handleConfirmCancelOrders}
+          variant="cancel"
         />
       ) : null}
     </section>

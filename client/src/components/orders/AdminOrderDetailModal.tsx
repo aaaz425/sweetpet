@@ -18,7 +18,7 @@ type AdminOrderDetailModalProps = {
   exportingOrderId: number | null;
   onClose: () => void;
   onExportOrder: (order: Order) => void;
-  onUpdateStatus: (order: Order, status: OrderStatus) => void;
+  onUpdateStatus: (order: Order, status: OrderStatus) => Promise<void>;
 };
 
 const orderStatuses: OrderStatus[] = ["pending", "processing", "completed", "canceled"];

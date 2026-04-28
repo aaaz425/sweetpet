@@ -11,7 +11,7 @@ import type { Pet, RecordFormState, RecordItem } from "../types";
 type RecordsPageProps = {
   pets: Pet[];
   onCreateRecord: (petId: number, form: RecordFormState) => Promise<void>;
-  onDeleteRecord: (id: number) => void;
+  onDeleteRecord: (id: number) => Promise<void>;
   onUpdateRecord: (id: number, form: RecordFormState) => Promise<void>;
 };
 

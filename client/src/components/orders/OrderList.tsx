@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "../ui/dropdown-menu";
+import { DeleteConfirmModal } from "../feedback/DeleteConfirmModal";
 import { EmptyState } from "../feedback/EmptyState";
 import { badgeClass, panelClass } from "../ui";
 
@@ -22,9 +23,9 @@ type OrderListProps = {
   headerAction?: ReactNode;
   displayMode?: "full" | "album";
   pets?: Pet[];
-  onCancelOrder?: (order: Order) => void;
+  onCancelOrder?: (order: Order) => Promise<void>;
   onEditOrder?: (order: Order) => void;
-  onUpdateStatus?: (order: Order, status: OrderStatus) => void;
+  onUpdateStatus?: (order: Order, status: OrderStatus) => Promise<void>;
   onExportOrder?: (order: Order) => void;
 };
 
@@ -123,7 +124,34 @@ export function OrderList({
   onExportOrder
 }: OrderListProps) {
   const [selectedDetailOrder, setSelectedDetailOrder] = useState<Order | null>(null);
+  const [cancelTargetOrder, setCancelTargetOrder] = useState<Order | null>(null);
+  const [isCanceling, setIsCanceling] = useState(false);
   const isAlbumDisplay = displayMode === "album";
+
+  async function handleConfirmCancelOrder() {
+    if (!cancelTargetOrder) return;
+
+    setIsCanceling(true);
+    try {
+      if (onCancelOrder) {
+        await onCancelOrder(cancelTargetOrder);
+      } else {
+        await onUpdateStatus?.(cancelTargetOrder, "canceled");
+      }
+      setCancelTargetOrder(null);
+    } finally {
+      setIsCanceling(false);
+    }
+  }
+
+  function handleUpdateStatus(order: Order, status: OrderStatus) {
+    if (status === "canceled") {
+      setCancelTargetOrder(order);
+      return;
+    }
+
+    void onUpdateStatus?.(order, status);
+  }
 
   return (
     <div className={panelClass}>
@@ -175,7 +203,7 @@ export function OrderList({
                       </Button>
                     ) : null}
                     {onCancelOrder ? (
-                      <Button onClick={() => onCancelOrder(order)} variant="secondary">
+                      <Button onClick={() => setCancelTargetOrder(order)} variant="secondary">
                         취소
                       </Button>
                     ) : null}
@@ -219,7 +247,7 @@ export function OrderList({
                           <DropdownMenuItem
                             disabled={order.status === status}
                             key={status}
-                            onSelect={() => onUpdateStatus(order, status)}
+                            onSelect={() => handleUpdateStatus(order, status)}
                           >
                             {orderStatusLabels[status]}
                           </DropdownMenuItem>
@@ -243,6 +271,18 @@ export function OrderList({
           order={selectedDetailOrder}
           petName={pets.find((pet) => pet.id === selectedDetailOrder.petId)?.name ?? `마이펫 #${selectedDetailOrder.petId}`}
           onClose={() => setSelectedDetailOrder(null)}
+        />
+      ) : null}
+      {cancelTargetOrder ? (
+        <DeleteConfirmModal
+          title="주문 취소"
+          description={`${cancelTargetOrder.title} 주문을 취소하시겠습니까? 취소 후에는 진행 상태가 취소로 변경됩니다.`}
+          confirmLabel="주문 취소"
+          loadingLabel="취소 중"
+          isDeleting={isCanceling}
+          onCancel={() => setCancelTargetOrder(null)}
+          onConfirm={handleConfirmCancelOrder}
+          variant="cancel"
         />
       ) : null}
     </div>
