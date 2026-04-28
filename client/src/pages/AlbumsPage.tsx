@@ -1,5 +1,6 @@
 import { X } from "lucide-react";
 import { useState } from "react";
+import { DataLoadErrorState } from "../components/feedback/PageState";
 import { OrderForm } from "../components/orders/OrderForm";
 import { OrderList } from "../components/orders/OrderList";
 import { PetSelectField } from "../components/pets/PetSelectField";
@@ -10,6 +11,7 @@ type AlbumsPageProps = {
   pets: Pet[];
   records: RecordItem[];
   orders: Order[];
+  isOrdersError: boolean;
   onCreateOrder: (petId: number, form: OrderFormState) => Promise<void>;
   onUpdateOrder: (order: Order, form: OrderFormState) => Promise<void>;
   onUpdateOrderStatus: (order: Order, status: Order["status"]) => Promise<void>;
@@ -36,7 +38,15 @@ function orderToFormState(order: Order): OrderFormState {
   };
 }
 
-export function AlbumsPage({ pets, records, orders, onCreateOrder, onUpdateOrder, onUpdateOrderStatus }: AlbumsPageProps) {
+export function AlbumsPage({
+  pets,
+  records,
+  orders,
+  isOrdersError,
+  onCreateOrder,
+  onUpdateOrder,
+  onUpdateOrderStatus
+}: AlbumsPageProps) {
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [selectedPetId, setSelectedPetId] = useState<number | null>(null);
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
@@ -71,26 +81,30 @@ export function AlbumsPage({ pets, records, orders, onCreateOrder, onUpdateOrder
 
   return (
     <section className="grid min-w-0 gap-4">
-      <OrderList
-        displayMode="album"
-        orders={orders}
-        pets={pets}
-        title="주문 내역"
-        onCancelOrder={(order) => onUpdateOrderStatus(order, "canceled")}
-        onEditOrder={openEditOrderModal}
-        headerAction={
-          <button
-            className={primaryButtonClass}
-            disabled={pets.length === 0}
-            onClick={openCreateOrderModal}
-            type="button"
-          >
-            주문하기
-          </button>
-        }
-      />
+      {isOrdersError ? (
+        <DataLoadErrorState title="주문 내역을 불러오지 못했습니다" />
+      ) : (
+        <OrderList
+          displayMode="album"
+          orders={orders}
+          pets={pets}
+          title="주문 내역"
+          onCancelOrder={(order) => onUpdateOrderStatus(order, "canceled")}
+          onEditOrder={openEditOrderModal}
+          headerAction={
+            <button
+              className={primaryButtonClass}
+              disabled={pets.length === 0}
+              onClick={openCreateOrderModal}
+              type="button"
+            >
+              주문하기
+            </button>
+          }
+        />
+      )}
 
-      {isOrderModalOpen ? (
+      {!isOrdersError && isOrderModalOpen ? (
         <div
           className="fixed inset-0 z-50 grid place-items-center bg-text-primary/35 px-4 py-6"
           onClick={closeOrderModal}

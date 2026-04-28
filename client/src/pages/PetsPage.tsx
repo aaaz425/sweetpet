@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { DataLoadErrorState } from "../components/feedback/PageState";
 import { PetForm } from "../components/pets/PetForm";
 import { PetList } from "../components/pets/PetList";
 import { primaryButtonClass } from "../components/ui";
@@ -8,6 +9,7 @@ import type { Pet, PetFormState } from "../types";
 
 type PetsPageProps = {
   pets: Pet[];
+  isPetsError: boolean;
   onCreatePet: (form: PetFormState) => Promise<void>;
   onDeletePet: (id: number) => Promise<void>;
   onUpdatePet: (id: number, form: PetFormState) => Promise<void>;
@@ -35,7 +37,7 @@ function hasPetFormChanges(pet: Pet, form: PetFormState) {
   );
 }
 
-export function PetsPage({ pets, onCreatePet, onDeletePet, onUpdatePet }: PetsPageProps) {
+export function PetsPage({ pets, isPetsError, onCreatePet, onDeletePet, onUpdatePet }: PetsPageProps) {
   const [isPetModalOpen, setIsPetModalOpen] = useState(false);
   const [editingPet, setEditingPet] = useState<Pet | null>(null);
 
@@ -58,18 +60,22 @@ export function PetsPage({ pets, onCreatePet, onDeletePet, onUpdatePet }: PetsPa
 
   return (
     <section className="grid min-w-0 gap-4">
-      <PetList
-        pets={pets}
-        onEditPet={setEditingPet}
-        onDeletePet={onDeletePet}
-        headerAction={
-          <button className={primaryButtonClass} onClick={() => setIsPetModalOpen(true)} type="button">
-            마이펫 등록
-          </button>
-        }
-      />
+      {isPetsError ? (
+        <DataLoadErrorState title="마이펫 정보를 불러오지 못했습니다" />
+      ) : (
+        <PetList
+          pets={pets}
+          onEditPet={setEditingPet}
+          onDeletePet={onDeletePet}
+          headerAction={
+            <button className={primaryButtonClass} onClick={() => setIsPetModalOpen(true)} type="button">
+              마이펫 등록
+            </button>
+          }
+        />
+      )}
 
-      {isPetModalOpen ? (
+      {!isPetsError && isPetModalOpen ? (
         <div
           className="fixed inset-0 z-50 grid place-items-center bg-text-primary/35 px-4 py-6"
           onClick={() => setIsPetModalOpen(false)}
@@ -94,7 +100,7 @@ export function PetsPage({ pets, onCreatePet, onDeletePet, onUpdatePet }: PetsPa
         </div>
       ) : null}
 
-      {editingPet ? (
+      {!isPetsError && editingPet ? (
         <div
           className="fixed inset-0 z-50 grid place-items-center bg-text-primary/35 px-4 py-6"
           onClick={() => setEditingPet(null)}

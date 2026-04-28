@@ -12,8 +12,23 @@ export function useSweetpetApp() {
   return {
     exportJson: orderExport.exportJson,
     orders: orders.orders,
+    ordersStatus: {
+      isLoading: orders.isLoading,
+      isError: orders.isError,
+      isFetching: orders.isFetching
+    },
     pets: pets.pets,
+    petsStatus: {
+      isLoading: pets.isLoading,
+      isError: pets.isError,
+      isFetching: pets.isFetching
+    },
     records: records.records,
+    recordsStatus: {
+      isLoading: records.isLoading,
+      isError: records.isError,
+      isFetching: records.isFetching
+    },
     handleCreateOrder: orders.handleCreateOrder,
     handleCreatePet: pets.handleCreatePet,
     handleDeletePet: pets.handleDeletePet,

@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { petFormSchema } from "../../lib/formSchemas";
 import { cn } from "../../lib/utils";
 import type { PetFormState } from "../../types";
@@ -120,8 +121,12 @@ export function PetForm({ initialValues = initialPetForm, submitLabel = "등록"
     reset(initialValues);
   }
 
+  function handleInvalidSubmit() {
+    toast.error("입력 내용을 확인해주세요.");
+  }
+
   return (
-    <form className="grid gap-3" onSubmit={handleSubmit(submitForm)}>
+    <form className="grid gap-3" onSubmit={handleSubmit(submitForm, handleInvalidSubmit)}>
       <div className={labelClass}>
         <label htmlFor="pet-name">이름</label>
         <input className={fieldClass} id="pet-name" {...register("name")} />

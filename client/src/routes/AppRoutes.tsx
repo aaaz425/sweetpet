@@ -24,6 +24,7 @@ export function AppRoutes({ app }: AppRoutesProps) {
         element={
           <PetsPage
             pets={app.pets}
+            isPetsError={app.petsStatus.isError}
             onCreatePet={app.handleCreatePet}
             onDeletePet={app.handleDeletePet}
             onUpdatePet={app.handleUpdatePet}
@@ -35,6 +36,7 @@ export function AppRoutes({ app }: AppRoutesProps) {
         element={
           <RecordsPage
             pets={app.pets}
+            isPetsError={app.petsStatus.isError}
             onCreateRecord={app.handleCreateRecord}
             onDeleteRecord={app.handleDeleteRecord}
             onUpdateRecord={app.handleUpdateRecord}
@@ -48,6 +50,7 @@ export function AppRoutes({ app }: AppRoutesProps) {
             pets={app.pets}
             records={app.records}
             orders={app.orders}
+            isOrdersError={app.ordersStatus.isError}
             onCreateOrder={app.handleCreateOrder}
             onUpdateOrder={app.handleUpdateOrder}
             onUpdateOrderStatus={app.handleUpdateOrderStatus}
@@ -59,6 +62,7 @@ export function AppRoutes({ app }: AppRoutesProps) {
         element={
           <AdminOrdersPage
             orders={app.orders}
+            isOrdersError={app.ordersStatus.isError}
             onExportOrders={app.handleExportOrders}
             onUpdateOrderStatus={app.handleUpdateOrderStatus}
             onUpdateOrdersStatus={app.handleUpdateOrdersStatus}

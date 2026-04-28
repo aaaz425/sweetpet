@@ -8,11 +8,13 @@ import { getStatusFilterLabel, type OrderStatusFilter } from "../components/orde
 import { AdminOrderTable } from "../components/orders/AdminOrderTable";
 import { AdminOrdersHeader } from "../components/orders/AdminOrdersHeader";
 import { DeleteConfirmModal } from "../components/feedback/DeleteConfirmModal";
+import { DataLoadErrorState } from "../components/feedback/PageState";
 import { panelClass } from "../components/ui";
 import type { Order, OrderStatus } from "../types";
 
 type AdminOrdersPageProps = {
   orders: Order[];
+  isOrdersError: boolean;
   onUpdateOrderStatus: (order: Order, status: OrderStatus) => Promise<void>;
   onUpdateOrdersStatus: (orders: Order[], status: OrderStatus) => Promise<void>;
   onExportOrder: (order: Order) => Promise<string | null>;
@@ -24,6 +26,7 @@ const orderPageSize = 10;
 
 export function AdminOrdersPage({
   orders,
+  isOrdersError,
   onUpdateOrderStatus,
   onUpdateOrdersStatus,
   onExportOrder,
@@ -195,6 +198,10 @@ export function AdminOrdersPage({
     } catch {
       toast.error("JSON 복사 중 문제가 발생했습니다.");
     }
+  }
+
+  if (isOrdersError) {
+    return <DataLoadErrorState title="관리자 주문 목록을 불러오지 못했습니다" />;
   }
 
   return (

@@ -97,6 +97,9 @@ export function useOrders() {
 
   return {
     orders,
+    isLoading: ordersQuery.isLoading,
+    isError: ordersQuery.isError,
+    isFetching: ordersQuery.isFetching,
     handleCreateOrder,
     handleUpdateOrder,
     handleUpdateOrdersStatus,

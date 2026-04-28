@@ -73,6 +73,9 @@ export function useRecords() {
 
   return {
     records,
+    isLoading: recordsQuery.isLoading,
+    isError: recordsQuery.isError,
+    isFetching: recordsQuery.isFetching,
     handleCreateRecord,
     handleDeleteRecord,
     handleUpdateRecord
@@ -98,6 +101,8 @@ export function useInfiniteRecords(petId: number | null) {
     fetchNextPage: recordsQuery.fetchNextPage,
     hasNextPage: recordsQuery.hasNextPage,
     isLoading: recordsQuery.isLoading,
+    isError: recordsQuery.isError,
+    isFetching: recordsQuery.isFetching,
     isFetchingNextPage: recordsQuery.isFetchingNextPage
   };
 }

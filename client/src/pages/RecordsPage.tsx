@@ -1,5 +1,6 @@
 import { X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { DataLoadErrorState } from "../components/feedback/PageState";
 import { PetSelectField } from "../components/pets/PetSelectField";
 import { RecordDetailModal } from "../components/records/RecordDetailModal";
 import { RecordForm } from "../components/records/RecordForm";
@@ -10,6 +11,7 @@ import type { Pet, RecordFormState, RecordItem } from "../types";
 
 type RecordsPageProps = {
   pets: Pet[];
+  isPetsError: boolean;
   onCreateRecord: (petId: number, form: RecordFormState) => Promise<void>;
   onDeleteRecord: (id: number) => Promise<void>;
   onUpdateRecord: (id: number, form: RecordFormState) => Promise<void>;
@@ -22,7 +24,7 @@ function firstRegisteredPetId(pets: Pet[]) {
   }, null);
 }
 
-export function RecordsPage({ pets, onCreateRecord, onDeleteRecord, onUpdateRecord }: RecordsPageProps) {
+export function RecordsPage({ pets, isPetsError, onCreateRecord, onDeleteRecord, onUpdateRecord }: RecordsPageProps) {
   const defaultPetId = useMemo(() => firstRegisteredPetId(pets), [pets]);
   const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
   const [selectedRecordId, setSelectedRecordId] = useState<number | null>(null);
@@ -59,36 +61,41 @@ export function RecordsPage({ pets, onCreateRecord, onDeleteRecord, onUpdateReco
 
   return (
     <section className="grid min-w-0 gap-4">
-      <RecordList
-        records={records.records}
-        fetchNextPage={records.fetchNextPage}
-        hasNextPage={records.hasNextPage}
-        isLoading={records.isLoading}
-        isFetchingNextPage={records.isFetchingNextPage}
-        toolbarStart={(
-          <PetSelectField
-            pets={pets}
-            selectedPetId={selectedPetId}
-            onSelectPet={setSelectedPetId}
-            hideHeader
-          />
-        )}
-        toolbarAction={(
-          <button
-            className={primaryButtonClass}
-            disabled={pets.length === 0}
-            onClick={() => setIsRecordModalOpen(true)}
-            type="button"
-          >
-            일상기록 작성
-          </button>
-        )}
-        onDeleteRecord={onDeleteRecord}
-        onEditRecord={handleEditRecord}
-        onSelectRecord={handleSelectRecord}
-      />
+      {isPetsError ? (
+        <DataLoadErrorState title="마이펫 정보를 불러오지 못했습니다" />
+      ) : (
+        <RecordList
+          records={records.records}
+          fetchNextPage={records.fetchNextPage}
+          hasNextPage={records.hasNextPage}
+          isLoading={records.isLoading}
+          isError={records.isError}
+          isFetchingNextPage={records.isFetchingNextPage}
+          toolbarStart={(
+            <PetSelectField
+              pets={pets}
+              selectedPetId={selectedPetId}
+              onSelectPet={setSelectedPetId}
+              hideHeader
+            />
+          )}
+          toolbarAction={(
+            <button
+              className={primaryButtonClass}
+              disabled={pets.length === 0}
+              onClick={() => setIsRecordModalOpen(true)}
+              type="button"
+            >
+              일상기록 작성
+            </button>
+          )}
+          onDeleteRecord={onDeleteRecord}
+          onEditRecord={handleEditRecord}
+          onSelectRecord={handleSelectRecord}
+        />
+      )}
 
-      {selectedRecord ? (
+      {!isPetsError && selectedRecord ? (
         <RecordDetailModal
           record={selectedRecord}
           initialIsEditing={shouldEditSelectedRecord}
@@ -101,7 +108,7 @@ export function RecordsPage({ pets, onCreateRecord, onDeleteRecord, onUpdateReco
         />
       ) : null}
 
-      {isRecordModalOpen ? (
+      {!isPetsError && isRecordModalOpen ? (
         <div
           className="fixed inset-0 z-50 grid place-items-center bg-text-primary/35 px-4 py-6"
           onClick={() => setIsRecordModalOpen(false)}

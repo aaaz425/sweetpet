@@ -7,11 +7,12 @@ type PageStateProps = {
   description: string;
   action?: ReactNode;
   icon: ReactNode;
+  isFramed?: boolean;
 };
 
-function PageState({ title, description, action, icon }: PageStateProps) {
+function PageState({ title, description, action, icon, isFramed = true }: PageStateProps) {
   return (
-    <section className={`${panelClass} grid min-h-[360px] place-items-center text-center`}>
+    <section className={`${isFramed ? panelClass : ""} grid min-h-[240px] place-items-center text-center`}>
       <div className="grid max-w-md justify-items-center gap-4">
         <div className="grid h-12 w-12 place-items-center rounded-full bg-primary-soft text-primary">
           {icon}
@@ -38,6 +39,23 @@ export function NotFoundState({ onGoHome }: { onGoHome: () => void }) {
           일상기록으로 이동
         </button>
       }
+    />
+  );
+}
+
+export function DataLoadErrorState({
+  title = "데이터를 불러오지 못했습니다",
+  isFramed = true
+}: {
+  title?: string;
+  isFramed?: boolean;
+}) {
+  return (
+    <PageState
+      title={title}
+      description="잠시 후 다시 시도해 주세요."
+      icon={<AlertCircle className="h-6 w-6" aria-hidden="true" />}
+      isFramed={isFramed}
     />
   );
 }

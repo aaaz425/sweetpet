@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { defaultPrintOptions, printOptionChoices } from "../../constants";
 import { orderFormSchema } from "../../lib/formSchemas";
 import type { OrderFormState, PrintOptions, RecordItem } from "../../types";
@@ -88,16 +89,29 @@ export function OrderForm({ selectedPetId, records, initialValues, submitLabel =
   const selectedRecordCount = countSelectedRecords(records, selectedPetId, startDate, endDate);
   const hasValidRecordCount =
     selectedRecordCount >= minOrderRecordCount && selectedRecordCount <= maxOrderRecordCount;
-  const missingRequiredFields = [
-    !selectedPetId ? "반려동물" : null,
-    !title.trim() ? "제목" : null
-  ].filter(Boolean);
-  const isOrderDisabled = missingRequiredFields.length > 0 || !hasValidRecordCount || isSubmitting;
   const recordCountRuleText = `기간 내 일상기록이 ${minOrderRecordCount}개 이상 ${maxOrderRecordCount}개 이하일 때만 주문할 수 있습니다.`;
   const recordCountStatusText = getRecordCountMessage(selectedRecordCount, selectedPetId);
 
+  async function submitOrderForm(form: OrderFormState) {
+    if (!selectedPetId) {
+      toast.error("주문할 반려동물을 선택해주세요.");
+      return;
+    }
+
+    if (!hasValidRecordCount) {
+      toast.error(recordCountRuleText);
+      return;
+    }
+
+    await onSubmit(form);
+  }
+
+  function handleInvalidSubmit() {
+    toast.error("입력 내용을 확인해주세요.");
+  }
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="grid gap-3">
+    <form onSubmit={handleSubmit(submitOrderForm, handleInvalidSubmit)} className="grid gap-3">
       <label className={labelClass}>
         제목
         <input className={fieldClass} placeholder="제목을 입력하세요" {...register("title")} />
@@ -156,7 +170,7 @@ export function OrderForm({ selectedPetId, records, initialValues, submitLabel =
           {errors.printOptions?.quantity && <span className="text-xs font-medium text-primary">{errors.printOptions.quantity.message}</span>}
         </label>
       </fieldset>
-      <button className={primaryButtonClass} disabled={isOrderDisabled} type="submit">{submitLabel}</button>
+      <button className={primaryButtonClass} disabled={isSubmitting} type="submit">{submitLabel}</button>
     </form>
   );
 }

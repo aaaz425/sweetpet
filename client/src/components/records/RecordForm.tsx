@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { recordFormSchema } from "../../lib/formSchemas";
 import { cn } from "../../lib/utils";
 import type { RecordFormState } from "../../types";
@@ -249,9 +250,18 @@ export function RecordForm({
   }
 
   async function submitForm(form: RecordFormState) {
+    if (!selectedPetId) {
+      toast.error("기록할 마이펫을 선택해주세요.");
+      return;
+    }
+
     await onSubmit(form);
     if (photoInputRef.current) photoInputRef.current.value = "";
     reset(initialValues ? form : { ...initialRecordForm, recordDate: form.recordDate, condition: form.condition });
+  }
+
+  function handleInvalidSubmit() {
+    toast.error("입력 내용을 확인해주세요.");
   }
 
   const containerClass = isFramed ? panelClass : "min-w-0";
@@ -259,7 +269,7 @@ export function RecordForm({
   return (
     <div className={containerClass}>
       {showTitle ? <SectionTitle title="일상기록 작성" /> : null}
-      <form onSubmit={handleSubmit(submitForm)} className="grid gap-3">
+      <form onSubmit={handleSubmit(submitForm, handleInvalidSubmit)} className="grid gap-3">
         <div className={labelClass}>
           <span>날짜</span>
           <Controller control={control} name="recordDate" render={({ field }) => <DatePicker value={field.value} onChange={field.onChange} />} />
@@ -317,7 +327,7 @@ export function RecordForm({
             ) : null}
           </div>
         </div>
-        <button className={primaryButtonClass} disabled={!selectedPetId || isSubmitting} type="submit">{submitLabel}</button>
+        <button className={primaryButtonClass} disabled={isSubmitting} type="submit">{submitLabel}</button>
       </form>
     </div>
   );

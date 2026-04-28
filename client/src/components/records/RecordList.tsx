@@ -5,6 +5,7 @@ import { recordImageUrl } from "../../lib/mockImages";
 import { cn } from "../../lib/utils";
 import type { RecordItem } from "../../types";
 import { DeleteConfirmModal } from "../feedback/DeleteConfirmModal";
+import { DataLoadErrorState } from "../feedback/PageState";
 import { EmptyState } from "../feedback/EmptyState";
 import { badgeClass, panelClass } from "../ui";
 import { RecordCalendarView } from "./RecordCalendarView";
@@ -14,6 +15,7 @@ type RecordListProps = {
   fetchNextPage: () => Promise<unknown>;
   hasNextPage: boolean;
   isLoading: boolean;
+  isError: boolean;
   isFetchingNextPage: boolean;
   toolbarAction: ReactNode;
   toolbarStart: ReactNode;
@@ -29,6 +31,7 @@ export function RecordList({
   fetchNextPage,
   hasNextPage,
   isLoading,
+  isError,
   isFetchingNextPage,
   toolbarAction,
   toolbarStart,
@@ -120,6 +123,8 @@ export function RecordList({
         <div className="rounded-xl border border-border bg-background px-4 py-8 text-center text-sm font-medium text-text-secondary">
           일상기록을 불러오는 중입니다
         </div>
+      ) : isError ? (
+        <DataLoadErrorState title="일상기록을 불러오지 못했습니다" isFramed={false} />
       ) : records.length === 0 ? (
         <EmptyState
           title="작성된 일상기록이 없습니다"

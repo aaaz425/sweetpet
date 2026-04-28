@@ -61,6 +61,9 @@ export function usePets() {
 
   return {
     pets,
+    isLoading: petsQuery.isLoading,
+    isError: petsQuery.isError,
+    isFetching: petsQuery.isFetching,
     handleCreatePet,
     handleUpdatePet,
     handleDeletePet
