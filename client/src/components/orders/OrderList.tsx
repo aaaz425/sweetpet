@@ -1,4 +1,5 @@
 import { ChevronDown } from "lucide-react";
+import type { ReactNode } from "react";
 import { orderStatusLabels } from "../../constants";
 import type { Order, OrderStatus } from "../../types";
 import { SectionTitle } from "../SectionTitle";
@@ -16,16 +17,27 @@ import { badgeClass, panelClass } from "../ui";
 type OrderListProps = {
   orders: Order[];
   title?: string;
+  headerAction?: ReactNode;
   onUpdateStatus?: (order: Order, status: OrderStatus) => void;
   onExportOrder?: (order: Order) => void;
 };
 
 const orderStatuses: OrderStatus[] = ["pending", "processing", "completed"];
 
-export function OrderList({ orders, title = "주문 목록", onUpdateStatus, onExportOrder }: OrderListProps) {
+export function OrderList({ orders, title = "주문 목록", headerAction, onUpdateStatus, onExportOrder }: OrderListProps) {
   return (
     <div className={panelClass}>
-      <SectionTitle title={title} meta={`${orders.length}건`} />
+      {headerAction ? (
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-2">
+            <h2 className="text-lg font-bold text-text-primary">{title}</h2>
+            <span className="text-sm font-medium text-text-secondary">{orders.length}건</span>
+          </div>
+          {headerAction}
+        </div>
+      ) : (
+        <SectionTitle title={title} meta={`${orders.length}건`} />
+      )}
       <div className="grid min-w-0 gap-3">
         {orders.map((order) => (
           <article className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4 transition duration-150 hover:border-primary" key={order.id}>

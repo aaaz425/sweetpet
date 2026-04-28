@@ -25,18 +25,20 @@ export function AlbumsPage({ pets, orders, onCreateOrder }: AlbumsPageProps) {
 
   return (
     <section className="grid min-w-0 gap-4">
-      <div className="flex justify-end">
-        <button
-          className={primaryButtonClass}
-          disabled={pets.length === 0}
-          onClick={() => setIsOrderModalOpen(true)}
-          type="button"
-        >
-          앨범북 주문하기
-        </button>
-      </div>
-
-      <OrderList orders={orders} title="주문 내역" />
+      <OrderList
+        orders={orders}
+        title="주문 내역"
+        headerAction={
+          <button
+            className={primaryButtonClass}
+            disabled={pets.length === 0}
+            onClick={() => setIsOrderModalOpen(true)}
+            type="button"
+          >
+            주문하기
+          </button>
+        }
+      />
 
       {isOrderModalOpen ? (
         <div
@@ -48,9 +50,9 @@ export function AlbumsPage({ pets, orders, onCreateOrder }: AlbumsPageProps) {
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-center justify-between gap-3">
-              <h2 className="text-lg font-bold text-text-primary">앨범북 주문하기</h2>
+              <h2 className="text-lg font-bold text-text-primary">앨범북 주문</h2>
               <button
-                className={`${secondaryButtonClass} inline-flex h-9 w-9 items-center justify-center rounded-full p-0`}
+                className={`${secondaryButtonClass} inline-flex h-9 w-9 items-center justify-center rounded-full p-0 border-none bg-transparent`}
                 aria-label="닫기"
                 onClick={() => setIsOrderModalOpen(false)}
                 type="button"
