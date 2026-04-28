@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, X } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { recordFormSchema } from "../../lib/formSchemas";
 import { cn } from "../../lib/utils";
@@ -21,8 +21,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 type RecordFormProps = {
   selectedPetId: number | null;
   onSubmit: (form: RecordFormState) => Promise<void>;
+  initialValues?: RecordFormState;
   isFramed?: boolean;
   showTitle?: boolean;
+  submitLabel?: string;
 };
 
 const conditionOptions = ["최고", "신남", "보통", "안좋음", "피곤함", "아픔"];
@@ -212,9 +214,16 @@ function TagCombobox({ id, value, onChange }: { id: string; value: string; onCha
   );
 }
 
-export function RecordForm({ selectedPetId, onSubmit, isFramed = true, showTitle = true }: RecordFormProps) {
+export function RecordForm({
+  selectedPetId,
+  onSubmit,
+  initialValues,
+  isFramed = true,
+  showTitle = true,
+  submitLabel = "일상기록 추가"
+}: RecordFormProps) {
   const photoInputRef = useRef<HTMLInputElement | null>(null);
-  const initialRecordForm = useMemo(() => getInitialRecordForm(), []);
+  const initialRecordForm = useMemo(() => initialValues ?? getInitialRecordForm(), [initialValues]);
   const {
     control,
     formState: { errors, isSubmitting },
@@ -229,6 +238,11 @@ export function RecordForm({ selectedPetId, onSubmit, isFramed = true, showTitle
   });
   const selectedPhoto = watch("photo");
 
+  useEffect(() => {
+    reset(initialRecordForm);
+    if (photoInputRef.current) photoInputRef.current.value = "";
+  }, [initialRecordForm, reset]);
+
   function handleClearPhoto() {
     setValue("photo", null, { shouldDirty: true });
     if (photoInputRef.current) photoInputRef.current.value = "";
@@ -237,7 +251,7 @@ export function RecordForm({ selectedPetId, onSubmit, isFramed = true, showTitle
   async function submitForm(form: RecordFormState) {
     await onSubmit(form);
     if (photoInputRef.current) photoInputRef.current.value = "";
-    reset({ ...initialRecordForm, recordDate: form.recordDate, condition: form.condition });
+    reset(initialValues ? form : { ...initialRecordForm, recordDate: form.recordDate, condition: form.condition });
   }
 
   const containerClass = isFramed ? panelClass : "min-w-0";
@@ -303,7 +317,7 @@ export function RecordForm({ selectedPetId, onSubmit, isFramed = true, showTitle
             ) : null}
           </div>
         </div>
-        <button className={primaryButtonClass} disabled={!selectedPetId || isSubmitting} type="submit">일상기록 추가</button>
+        <button className={primaryButtonClass} disabled={!selectedPetId || isSubmitting} type="submit">{submitLabel}</button>
       </form>
     </div>
   );

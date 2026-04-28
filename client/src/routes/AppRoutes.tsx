@@ -35,9 +35,9 @@ export function AppRoutes({ app }: AppRoutesProps) {
         element={
           <RecordsPage
             pets={app.pets}
-            records={app.records}
             onCreateRecord={app.handleCreateRecord}
             onDeleteRecord={app.handleDeleteRecord}
+            onUpdateRecord={app.handleUpdateRecord}
           />
         }
       />

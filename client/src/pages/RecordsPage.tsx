@@ -1,16 +1,18 @@
 import { X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { PetSelectField } from "../components/pets/PetSelectField";
+import { RecordDetailModal } from "../components/records/RecordDetailModal";
 import { RecordForm } from "../components/records/RecordForm";
 import { RecordList } from "../components/records/RecordList";
 import { primaryButtonClass, secondaryButtonClass } from "../components/ui";
+import { useInfiniteRecords } from "../hooks/useRecords";
 import type { Pet, RecordFormState, RecordItem } from "../types";
 
 type RecordsPageProps = {
   pets: Pet[];
-  records: RecordItem[];
   onCreateRecord: (petId: number, form: RecordFormState) => Promise<void>;
   onDeleteRecord: (id: number) => void;
+  onUpdateRecord: (id: number, form: RecordFormState) => Promise<void>;
 };
 
 function firstRegisteredPetId(pets: Pet[]) {
@@ -20,13 +22,15 @@ function firstRegisteredPetId(pets: Pet[]) {
   }, null);
 }
 
-export function RecordsPage({ pets, records, onCreateRecord, onDeleteRecord }: RecordsPageProps) {
+export function RecordsPage({ pets, onCreateRecord, onDeleteRecord, onUpdateRecord }: RecordsPageProps) {
   const defaultPetId = useMemo(() => firstRegisteredPetId(pets), [pets]);
   const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
+  const [selectedRecordId, setSelectedRecordId] = useState<number | null>(null);
   const [selectedPetId, setSelectedPetId] = useState<number | null>(null);
-  const visibleRecords = useMemo(
-    () => records.filter((record) => selectedPetId !== null && record.petId === selectedPetId),
-    [records, selectedPetId]
+  const records = useInfiniteRecords(selectedPetId);
+  const selectedRecord = useMemo(
+    () => records.records.find((record) => record.id === selectedRecordId) ?? null,
+    [records.records, selectedRecordId]
   );
 
   useEffect(() => {
@@ -42,27 +46,47 @@ export function RecordsPage({ pets, records, onCreateRecord, onDeleteRecord }: R
     setIsRecordModalOpen(false);
   }
 
+  function handleSelectRecord(record: RecordItem) {
+    setSelectedRecordId(record.id);
+  }
+
   return (
     <section className="grid min-w-0 gap-4">
-      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div className="min-w-0 flex-1 sm:max-w-[360px]">
+      <RecordList
+        records={records.records}
+        fetchNextPage={records.fetchNextPage}
+        hasNextPage={records.hasNextPage}
+        isLoading={records.isLoading}
+        isFetchingNextPage={records.isFetchingNextPage}
+        toolbarStart={(
           <PetSelectField
             pets={pets}
             selectedPetId={selectedPetId}
             onSelectPet={setSelectedPetId}
             hideHeader
           />
-        </div>
-        <button
-          className={`${primaryButtonClass} sm:mb-0.5`}
-          disabled={pets.length === 0}
-          onClick={() => setIsRecordModalOpen(true)}
-          type="button"
-        >
-          일상기록 작성
-        </button>
-      </div>
-      <RecordList records={visibleRecords} onDeleteRecord={onDeleteRecord} />
+        )}
+        toolbarAction={(
+          <button
+            className={primaryButtonClass}
+            disabled={pets.length === 0}
+            onClick={() => setIsRecordModalOpen(true)}
+            type="button"
+          >
+            일상기록 작성
+          </button>
+        )}
+        onDeleteRecord={onDeleteRecord}
+        onSelectRecord={handleSelectRecord}
+      />
+
+      {selectedRecord ? (
+        <RecordDetailModal
+          record={selectedRecord}
+          onClose={() => setSelectedRecordId(null)}
+          onUpdateRecord={onUpdateRecord}
+        />
+      ) : null}
 
       {isRecordModalOpen ? (
         <div

@@ -8,6 +8,26 @@ export const recordsRouter = Router();
 
 recordsRouter.get("/", (req, res) => {
   const petId = req.query.petId ? Number(req.query.petId) : undefined;
+  const requestedLimit = req.query.limit ? Number(req.query.limit) : undefined;
+  const requestedPage = req.query.page ? Number(req.query.page) : 1;
+  const limit = requestedLimit && Number.isFinite(requestedLimit) && requestedLimit > 0
+    ? Math.min(requestedLimit, 50)
+    : undefined;
+  const page = Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+
+  if (limit) {
+    const offset = (Math.max(page, 1) - 1) * limit;
+    const rows = petId
+      ? db.prepare("SELECT * FROM records WHERE pet_id = ? ORDER BY record_date DESC, id DESC LIMIT ? OFFSET ?").all(petId, limit + 1, offset)
+      : db.prepare("SELECT * FROM records ORDER BY record_date DESC, id DESC LIMIT ? OFFSET ?").all(limit + 1, offset);
+    const hasNextPage = rows.length > limit;
+
+    return ok(res, "Success", {
+      items: rows.slice(0, limit).map(mapRecord),
+      nextPage: hasNextPage ? page + 1 : null
+    });
+  }
+
   const rows = petId
     ? db.prepare("SELECT * FROM records WHERE pet_id = ? ORDER BY record_date DESC, id DESC").all(petId)
     : db.prepare("SELECT * FROM records ORDER BY record_date DESC, id DESC").all();
@@ -30,14 +50,21 @@ recordsRouter.post("/", upload.single("photo"), (req, res) => {
   ok(res, "Record created", mapRecord(record), 201);
 });
 
-recordsRouter.put("/:id", (req, res) => {
+recordsRouter.put("/:id", upload.single("photo"), (req, res) => {
   const { recordDate, condition, memo, tags = [] } = req.body;
+  if (!recordDate || !condition || !memo) {
+    return fail(res, 400, "recordDate, condition, and memo are required");
+  }
+
+  const currentRecord = db.prepare("SELECT * FROM records WHERE id = ?").get(req.params.id);
+  if (!currentRecord) return fail(res, 404, "record not found");
+
+  const nextImagePath = uploadedPath(req.file) ?? currentRecord.image_path;
   db.prepare(
-    "UPDATE records SET record_date = ?, condition = ?, memo = ?, tags = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?"
-  ).run(recordDate, condition, memo, JSON.stringify(parseTags(tags)), req.params.id);
+    "UPDATE records SET record_date = ?, condition = ?, memo = ?, tags = ?, image_path = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?"
+  ).run(recordDate, condition, memo, JSON.stringify(parseTags(tags)), nextImagePath, req.params.id);
 
   const record = db.prepare("SELECT * FROM records WHERE id = ?").get(req.params.id);
-  if (!record) return fail(res, 404, "record not found");
   ok(res, "Record updated", mapRecord(record));
 });
 

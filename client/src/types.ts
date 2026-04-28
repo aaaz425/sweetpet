@@ -102,6 +102,8 @@ export type CreateRecordInput = {
   photo?: File | null;
 };
 
+export type UpdateRecordInput = CreateRecordInput;
+
 export type CreateOrderInput = {
   petId: number;
   title: string;

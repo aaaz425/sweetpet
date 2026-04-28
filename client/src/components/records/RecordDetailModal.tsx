@@ -1,0 +1,105 @@
+import { Pencil, X } from "lucide-react";
+import { useMemo, useState } from "react";
+import { recordImageUrl } from "../../lib/mockImages";
+import type { RecordFormState, RecordItem } from "../../types";
+import { badgeClass, primaryButtonClass, secondaryButtonClass } from "../ui";
+import { RecordForm } from "./RecordForm";
+
+type RecordDetailModalProps = {
+  record: RecordItem;
+  onClose: () => void;
+  onUpdateRecord: (id: number, form: RecordFormState) => Promise<void>;
+};
+
+function toRecordFormState(record: RecordItem): RecordFormState {
+  return {
+    recordDate: record.recordDate,
+    condition: record.condition,
+    memo: record.memo,
+    tags: record.tags.join(", "),
+    photo: null
+  };
+}
+
+export function RecordDetailModal({ record, onClose, onUpdateRecord }: RecordDetailModalProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const initialValues = useMemo(() => toRecordFormState(record), [record]);
+
+  async function handleUpdateRecord(form: RecordFormState) {
+    await onUpdateRecord(record.id, form);
+    setIsEditing(false);
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 grid place-items-center bg-text-primary/35 px-4 py-6"
+      onClick={onClose}
+    >
+      <div
+        className="grid max-h-full w-full max-w-[760px] gap-4 overflow-y-auto rounded-xl border border-border bg-background px-6 py-6 shadow-lg sm:px-8 sm:py-7"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-text-secondary">{record.recordDate}</p>
+            <h2 className="truncate text-lg font-bold text-text-primary">{record.condition}</h2>
+          </div>
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              className={`${secondaryButtonClass} inline-flex h-9 w-9 items-center justify-center rounded-full p-0`}
+              onClick={() => setIsEditing((currentValue) => !currentValue)}
+              aria-label={isEditing ? "상세 보기" : "일상기록 편집"}
+              type="button"
+            >
+              <Pencil className="h-4 w-4" aria-hidden="true" />
+            </button>
+            <button
+              aria-label="닫기"
+              className={`${secondaryButtonClass} inline-flex h-9 w-9 items-center justify-center rounded-full border-none bg-transparent p-0`}
+              onClick={onClose}
+              type="button"
+            >
+              <X className="h-4 w-4" aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+
+        {isEditing ? (
+          <RecordForm
+            selectedPetId={record.petId}
+            initialValues={initialValues}
+            isFramed={false}
+            showTitle={false}
+            submitLabel="수정 저장"
+            onSubmit={handleUpdateRecord}
+          />
+        ) : (
+          <div className="grid min-w-0 gap-4 md:grid-cols-[280px_minmax(0,1fr)]">
+            <img
+              alt={`${record.recordDate} 일상기록 사진`}
+              className="aspect-[4/3] w-full rounded-lg border border-border object-cover"
+              src={recordImageUrl(record)}
+            />
+            <div className="grid content-start gap-4">
+              <div className="grid gap-2">
+                <span className="text-xs font-bold text-text-secondary">메모</span>
+                <p className="whitespace-pre-wrap text-sm leading-6 text-text-primary">{record.memo}</p>
+              </div>
+              {record.tags.length > 0 ? (
+                <div className="grid gap-2">
+                  <span className="text-xs font-bold text-text-secondary">태그</span>
+                  <div className="flex flex-wrap gap-2">
+                    {record.tags.map((tag) => <span className={badgeClass} key={tag}>{tag}</span>)}
+                  </div>
+                </div>
+              ) : null}
+              <button className={`${primaryButtonClass} justify-self-start`} onClick={() => setIsEditing(true)} type="button">
+                편집
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
