@@ -25,6 +25,7 @@ export function AppRoutes({ app }: AppRoutesProps) {
           <PetsPage
             pets={app.pets}
             onCreatePet={app.handleCreatePet}
+            onDeletePet={app.handleDeletePet}
           />
         }
       />

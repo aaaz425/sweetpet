@@ -19,3 +19,7 @@ export async function createPet(payload: CreatePetInput) {
     body: formData
   });
 }
+
+export async function deletePet(id: number) {
+  await request<{ id: number }>(`/api/pets/${id}`, { method: "DELETE" });
+}

@@ -16,6 +16,7 @@ export function useSweetpetApp() {
     records: records.records,
     handleCreateOrder: orders.handleCreateOrder,
     handleCreatePet: pets.handleCreatePet,
+    handleDeletePet: pets.handleDeletePet,
     handleCreateRecord: records.handleCreateRecord,
     handleDeleteRecord: records.handleDeleteRecord,
     handleExportOrder: orderExport.handleExportOrder,
