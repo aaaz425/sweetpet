@@ -11,6 +11,9 @@ import { cardSurfaceClass, panelClass } from "../ui";
 type PetListProps = {
   pets: Pet[];
   headerAction?: ReactNode;
+  filters?: ReactNode;
+  emptyTitle?: string;
+  emptyDescription?: string;
   onEditPet?: (pet: Pet) => void;
   onDeletePet?: (id: number) => Promise<void>;
 };
@@ -37,7 +40,15 @@ function formatPetAge(birthday: string | null) {
   return `${months + 1}개월 미만`;
 }
 
-export function PetList({ pets, headerAction, onEditPet, onDeletePet }: PetListProps) {
+export function PetList({
+  pets,
+  headerAction,
+  filters,
+  emptyTitle = "등록된 마이펫이 없습니다",
+  emptyDescription = "먼저 반려동물을 등록하면 일상기록과 앨범북 주문을 이어서 만들 수 있습니다.",
+  onEditPet,
+  onDeletePet
+}: PetListProps) {
   const [selectedDetailPet, setSelectedDetailPet] = useState<Pet | null>(null);
   const [deleteTargetPet, setDeleteTargetPet] = useState<Pet | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -77,10 +88,11 @@ export function PetList({ pets, headerAction, onEditPet, onDeletePet }: PetListP
       ) : (
         <SectionTitle title="등록된 마이펫" meta={`${pets.length}마리`} />
       )}
+      {filters}
       {pets.length === 0 ? (
         <EmptyState
-          title="등록된 마이펫이 없습니다"
-          description="먼저 반려동물을 등록하면 일상기록과 앨범북 주문을 이어서 만들 수 있습니다."
+          title={emptyTitle}
+          description={emptyDescription}
         />
       ) : (
         <div className="grid min-w-0 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">

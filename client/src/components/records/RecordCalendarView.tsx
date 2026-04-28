@@ -137,10 +137,7 @@ export function RecordCalendarView({ records, onSelectRecord }: RecordCalendarVi
                     className="aspect-[4/3] w-full rounded-lg border border-border object-cover"
                     src={recordImageUrl(representativeRecord)}
                   />
-                  <p className="mt-1.5 truncate px-1 text-xs font-semibold text-text-primary">
-                    {representativeRecord.condition}
-                  </p>
-                  <p className="line-clamp-2 px-1 text-xs leading-5 text-text-secondary">
+                  <p className="mt-1.5 truncate px-1 text-xs leading-5 text-text-secondary">
                     {representativeRecord.memo}
                   </p>
                   {dailyRecords.length > 1 ? (

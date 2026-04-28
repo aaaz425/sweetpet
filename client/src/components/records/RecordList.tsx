@@ -19,6 +19,9 @@ type RecordListProps = {
   isFetchingNextPage: boolean;
   toolbarAction: ReactNode;
   toolbarStart: ReactNode;
+  filters?: ReactNode;
+  emptyTitle?: string;
+  emptyDescription?: string;
   onDeleteRecord: (id: number) => Promise<void>;
   onEditRecord: (record: RecordItem) => void;
   onSelectRecord: (record: RecordItem) => void;
@@ -35,6 +38,9 @@ export function RecordList({
   isFetchingNextPage,
   toolbarAction,
   toolbarStart,
+  filters,
+  emptyTitle = "작성된 일상기록이 없습니다",
+  emptyDescription = "선택한 반려동물의 사진, 컨디션, 메모를 남기면 이곳에서 날짜순으로 확인할 수 있습니다.",
   onDeleteRecord,
   onEditRecord,
   onSelectRecord
@@ -80,6 +86,10 @@ export function RecordList({
     }
   }
 
+  function toggleViewMode() {
+    setViewMode((currentViewMode) => (currentViewMode === "list" ? "calendar" : "list"));
+  }
+
   return (
     <div className={`${panelClass} grid min-w-0 gap-5`}>
       <div className={`grid min-w-0 gap-3.5 p-3 lg:grid-cols-[minmax(220px,1fr)_auto_auto] lg:items-end ${cardSurfaceClass}`}>
@@ -94,7 +104,7 @@ export function RecordList({
               "inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg px-3 text-sm font-semibold transition duration-150",
               viewMode === "list" ? "bg-surface text-primary shadow-sm" : "text-text-secondary hover:text-primary"
             )}
-            onClick={() => setViewMode("list")}
+            onClick={toggleViewMode}
             role="tab"
             aria-selected={viewMode === "list"}
             type="button"
@@ -107,7 +117,7 @@ export function RecordList({
               "inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg px-3 text-sm font-semibold transition duration-150",
               viewMode === "calendar" ? "bg-surface text-primary shadow-sm" : "text-text-secondary hover:text-primary"
             )}
-            onClick={() => setViewMode("calendar")}
+            onClick={toggleViewMode}
             role="tab"
             aria-selected={viewMode === "calendar"}
             type="button"
@@ -119,19 +129,22 @@ export function RecordList({
         <div className="grid min-w-0">{toolbarAction}</div>
       </div>
 
+      {filters}
+
       {isLoading ? (
         <div className="rounded-xl border border-border bg-surface-muted px-4 py-8 text-center text-sm font-medium text-text-secondary">
           일상기록을 불러오는 중입니다
         </div>
       ) : isError ? (
         <DataLoadErrorState title="일상기록을 불러오지 못했습니다" isFramed={false} />
-      ) : records.length === 0 ? (
-        <EmptyState
-          title="작성된 일상기록이 없습니다"
-          description="선택한 반려동물의 사진, 컨디션, 메모를 남기면 이곳에서 날짜순으로 확인할 수 있습니다."
-        />
       ) : (
         <div className="grid min-w-0 gap-3.5">
+          {records.length === 0 ? (
+            <EmptyState
+              title={emptyTitle}
+              description={emptyDescription}
+            />
+          ) : null}
           {viewMode === "list" ? (
             <>
               {records.map((record) => (
@@ -216,7 +229,7 @@ export function RecordList({
                 </div>
               ) : null}
             </>
-          ) : <RecordCalendarView records={records} onSelectRecord={onSelectRecord} />}
+          ) : records.length > 0 ? <RecordCalendarView records={records} onSelectRecord={onSelectRecord} /> : null}
         </div>
       )}
       {deleteTargetRecord ? (

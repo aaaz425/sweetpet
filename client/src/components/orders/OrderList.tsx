@@ -21,6 +21,9 @@ type OrderListProps = {
   orders: Order[];
   title?: string;
   headerAction?: ReactNode;
+  filters?: ReactNode;
+  emptyTitle?: string;
+  emptyDescription?: string;
   displayMode?: "full" | "album";
   pets?: Pet[];
   onCancelOrder?: (order: Order) => Promise<void>;
@@ -116,6 +119,9 @@ export function OrderList({
   orders,
   title = "주문 목록",
   headerAction,
+  filters,
+  emptyTitle,
+  emptyDescription,
   displayMode = "full",
   pets = [],
   onCancelOrder,
@@ -166,13 +172,15 @@ export function OrderList({
       ) : (
         <SectionTitle title={title} meta={`${orders.length}건`} />
       )}
+      {filters ? <div className="mb-5">{filters}</div> : null}
       {orders.length === 0 ? (
         <EmptyState
-          title={isAlbumDisplay ? "생성된 앨범북 주문이 없습니다" : "접수된 주문이 없습니다"}
+          title={emptyTitle ?? (isAlbumDisplay ? "생성된 앨범북 주문이 없습니다" : "접수된 주문이 없습니다")}
           description={
-            isAlbumDisplay
+            emptyDescription ??
+            (isAlbumDisplay
               ? "일상기록을 남긴 뒤 기간을 선택해 앨범북 주문을 만들 수 있습니다."
-              : "사용자가 앨범북 주문을 만들면 이곳에서 상태 변경과 JSON export를 진행할 수 있습니다."
+              : "사용자가 앨범북 주문을 만들면 이곳에서 상태 변경과 JSON export를 진행할 수 있습니다.")
           }
         />
       ) : (

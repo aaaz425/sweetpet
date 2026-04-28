@@ -231,6 +231,16 @@ Style:
 * Pill shape
 * Clear contrast
 
+### Component Usage
+
+* Prefer existing shared UI components before creating new UI patterns.
+* When a control already exists in `client/src/components/ui`, use it instead of native browser controls or one-off page styling.
+* Use the existing shadcn/Radix-based components for dropdowns, menus, popovers, calendars, date pickers, buttons, command/search selectors, and tooltips.
+* Do not introduce raw `<select>` controls or native date inputs when an existing styled component can provide the same behavior.
+* If a needed UI control does not exist yet, first review whether it should be added as a reusable shared component in `client/src/components/ui`.
+* New shared UI components should follow the existing shadcn/Radix style, Tailwind tokens, spacing, radius, and interaction patterns.
+* Avoid creating page-specific controls unless the interaction is truly unique to that page.
+
 ---
 
 ## Interaction

@@ -1,7 +1,9 @@
 import { X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { DataLoadErrorState } from "../components/feedback/PageState";
+import { PetFilterSummary } from "../components/pets/PetFilterSummary";
+import { PetFilters } from "../components/pets/PetFilters";
 import { PetForm } from "../components/pets/PetForm";
 import { PetList } from "../components/pets/PetList";
 import { primaryButtonClass } from "../components/ui";
@@ -40,6 +42,27 @@ function hasPetFormChanges(pet: Pet, form: PetFormState) {
 export function PetsPage({ pets, isPetsError, onCreatePet, onDeletePet, onUpdatePet }: PetsPageProps) {
   const [isPetModalOpen, setIsPetModalOpen] = useState(false);
   const [editingPet, setEditingPet] = useState<Pet | null>(null);
+  const [selectedSpecies, setSelectedSpecies] = useState("all");
+  const speciesOptions = useMemo(
+    () => Array.from(new Set(pets.map((pet) => pet.species))).sort((first, second) => first.localeCompare(second)),
+    [pets]
+  );
+  const filteredPets = useMemo(
+    () => pets.filter((pet) => selectedSpecies === "all" || pet.species === selectedSpecies),
+    [pets, selectedSpecies]
+  );
+  const hasActiveFilters = selectedSpecies !== "all";
+  const emptyTitle = pets.length === 0 ? "등록된 마이펫이 없습니다" : "조건에 맞는 마이펫이 없습니다";
+  const emptyDescription =
+    pets.length === 0
+      ? "먼저 반려동물을 등록하면 일상기록과 앨범북 주문을 이어서 만들 수 있습니다."
+      : "선택한 종류 조건에 맞는 마이펫이 없습니다.";
+
+  useEffect(() => {
+    if (selectedSpecies !== "all" && !speciesOptions.includes(selectedSpecies)) {
+      setSelectedSpecies("all");
+    }
+  }, [selectedSpecies, speciesOptions]);
 
   async function handleCreatePet(form: PetFormState) {
     await onCreatePet(form);
@@ -64,9 +87,23 @@ export function PetsPage({ pets, isPetsError, onCreatePet, onDeletePet, onUpdate
         <DataLoadErrorState title="마이펫 정보를 불러오지 못했습니다" />
       ) : (
         <PetList
-          pets={pets}
+          pets={filteredPets}
+          emptyTitle={emptyTitle}
+          emptyDescription={emptyDescription}
           onEditPet={setEditingPet}
           onDeletePet={onDeletePet}
+          filters={
+            pets.length > 0 ? (
+              <PetFilters
+                speciesOptions={speciesOptions}
+                selectedSpecies={selectedSpecies}
+                hasActiveFilters={hasActiveFilters}
+                summary={<PetFilterSummary selectedSpecies={selectedSpecies} resultCount={filteredPets.length} />}
+                onChangeSpecies={setSelectedSpecies}
+                onResetFilters={() => setSelectedSpecies("all")}
+              />
+            ) : null
+          }
           headerAction={
             <button className={primaryButtonClass} onClick={() => setIsPetModalOpen(true)} type="button">
               마이펫 등록

@@ -7,6 +7,7 @@ import { AdminOrderPagination } from "../components/orders/AdminOrderPagination"
 import { getStatusFilterLabel, type OrderStatusFilter } from "../components/orders/AdminOrderStatusFilter";
 import { AdminOrderTable } from "../components/orders/AdminOrderTable";
 import { AdminOrdersHeader } from "../components/orders/AdminOrdersHeader";
+import type { OrderSortOrder } from "../components/orders/OrderFilters";
 import { DeleteConfirmModal } from "../components/feedback/DeleteConfirmModal";
 import { DataLoadErrorState } from "../components/feedback/PageState";
 import { panelClass } from "../components/ui";
@@ -24,6 +25,35 @@ type AdminOrdersPageProps = {
 const orderStatusFilters: OrderStatusFilter[] = ["all", "pending", "processing", "completed", "canceled"];
 const orderPageSize = 10;
 
+function filterAdminOrders({
+  orders,
+  selectedStatus,
+  searchKeyword
+}: {
+  orders: Order[];
+  selectedStatus: OrderStatusFilter;
+  searchKeyword: string;
+}) {
+  const normalizedSearchKeyword = searchKeyword.trim().toLowerCase();
+
+  return orders.filter((order) => {
+    if (selectedStatus !== "all" && order.status !== selectedStatus) return false;
+    if (normalizedSearchKeyword && !order.title.toLowerCase().includes(normalizedSearchKeyword)) return false;
+
+    return true;
+  });
+}
+
+function sortOrders(orders: Order[], sortOrder: OrderSortOrder) {
+  return [...orders].sort((firstOrder, secondOrder) => {
+    const dateComparison = firstOrder.createdAt.localeCompare(secondOrder.createdAt);
+    const idComparison = firstOrder.id - secondOrder.id;
+    const comparison = dateComparison || idComparison;
+
+    return sortOrder === "newest" ? -comparison : comparison;
+  });
+}
+
 export function AdminOrdersPage({
   orders,
   isOrdersError,
@@ -32,7 +62,9 @@ export function AdminOrdersPage({
   onExportOrder,
   onExportOrders
 }: AdminOrdersPageProps) {
-  const [selectedStatusFilter, setSelectedStatusFilter] = useState<OrderStatusFilter>("all");
+  const [selectedStatus, setSelectedStatus] = useState<OrderStatusFilter>("all");
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [sortOrder, setSortOrder] = useState<OrderSortOrder>("newest");
   const [selectedOrderIds, setSelectedOrderIds] = useState<number[]>([]);
   const [detailOrder, setDetailOrder] = useState<Order | null>(null);
   const [exportModalJson, setExportModalJson] = useState("");
@@ -47,15 +79,16 @@ export function AdminOrdersPage({
   const [isCanceling, setIsCanceling] = useState(false);
 
   const filteredOrders = useMemo(
-    () => orders.filter((order) => selectedStatusFilter === "all" || order.status === selectedStatusFilter),
-    [orders, selectedStatusFilter]
+    () => filterAdminOrders({ orders, selectedStatus, searchKeyword }),
+    [orders, searchKeyword, selectedStatus]
   );
-  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / orderPageSize));
+  const sortedOrders = useMemo(() => sortOrders(filteredOrders, sortOrder), [filteredOrders, sortOrder]);
+  const totalPages = Math.max(1, Math.ceil(sortedOrders.length / orderPageSize));
   const paginatedOrders = useMemo(() => {
     const startIndex = (currentPage - 1) * orderPageSize;
 
-    return filteredOrders.slice(startIndex, startIndex + orderPageSize);
-  }, [currentPage, filteredOrders]);
+    return sortedOrders.slice(startIndex, startIndex + orderPageSize);
+  }, [currentPage, sortedOrders]);
   const selectedOrders = useMemo(
     () => orders.filter((order) => selectedOrderIds.includes(order.id)),
     [orders, selectedOrderIds]
@@ -74,9 +107,10 @@ export function AdminOrdersPage({
   }
 
   const emptyDescription =
-    selectedStatusFilter === "all"
+    orders.length === 0
       ? "사용자가 앨범북 주문을 만들면 이곳에서 상태 변경과 JSON export를 진행할 수 있습니다."
-      : `${getStatusFilterLabel(selectedStatusFilter)} 상태의 주문이 없습니다.`;
+      : `${getStatusFilterLabel(selectedStatus)} 상태 또는 검색 조건에 맞는 주문이 없습니다.`;
+  const hasActiveAdminFilters = selectedStatus !== "all" || searchKeyword.trim() !== "" || sortOrder !== "newest";
 
   async function handleExportOrder(order: Order) {
     setExportingOrderId(order.id);
@@ -157,7 +191,24 @@ export function AdminOrdersPage({
   }
 
   function handleSelectStatusFilter(statusFilter: OrderStatusFilter) {
-    setSelectedStatusFilter(statusFilter);
+    setSelectedStatus(statusFilter);
+    setCurrentPage(1);
+  }
+
+  function handleChangeSearchKeyword(nextSearchKeyword: string) {
+    setSearchKeyword(nextSearchKeyword);
+    setCurrentPage(1);
+  }
+
+  function handleChangeSortOrder(nextSortOrder: OrderSortOrder) {
+    setSortOrder(nextSortOrder);
+    setCurrentPage(1);
+  }
+
+  function resetAdminOrderFilters() {
+    setSelectedStatus("all");
+    setSearchKeyword("");
+    setSortOrder("newest");
     setCurrentPage(1);
   }
 
@@ -208,10 +259,16 @@ export function AdminOrdersPage({
     <section className={`${panelClass} grid gap-5`}>
       <AdminOrdersHeader
         filters={orderStatusFilters}
-        orderCount={filteredOrders.length}
-        selectedFilter={selectedStatusFilter}
+        orderCount={sortedOrders.length}
+        selectedFilter={selectedStatus}
+        searchKeyword={searchKeyword}
+        sortOrder={sortOrder}
+        hasActiveFilters={hasActiveAdminFilters}
         getCount={getStatusFilterCount}
         onSelectFilter={handleSelectStatusFilter}
+        onChangeSearchKeyword={handleChangeSearchKeyword}
+        onChangeSortOrder={handleChangeSortOrder}
+        onResetFilters={resetAdminOrderFilters}
       />
 
       <AdminOrderTable
@@ -226,7 +283,7 @@ export function AdminOrdersPage({
       <AdminOrderPagination
         currentPage={currentPage}
         pageSize={orderPageSize}
-        totalCount={filteredOrders.length}
+        totalCount={sortedOrders.length}
         totalPages={totalPages}
         onPageChange={handlePageChange}
       />

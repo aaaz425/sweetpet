@@ -36,7 +36,10 @@ export function AppRoutes({ app }: AppRoutesProps) {
         element={
           <RecordsPage
             pets={app.pets}
+            records={app.records}
             isPetsError={app.petsStatus.isError}
+            isRecordsError={app.recordsStatus.isError}
+            isRecordsLoading={app.recordsStatus.isLoading}
             onCreateRecord={app.handleCreateRecord}
             onDeleteRecord={app.handleDeleteRecord}
             onUpdateRecord={app.handleUpdateRecord}

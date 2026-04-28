@@ -3,15 +3,19 @@ import { useEffect, useMemo, useState } from "react";
 import { DataLoadErrorState } from "../components/feedback/PageState";
 import { PetSelectField } from "../components/pets/PetSelectField";
 import { RecordDetailModal } from "../components/records/RecordDetailModal";
+import { RecordFilterSummary, type RecordFilterSummaryItem } from "../components/records/RecordFilterSummary";
+import { RecordFilters, type RecordSortOrder } from "../components/records/RecordFilters";
 import { RecordForm } from "../components/records/RecordForm";
 import { RecordList } from "../components/records/RecordList";
 import { primaryButtonClass, secondaryButtonClass } from "../components/ui";
-import { useInfiniteRecords } from "../hooks/useRecords";
 import type { Pet, RecordFormState, RecordItem } from "../types";
 
 type RecordsPageProps = {
   pets: Pet[];
+  records: RecordItem[];
   isPetsError: boolean;
+  isRecordsError: boolean;
+  isRecordsLoading: boolean;
   onCreateRecord: (petId: number, form: RecordFormState) => Promise<void>;
   onDeleteRecord: (id: number) => Promise<void>;
   onUpdateRecord: (id: number, form: RecordFormState) => Promise<void>;
@@ -24,17 +28,116 @@ function firstRegisteredPetId(pets: Pet[]) {
   }, null);
 }
 
-export function RecordsPage({ pets, isPetsError, onCreateRecord, onDeleteRecord, onUpdateRecord }: RecordsPageProps) {
+function filterRecords({
+  records,
+  selectedPetId,
+  startDate,
+  endDate,
+  selectedCondition,
+  selectedTag
+}: {
+  records: RecordItem[];
+  selectedPetId: number | null;
+  startDate: string;
+  endDate: string;
+  selectedCondition: string;
+  selectedTag: string;
+}) {
+  return records.filter((record) => {
+    if (selectedPetId !== null && record.petId !== selectedPetId) return false;
+    if (startDate && record.recordDate < startDate) return false;
+    if (endDate && record.recordDate > endDate) return false;
+    if (selectedCondition !== "all" && record.condition !== selectedCondition) return false;
+    if (selectedTag !== "all" && !record.tags.includes(selectedTag)) return false;
+
+    return true;
+  });
+}
+
+function sortRecords(records: RecordItem[], sortOrder: RecordSortOrder) {
+  return [...records].sort((firstRecord, secondRecord) => {
+    const dateComparison = firstRecord.recordDate.localeCompare(secondRecord.recordDate);
+    const idComparison = firstRecord.id - secondRecord.id;
+    const comparison = dateComparison || idComparison;
+
+    return sortOrder === "newest" ? -comparison : comparison;
+  });
+}
+
+function getDateRangeLabel(startDate: string, endDate: string) {
+  if (startDate && endDate) return `${startDate} - ${endDate}`;
+  if (startDate) return `${startDate} 이후`;
+  return `${endDate} 이전`;
+}
+
+export function RecordsPage({
+  pets,
+  records,
+  isPetsError,
+  isRecordsError,
+  isRecordsLoading,
+  onCreateRecord,
+  onDeleteRecord,
+  onUpdateRecord
+}: RecordsPageProps) {
   const defaultPetId = useMemo(() => firstRegisteredPetId(pets), [pets]);
   const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
   const [selectedRecordId, setSelectedRecordId] = useState<number | null>(null);
   const [shouldEditSelectedRecord, setShouldEditSelectedRecord] = useState(false);
   const [selectedPetId, setSelectedPetId] = useState<number | null>(null);
-  const records = useInfiniteRecords(selectedPetId);
-  const selectedRecord = useMemo(
-    () => records.records.find((record) => record.id === selectedRecordId) ?? null,
-    [records.records, selectedRecordId]
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [selectedCondition, setSelectedCondition] = useState("all");
+  const [selectedTag, setSelectedTag] = useState("all");
+  const [sortOrder, setSortOrder] = useState<RecordSortOrder>("newest");
+  const petRecords = useMemo(
+    () => records.filter((record) => selectedPetId === null || record.petId === selectedPetId),
+    [records, selectedPetId]
   );
+  const conditionOptions = useMemo(
+    () => Array.from(new Set(petRecords.map((record) => record.condition))).sort((first, second) => first.localeCompare(second)),
+    [petRecords]
+  );
+  const tagOptions = useMemo(
+    () => Array.from(new Set(petRecords.flatMap((record) => record.tags))).sort((first, second) => first.localeCompare(second)),
+    [petRecords]
+  );
+  const filteredRecords = useMemo(
+    () => filterRecords({ records, selectedPetId, startDate, endDate, selectedCondition, selectedTag }),
+    [endDate, records, selectedCondition, selectedPetId, selectedTag, startDate]
+  );
+  const sortedRecords = useMemo(() => sortRecords(filteredRecords, sortOrder), [filteredRecords, sortOrder]);
+  const selectedRecord = useMemo(
+    () => records.find((record) => record.id === selectedRecordId) ?? null,
+    [records, selectedRecordId]
+  );
+  const selectedPet = useMemo(() => pets.find((pet) => pet.id === selectedPetId) ?? null, [pets, selectedPetId]);
+  const activeFilterSummaryItems = useMemo(() => {
+    const nextFilters: RecordFilterSummaryItem[] = [];
+
+    if (selectedPet) {
+      nextFilters.push({ label: "마이펫", value: selectedPet.name });
+    }
+    if (startDate || endDate) {
+      nextFilters.push({ label: "기간", value: getDateRangeLabel(startDate, endDate) });
+    }
+    if (selectedCondition !== "all") {
+      nextFilters.push({ label: "컨디션", value: selectedCondition });
+    }
+    if (selectedTag !== "all") {
+      nextFilters.push({ label: "태그", value: selectedTag });
+    }
+    nextFilters.push({ label: "정렬", value: sortOrder === "newest" ? "최신순" : "오래된순" });
+
+    return nextFilters;
+  }, [endDate, selectedCondition, selectedPet, selectedTag, sortOrder, startDate]);
+  const hasActiveFilters = Boolean(startDate || endDate || selectedCondition !== "all" || selectedTag !== "all");
+  const isFilteringResult = hasActiveFilters || sortOrder !== "newest";
+  const emptyTitle = petRecords.length === 0 ? "작성된 일상기록이 없습니다" : "조건에 맞는 일상기록이 없습니다";
+  const emptyDescription =
+    petRecords.length === 0
+      ? "선택한 반려동물의 사진, 컨디션, 메모를 남기면 이곳에서 날짜순으로 확인할 수 있습니다."
+      : "적용한 날짜, 컨디션, 태그 조건을 조정하면 더 많은 기록을 확인할 수 있습니다.";
 
   useEffect(() => {
     setSelectedPetId((currentPetId) => {
@@ -42,6 +145,15 @@ export function RecordsPage({ pets, isPetsError, onCreateRecord, onDeleteRecord,
       return hasCurrentPet ? currentPetId : defaultPetId;
     });
   }, [defaultPetId, pets]);
+
+  useEffect(() => {
+    if (selectedCondition !== "all" && !conditionOptions.includes(selectedCondition)) {
+      setSelectedCondition("all");
+    }
+    if (selectedTag !== "all" && !tagOptions.includes(selectedTag)) {
+      setSelectedTag("all");
+    }
+  }, [conditionOptions, selectedCondition, selectedTag, tagOptions]);
 
   async function handleCreateRecord(form: RecordFormState) {
     if (selectedPetId === null) return;
@@ -59,18 +171,28 @@ export function RecordsPage({ pets, isPetsError, onCreateRecord, onDeleteRecord,
     setSelectedRecordId(record.id);
   }
 
+  function resetRecordFilters() {
+    setStartDate("");
+    setEndDate("");
+    setSelectedCondition("all");
+    setSelectedTag("all");
+    setSortOrder("newest");
+  }
+
   return (
     <section className="grid min-w-0 gap-4">
       {isPetsError ? (
         <DataLoadErrorState title="마이펫 정보를 불러오지 못했습니다" />
       ) : (
         <RecordList
-          records={records.records}
-          fetchNextPage={records.fetchNextPage}
-          hasNextPage={records.hasNextPage}
-          isLoading={records.isLoading}
-          isError={records.isError}
-          isFetchingNextPage={records.isFetchingNextPage}
+          records={sortedRecords}
+          fetchNextPage={() => Promise.resolve()}
+          hasNextPage={false}
+          isLoading={isRecordsLoading}
+          isError={isRecordsError}
+          isFetchingNextPage={false}
+          emptyTitle={emptyTitle}
+          emptyDescription={emptyDescription}
           toolbarStart={(
             <PetSelectField
               pets={pets}
@@ -88,6 +210,30 @@ export function RecordsPage({ pets, isPetsError, onCreateRecord, onDeleteRecord,
             >
               일상기록 작성
             </button>
+          )}
+          filters={(
+            <RecordFilters
+              conditionOptions={conditionOptions}
+              tagOptions={tagOptions}
+              startDate={startDate}
+              endDate={endDate}
+              selectedCondition={selectedCondition}
+              selectedTag={selectedTag}
+              sortOrder={sortOrder}
+              hasActiveFilters={isFilteringResult}
+              summary={(
+                <RecordFilterSummary
+                  filters={activeFilterSummaryItems}
+                  resultCount={sortedRecords.length}
+                />
+              )}
+              onChangeStartDate={setStartDate}
+              onChangeEndDate={setEndDate}
+              onChangeCondition={setSelectedCondition}
+              onChangeTag={setSelectedTag}
+              onChangeSortOrder={setSortOrder}
+              onResetFilters={resetRecordFilters}
+            />
           )}
           onDeleteRecord={onDeleteRecord}
           onEditRecord={handleEditRecord}
