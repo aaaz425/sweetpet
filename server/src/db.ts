@@ -137,10 +137,24 @@ export function seed() {
   );
   insertRecord.run(
     petId,
+    "2026-04-05",
+    "신남",
+    "좋아하는 공놀이를 오래 했고 집에 와서 물을 많이 마셨습니다.",
+    JSON.stringify(["놀이"])
+  );
+  insertRecord.run(
+    petId,
     "2026-04-10",
     "보통",
     "미용실에 다녀왔습니다. 조금 피곤해 보였지만 집에서는 편하게 쉬었습니다.",
     JSON.stringify(["미용"])
+  );
+  insertRecord.run(
+    petId,
+    "2026-04-15",
+    "좋음",
+    "저녁 산책에서 새로운 길을 걸었습니다. 낯선 냄새를 오래 맡으며 천천히 움직였습니다.",
+    JSON.stringify(["산책"])
   );
   insertRecord.run(
     petId,

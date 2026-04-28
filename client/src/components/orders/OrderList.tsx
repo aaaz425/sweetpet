@@ -22,11 +22,13 @@ type OrderListProps = {
   headerAction?: ReactNode;
   displayMode?: "full" | "album";
   pets?: Pet[];
+  onCancelOrder?: (order: Order) => void;
+  onEditOrder?: (order: Order) => void;
   onUpdateStatus?: (order: Order, status: OrderStatus) => void;
   onExportOrder?: (order: Order) => void;
 };
 
-const orderStatuses: OrderStatus[] = ["pending", "processing", "completed"];
+const orderStatuses: OrderStatus[] = ["pending", "processing", "completed", "canceled"];
 
 function getOrderQuantity(order: Order) {
   return typeof order.printOptions.quantity === "number" ? order.printOptions.quantity : 1;
@@ -115,6 +117,8 @@ export function OrderList({
   headerAction,
   displayMode = "full",
   pets = [],
+  onCancelOrder,
+  onEditOrder,
   onUpdateStatus,
   onExportOrder
 }: OrderListProps) {
@@ -147,16 +151,37 @@ export function OrderList({
         <div className="grid min-w-0 gap-3">
           {orders.map((order) =>
             isAlbumDisplay ? (
-              <button
-                className="grid min-w-0 gap-2 rounded-xl border border-border bg-surface p-4 text-left transition duration-150 hover:border-primary hover:bg-primary-soft/40 active:scale-[0.99]"
+              <article
+                className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4 transition duration-150 hover:border-primary"
                 key={order.id}
-                onClick={() => setSelectedDetailOrder(order)}
-                type="button"
               >
-                <strong className="break-words text-base text-text-primary">{order.title}</strong>
-                <span className="text-sm text-text-secondary">{order.startDate} - {order.endDate}</span>
-                <span className="text-sm font-medium text-text-primary">주문 수량 {getOrderQuantity(order)}권</span>
-              </button>
+                <button
+                  className="grid min-w-0 gap-2 text-left"
+                  onClick={() => setSelectedDetailOrder(order)}
+                  type="button"
+                >
+                  <strong className="break-words text-base text-text-primary">{order.title}</strong>
+                  <span className="text-sm text-text-secondary">{order.startDate} - {order.endDate}</span>
+                  <span className="flex flex-wrap items-center gap-2">
+                    <span className={badgeClass}>{orderStatusLabels[order.status]}</span>
+                    <span className="text-sm font-medium text-text-primary">주문 수량 {getOrderQuantity(order)}권</span>
+                  </span>
+                </button>
+                {order.status === "pending" && (onEditOrder || onCancelOrder) ? (
+                  <div className="flex flex-wrap gap-2">
+                    {onEditOrder ? (
+                      <Button onClick={() => onEditOrder(order)} variant="secondary">
+                        편집
+                      </Button>
+                    ) : null}
+                    {onCancelOrder ? (
+                      <Button onClick={() => onCancelOrder(order)} variant="secondary">
+                        취소
+                      </Button>
+                    ) : null}
+                  </div>
+                ) : null}
+              </article>
             ) : (
               <article className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4 transition duration-150 hover:border-primary" key={order.id}>
                 <div className="flex flex-wrap items-start justify-between gap-3">

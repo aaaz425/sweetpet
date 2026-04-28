@@ -20,6 +20,12 @@ ordersRouter.get("/:orderUid", (req, res) => {
   ok(res, result.message, result.data, result.status);
 });
 
+ordersRouter.put("/:orderUid", (req, res) => {
+  const result = orderService.updateOrder(req.params.orderUid, req.body);
+  if (!result.ok) return fail(res, result.status, result.message);
+  ok(res, result.message, result.data, result.status);
+});
+
 ordersRouter.patch("/:orderUid/status", (req, res) => {
   const result = orderService.updateOrderStatus(req.params.orderUid, req.body.status);
   if (!result.ok) return fail(res, result.status, result.message);

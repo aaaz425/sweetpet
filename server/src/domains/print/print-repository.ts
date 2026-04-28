@@ -114,3 +114,21 @@ export function updateOrderStatus(orderId: number, status: string) {
   db.prepare("UPDATE orders SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(status, orderId);
   return db.prepare(orderSelect("WHERE o.id = ?")).get(orderId) as any;
 }
+
+export function updatePendingOrder(order: any, input: CreateBookInput, recordIds: Array<{ id: number }>) {
+  db.prepare(
+    `UPDATE books
+     SET title = ?, start_date = ?, end_date = ?, print_options = ?, updated_at = CURRENT_TIMESTAMP
+     WHERE id = ?`
+  ).run(input.title, input.startDate, input.endDate, JSON.stringify(input.printOptions), order.book_id);
+
+  replaceBookContents(order.book_id, recordIds);
+
+  db.prepare(
+    `UPDATE orders
+     SET title = ?, start_date = ?, end_date = ?, print_options = ?, updated_at = CURRENT_TIMESTAMP
+     WHERE id = ?`
+  ).run(input.title, input.startDate, input.endDate, JSON.stringify(input.printOptions), order.id);
+
+  return db.prepare(orderSelect("WHERE o.id = ?")).get(order.id) as any;
+}

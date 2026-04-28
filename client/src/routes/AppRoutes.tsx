@@ -46,8 +46,11 @@ export function AppRoutes({ app }: AppRoutesProps) {
         element={
           <AlbumsPage
             pets={app.pets}
+            records={app.records}
             orders={app.orders}
             onCreateOrder={app.handleCreateOrder}
+            onUpdateOrder={app.handleUpdateOrder}
+            onUpdateOrderStatus={app.handleUpdateOrderStatus}
           />
         }
       />

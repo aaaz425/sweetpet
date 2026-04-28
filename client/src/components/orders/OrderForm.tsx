@@ -1,14 +1,19 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMemo } from "react";
+import { AlertCircle } from "lucide-react";
+import { useEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { defaultPrintOptions, printOptionChoices } from "../../constants";
 import { orderFormSchema } from "../../lib/formSchemas";
-import type { OrderFormState, PrintOptions } from "../../types";
+import type { OrderFormState, PrintOptions, RecordItem } from "../../types";
 import { fieldClass, labelClass, primaryButtonClass } from "../ui";
 import { DatePicker } from "../ui/date-picker";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 
 type OrderFormProps = {
   selectedPetId: number | null;
+  records: RecordItem[];
+  initialValues?: OrderFormState;
+  submitLabel?: string;
   onSubmit: (form: OrderFormState) => Promise<void>;
 };
 
@@ -19,6 +24,8 @@ const printOptionFields: Array<{ name: SelectPrintOptionKey; label: string }> = 
   { name: "binding", label: "제본" },
   { name: "paper", label: "용지" }
 ];
+const minOrderRecordCount = 5;
+const maxOrderRecordCount = 30;
 
 function formatDate(date: Date) {
   const year = date.getFullYear();
@@ -40,24 +47,54 @@ function getInitialOrderForm(): OrderFormState {
   };
 }
 
-export function OrderForm({ selectedPetId, onSubmit }: OrderFormProps) {
-  const initialOrderForm = useMemo(() => getInitialOrderForm(), []);
+function countSelectedRecords(records: RecordItem[], selectedPetId: number | null, startDate: string, endDate: string) {
+  if (selectedPetId === null || !startDate || !endDate || startDate > endDate) return 0;
+
+  return records.filter(
+    (record) =>
+      record.petId === selectedPetId &&
+      record.recordDate >= startDate &&
+      record.recordDate <= endDate
+  ).length;
+}
+
+function getRecordCountMessage(recordCount: number, selectedPetId: number | null) {
+  if (selectedPetId === null) return "주문할 반려동물을 선택하면 기간 내 기록 수를 확인할 수 있습니다.";
+  if (recordCount < minOrderRecordCount) return `기록이 ${minOrderRecordCount - recordCount}개 더 필요합니다.`;
+  if (recordCount > maxOrderRecordCount) return `기록을 ${recordCount - maxOrderRecordCount}개 줄여야 합니다.`;
+  return "주문 가능한 기록 수입니다.";
+}
+
+export function OrderForm({ selectedPetId, records, initialValues, submitLabel = "주문하기", onSubmit }: OrderFormProps) {
+  const initialOrderForm = useMemo(() => initialValues ?? getInitialOrderForm(), [initialValues]);
   const {
     control,
     formState: { errors, isSubmitting },
     handleSubmit,
     register,
+    reset,
     watch
   } = useForm<OrderFormState>({
     defaultValues: initialOrderForm,
     resolver: zodResolver(orderFormSchema)
   });
+
+  useEffect(() => {
+    reset(initialOrderForm);
+  }, [initialOrderForm, reset]);
   const title = watch("title");
+  const startDate = watch("startDate");
+  const endDate = watch("endDate");
+  const selectedRecordCount = countSelectedRecords(records, selectedPetId, startDate, endDate);
+  const hasValidRecordCount =
+    selectedRecordCount >= minOrderRecordCount && selectedRecordCount <= maxOrderRecordCount;
   const missingRequiredFields = [
     !selectedPetId ? "반려동물" : null,
     !title.trim() ? "제목" : null
   ].filter(Boolean);
-  const isOrderDisabled = missingRequiredFields.length > 0 || isSubmitting;
+  const isOrderDisabled = missingRequiredFields.length > 0 || !hasValidRecordCount || isSubmitting;
+  const recordCountRuleText = `기간 내 일상기록이 ${minOrderRecordCount}개 이상 ${maxOrderRecordCount}개 이하일 때만 주문할 수 있습니다.`;
+  const recordCountStatusText = getRecordCountMessage(selectedRecordCount, selectedPetId);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-3">
@@ -76,6 +113,29 @@ export function OrderForm({ selectedPetId, onSubmit }: OrderFormProps) {
         <Controller control={control} name="endDate" render={({ field }) => <DatePicker value={field.value} onChange={field.onChange} />} />
         {errors.endDate && <span className="text-xs font-medium text-primary">{errors.endDate.message}</span>}
       </label>
+      <div className="grid gap-1.5">
+        <div className="flex min-w-0 flex-wrap items-center gap-1.5 text-sm font-medium text-text-secondary">
+          <span>선택 기간 내 일상기록</span>
+          <TooltipProvider delayDuration={120}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  aria-label={`${recordCountRuleText} ${recordCountStatusText}`}
+                  className="inline-flex h-5 w-5 items-center justify-center rounded-full text-primary outline-none transition duration-150 hover:bg-primary-soft focus:bg-primary-soft focus:ring-2 focus:ring-primary-soft"
+                  type="button"
+                >
+                  <AlertCircle className="h-4 w-4" aria-hidden="true" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{recordCountRuleText}</p>
+                <p>{recordCountStatusText}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <strong className="text-sm font-bold text-text-primary">{selectedRecordCount}개</strong>
+        </div>
+      </div>
       <fieldset className="grid gap-2 rounded-xl border border-border bg-background p-3">
         <legend className="px-1 text-sm font-semibold text-text-primary">프린트 옵션</legend>
         <div className="grid gap-3 sm:grid-cols-3">
@@ -96,7 +156,7 @@ export function OrderForm({ selectedPetId, onSubmit }: OrderFormProps) {
           {errors.printOptions?.quantity && <span className="text-xs font-medium text-primary">{errors.printOptions.quantity.message}</span>}
         </label>
       </fieldset>
-      <button className={primaryButtonClass} disabled={isOrderDisabled} type="submit">주문하기</button>
+      <button className={primaryButtonClass} disabled={isOrderDisabled} type="submit">{submitLabel}</button>
     </form>
   );
 }

@@ -32,12 +32,23 @@ type PrintOptions = {
   quantity: number;
 };
 
+type ValidatedOrderInput = {
+  petId: number;
+  title: string;
+  startDate: string;
+  endDate: string;
+  records: Array<{ id: number }>;
+  printOptions: PrintOptions;
+};
+
 const defaultPrintOptions: PrintOptions = {
   size: "a5",
   binding: "softcover",
   paper: "matte",
   quantity: 1
 };
+const minOrderRecordCount = 5;
+const maxOrderRecordCount = 30;
 
 function success<T>(status: number, message: string, data: T): ServiceResult<T> {
   return { ok: true, status, message, data };
@@ -79,11 +90,7 @@ function createOrderFromFinalizedBook(bookUid: string) {
   return success(201, "Order created", mapOrder(repository.createOrderFromBook(book)));
 }
 
-export function createOrder(input: CreateOrderInput) {
-  if (input.bookUid) {
-    return createOrderFromFinalizedBook(input.bookUid);
-  }
-
+function validateOrderInput(input: CreateOrderInput): ServiceResult<ValidatedOrderInput> {
   if (!input.petId || !input.title || !input.startDate || !input.endDate) {
     return failure(400, "petId, title, startDate, and endDate are required");
   }
@@ -95,20 +102,62 @@ export function createOrder(input: CreateOrderInput) {
     startDate: input.startDate,
     endDate: input.endDate
   });
-  if (records.length === 0) return failure(400, "no records selected");
+  if (records.length < minOrderRecordCount) {
+    return failure(400, `at least ${minOrderRecordCount} records are required`);
+  }
+  if (records.length > maxOrderRecordCount) {
+    return failure(400, `up to ${maxOrderRecordCount} records can be selected`);
+  }
 
-  const book = repository.createBookDraft({
+  return success(200, "Valid order input", {
     petId: Number(input.petId),
     title: input.title,
     startDate: input.startDate,
     endDate: input.endDate,
+    records,
     printOptions: normalizePrintOptions(input.printOptions)
   });
+}
 
-  repository.replaceBookContents(book.id, records);
+export function createOrder(input: CreateOrderInput) {
+  if (input.bookUid) {
+    return createOrderFromFinalizedBook(input.bookUid);
+  }
+
+  const validated = validateOrderInput(input);
+  if (!validated.ok) return validated;
+
+  const book = repository.createBookDraft({
+    petId: validated.data.petId,
+    title: validated.data.title,
+    startDate: validated.data.startDate,
+    endDate: validated.data.endDate,
+    printOptions: validated.data.printOptions
+  });
+
+  repository.replaceBookContents(book.id, validated.data.records);
   repository.finalizeBook(book.id);
 
   return createOrderFromFinalizedBook(book.book_uid);
+}
+
+export function updateOrder(orderUid: string, input: CreateOrderInput) {
+  const order = repository.findOrder(orderUid);
+  if (!order) return failure(404, "order not found");
+  if (order.status !== "pending") return failure(400, "only pending orders can be edited");
+  if (!order.book_id) return failure(400, "order is not connected to a book");
+  if (Number(input.petId) !== Number(order.pet_id)) return failure(400, "order pet cannot be changed");
+
+  const validated = validateOrderInput(input);
+  if (!validated.ok) return validated;
+
+  return success(200, "Order updated", mapOrder(repository.updatePendingOrder(order, {
+    petId: validated.data.petId,
+    title: validated.data.title,
+    startDate: validated.data.startDate,
+    endDate: validated.data.endDate,
+    printOptions: validated.data.printOptions
+  }, validated.data.records)));
 }
 
 export function listOrders() {
@@ -122,11 +171,12 @@ export function getOrder(orderUid: string) {
 }
 
 export function updateOrderStatus(orderUid: string, status: string) {
-  const allowed = ["pending", "processing", "completed"];
+  const allowed = ["pending", "processing", "completed", "canceled"];
   if (!allowed.includes(status)) return failure(400, "invalid status");
 
   const order = repository.findOrder(orderUid);
   if (!order) return failure(404, "order not found");
+  if (status === "canceled" && order.status !== "pending") return failure(400, "only pending orders can be canceled");
 
   return success(200, "Order status updated", mapOrder(repository.updateOrderStatus(order.id, status)));
 }

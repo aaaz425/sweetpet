@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { createOrder, getOrders, updateOrderStatus } from "../api/orders";
+import { createOrder, getOrders, updateOrder, updateOrderStatus } from "../api/orders";
 import { pagePaths } from "../constants";
 import type { Order, OrderFormState, OrderStatus } from "../types";
 import { queryKeys } from "./queryKeys";
@@ -36,6 +36,24 @@ export function useOrders() {
     }
   });
 
+  const updateOrderMutation = useMutation({
+    mutationFn: ({ order, form }: { order: Order; form: OrderFormState }) =>
+      updateOrder(order.orderUid ?? "", {
+        petId: order.petId,
+        title: form.title,
+        startDate: form.startDate,
+        endDate: form.endDate,
+        printOptions: form.printOptions
+      }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: queryKeys.orders });
+      toast.success("주문이 수정되었습니다.");
+    },
+    onError: () => {
+      toast.error("주문 수정 중 문제가 발생했습니다.");
+    }
+  });
+
   async function handleCreateOrder(petId: number, form: OrderFormState) {
     await createOrderMutation.mutateAsync({
       petId,
@@ -52,9 +70,16 @@ export function useOrders() {
     await updateOrderStatusMutation.mutateAsync({ order, status });
   }
 
+  async function handleUpdateOrder(order: Order, form: OrderFormState) {
+    if (!order.orderUid) return;
+
+    await updateOrderMutation.mutateAsync({ order, form });
+  }
+
   return {
     orders,
     handleCreateOrder,
+    handleUpdateOrder,
     handleUpdateOrderStatus
   };
 }

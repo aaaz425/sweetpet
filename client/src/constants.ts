@@ -27,9 +27,10 @@ export function getPageFromPath(pathname: string): Page | null {
 }
 
 export const orderStatusLabels: Record<OrderStatus, string> = {
-  pending: "대기",
-  processing: "진행 중",
-  completed: "완료"
+  pending: "주문대기",
+  processing: "접수완료",
+  completed: "처리완료",
+  canceled: "주문취소"
 };
 
 export const userNavItems: Page[] = ["home", "pets", "records", "albums"];

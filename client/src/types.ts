@@ -55,7 +55,7 @@ export type BookRecord = {
   recordId: number;
 };
 
-export type OrderStatus = "pending" | "processing" | "completed";
+export type OrderStatus = "pending" | "processing" | "completed" | "canceled";
 
 export type Order = {
   id: number;
@@ -109,6 +109,8 @@ export type CreateOrderInput = {
   endDate: string;
   printOptions: PrintOptions;
 };
+
+export type UpdateOrderInput = CreateOrderInput;
 
 export type PetFormState = {
   name: string;
