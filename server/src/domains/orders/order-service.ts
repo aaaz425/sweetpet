@@ -1,4 +1,4 @@
-import { bookSpecs, mapBook, mapOrder, templates } from "../print/print-model.js";
+import { mapBook, mapOrder } from "../print/print-model.js";
 import { mapPet } from "../pets/pets-model.js";
 import { parseJson } from "../records/records-model.js";
 import * as repository from "../print/print-repository.js";
@@ -22,8 +22,6 @@ type CreateOrderInput = {
   title?: string;
   startDate?: string;
   endDate?: string;
-  templateUid?: string;
-  bookSpecUid?: string;
   printOptions?: unknown;
 };
 
@@ -69,8 +67,6 @@ export function createOrder(input: CreateOrderInput) {
     title: input.title,
     startDate: input.startDate,
     endDate: input.endDate,
-    templateUid: input.templateUid ?? templates[0].templateUid,
-    bookSpecUid: input.bookSpecUid ?? bookSpecs[0].bookSpecUid,
     printOptions: input.printOptions ?? {}
   });
 

@@ -1,19 +1,8 @@
 import { Router } from "express";
 import { ok, fail } from "../../response.js";
 import * as bookService from "./book-service.js";
-import { bookSpecs, templates } from "../print/print-model.js";
 
 export const booksRouter = Router();
-export const bookSpecsRouter = Router();
-export const templatesRouter = Router();
-
-bookSpecsRouter.get("/", (_req, res) => {
-  ok(res, "Success", bookSpecs);
-});
-
-templatesRouter.get("/", (_req, res) => {
-  ok(res, "Success", templates);
-});
 
 booksRouter.post("/", (req, res) => {
   const result = bookService.createBook(req.body);

@@ -36,8 +36,6 @@ export type Book = {
   startDate: string | null;
   endDate: string | null;
   status: BookStatus;
-  templateUid: string;
-  bookSpecUid: string;
   printOptions: JsonObject;
   finalizedAt: string | null;
   createdAt: string;
@@ -66,27 +64,6 @@ export type Order = {
   createdAt: string;
   updatedAt: string;
   recordCount: number;
-};
-
-export type OrderRecord = {
-  orderId: number;
-  recordId: number;
-};
-
-export type BookSpec = {
-  bookSpecUid: string;
-  name: string;
-  size: string;
-  binding: string;
-  minPages: number;
-  maxPages: number;
-};
-
-export type Template = {
-  templateUid: string;
-  name: string;
-  category: string;
-  bookSpecUid: string;
 };
 
 export type OrderExport = {

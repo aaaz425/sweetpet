@@ -7,8 +7,6 @@ type CreateBookInput = {
   title: string;
   startDate: string | null;
   endDate: string | null;
-  templateUid: string;
-  bookSpecUid: string;
   printOptions: unknown;
 };
 
@@ -19,8 +17,8 @@ export function findPet(petId: number) {
 export function createBookDraft(input: CreateBookInput) {
   const result = db
     .prepare(
-      `INSERT INTO books (book_uid, pet_id, title, start_date, end_date, template_uid, book_spec_uid, print_options)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO books (book_uid, pet_id, title, start_date, end_date, print_options)
+       VALUES (?, ?, ?, ?, ?, ?)`
     )
     .run(
       uid("book"),
@@ -28,8 +26,6 @@ export function createBookDraft(input: CreateBookInput) {
       input.title,
       input.startDate,
       input.endDate,
-      input.templateUid,
-      input.bookSpecUid,
       JSON.stringify(input.printOptions)
     );
 

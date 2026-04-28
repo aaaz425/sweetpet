@@ -7,9 +7,6 @@ The backend uses these main data structures:
 - Book
 - BookRecord
 - Order
-- OrderRecord
-- BookSpec
-- Template
 
 API responses are wrapped as:
 
@@ -55,8 +52,6 @@ API request and response field names use camelCase. The SQLite schema may use sn
 - `startDate`: string | null
 - `endDate`: string | null
 - `status`: string
-- `templateUid`: string
-- `bookSpecUid`: string
 - `printOptions`: object
 - `finalizedAt`: string | null
 - `createdAt`: string
@@ -84,27 +79,6 @@ API request and response field names use camelCase. The SQLite schema may use sn
 - `updatedAt`: string
 - `recordCount`: number
 
-## OrderRecord
-
-- `orderId`: number
-- `recordId`: number
-
-## BookSpec
-
-- `bookSpecUid`: string
-- `name`: string
-- `size`: string
-- `binding`: string
-- `minPages`: number
-- `maxPages`: number
-
-## Template
-
-- `templateUid`: string
-- `name`: string
-- `category`: string
-- `bookSpecUid`: string
-
 # Relationships
 
 - A Pet has many Records.
@@ -114,10 +88,6 @@ API request and response field names use camelCase. The SQLite schema may use sn
 - A Book has many Records through BookRecord.
 - An Order belongs to one Pet.
 - An Order can belong to one Book through `bookId`.
-- An OrderRecord joins Orders and Records, but current order export uses BookRecord through the connected Book.
-- A Template references one BookSpec through `bookSpecUid`.
-- A Book references one Template through `templateUid`.
-- A Book references one BookSpec through `bookSpecUid`.
 
 # Export Structure
 

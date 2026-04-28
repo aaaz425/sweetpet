@@ -47,8 +47,6 @@ export function migrate() {
       start_date TEXT,
       end_date TEXT,
       status TEXT NOT NULL DEFAULT 'draft',
-      template_uid TEXT NOT NULL DEFAULT 'sweetpet-basic-template',
-      book_spec_uid TEXT NOT NULL DEFAULT 'sweetpet-a5-softcover',
       print_options TEXT NOT NULL DEFAULT '{}',
       finalized_at TEXT,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -74,14 +72,6 @@ export function migrate() {
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (pet_id) REFERENCES pets(id) ON DELETE CASCADE
-    );
-
-    CREATE TABLE IF NOT EXISTS order_records (
-      order_id INTEGER NOT NULL,
-      record_id INTEGER NOT NULL,
-      PRIMARY KEY (order_id, record_id),
-      FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
-      FOREIGN KEY (record_id) REFERENCES records(id) ON DELETE CASCADE
     );
   `);
 

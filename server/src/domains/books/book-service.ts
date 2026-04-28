@@ -1,4 +1,4 @@
-import { bookSpecs, mapBook, templates } from "../print/print-model.js";
+import { mapBook } from "../print/print-model.js";
 import * as repository from "../print/print-repository.js";
 
 type ServiceResult<T> =
@@ -19,8 +19,6 @@ type CreateBookInput = {
   title?: string;
   startDate?: string | null;
   endDate?: string | null;
-  templateUid?: string;
-  bookSpecUid?: string;
   printOptions?: unknown;
 };
 
@@ -43,8 +41,6 @@ export function createBook(input: CreateBookInput) {
     title: input.title,
     startDate: input.startDate ?? null,
     endDate: input.endDate ?? null,
-    templateUid: input.templateUid ?? templates[0].templateUid,
-    bookSpecUid: input.bookSpecUid ?? bookSpecs[0].bookSpecUid,
     printOptions: input.printOptions ?? {}
   });
 

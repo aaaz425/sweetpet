@@ -1,26 +1,6 @@
 import crypto from "node:crypto";
 import { parseJson } from "../records/records-model.js";
 
-export const bookSpecs = [
-  {
-    bookSpecUid: "sweetpet-a5-softcover",
-    name: "Sweetpet A5 Softcover",
-    size: "A5",
-    binding: "softcover",
-    minPages: 20,
-    maxPages: 80
-  }
-];
-
-export const templates = [
-  {
-    templateUid: "sweetpet-basic-template",
-    name: "Sweetpet Basic",
-    category: "pet-records",
-    bookSpecUid: "sweetpet-a5-softcover"
-  }
-];
-
 export function uid(prefix: string) {
   return `${prefix}_${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
 }
@@ -35,8 +15,6 @@ export function mapBook(row: any) {
     startDate: row.start_date,
     endDate: row.end_date,
     status: row.status,
-    templateUid: row.template_uid,
-    bookSpecUid: row.book_spec_uid,
     printOptions: parseJson(row.print_options, {}),
     finalizedAt: row.finalized_at,
     createdAt: row.created_at,

@@ -2,7 +2,7 @@ import cors from "cors";
 import "dotenv/config";
 import express, { type ErrorRequestHandler } from "express";
 import { migrate, seed } from "./db.js";
-import { bookSpecsRouter, booksRouter, templatesRouter } from "./domains/books/books.router.js";
+import { booksRouter } from "./domains/books/books.router.js";
 import { ordersRouter } from "./domains/orders/orders.router.js";
 import { petsRouter } from "./domains/pets/pets.router.js";
 import { recordsRouter } from "./domains/records/records.router.js";
@@ -26,8 +26,6 @@ app.get("/api/health", (_req, res) => {
 app.use("/api/pets", petsRouter);
 app.use("/api/records", recordsRouter);
 app.use("/api/books", booksRouter);
-app.use("/api/book-specs", bookSpecsRouter);
-app.use("/api/templates", templatesRouter);
 app.use("/api/orders", ordersRouter);
 
 const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
