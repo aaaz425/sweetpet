@@ -1,13 +1,15 @@
-import { Pencil, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Pencil, Trash2, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { recordImageUrl } from "../../lib/mockImages";
 import type { RecordFormState, RecordItem } from "../../types";
-import { badgeClass, primaryButtonClass, secondaryButtonClass } from "../ui";
+import { badgeClass } from "../ui";
 import { RecordForm } from "./RecordForm";
 
 type RecordDetailModalProps = {
   record: RecordItem;
+  initialIsEditing?: boolean;
   onClose: () => void;
+  onDeleteRecord: (id: number) => void;
   onUpdateRecord: (id: number, form: RecordFormState) => Promise<void>;
 };
 
@@ -21,13 +23,28 @@ function toRecordFormState(record: RecordItem): RecordFormState {
   };
 }
 
-export function RecordDetailModal({ record, onClose, onUpdateRecord }: RecordDetailModalProps) {
-  const [isEditing, setIsEditing] = useState(false);
+export function RecordDetailModal({
+  record,
+  initialIsEditing = false,
+  onClose,
+  onDeleteRecord,
+  onUpdateRecord
+}: RecordDetailModalProps) {
+  const [isEditing, setIsEditing] = useState(initialIsEditing);
   const initialValues = useMemo(() => toRecordFormState(record), [record]);
+
+  useEffect(() => {
+    setIsEditing(initialIsEditing);
+  }, [initialIsEditing, record.id]);
 
   async function handleUpdateRecord(form: RecordFormState) {
     await onUpdateRecord(record.id, form);
     setIsEditing(false);
+  }
+
+  function handleDeleteRecord() {
+    onDeleteRecord(record.id);
+    onClose();
   }
 
   return (
@@ -46,7 +63,7 @@ export function RecordDetailModal({ record, onClose, onUpdateRecord }: RecordDet
           </div>
           <div className="flex shrink-0 items-center gap-2">
             <button
-              className={`${secondaryButtonClass} inline-flex h-9 w-9 items-center justify-center rounded-full p-0`}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99]"
               onClick={() => setIsEditing((currentValue) => !currentValue)}
               aria-label={isEditing ? "상세 보기" : "일상기록 편집"}
               type="button"
@@ -54,8 +71,16 @@ export function RecordDetailModal({ record, onClose, onUpdateRecord }: RecordDet
               <Pencil className="h-4 w-4" aria-hidden="true" />
             </button>
             <button
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99]"
+              onClick={handleDeleteRecord}
+              aria-label="일상기록 삭제"
+              type="button"
+            >
+              <Trash2 className="h-4 w-4" aria-hidden="true" />
+            </button>
+            <button
               aria-label="닫기"
-              className={`${secondaryButtonClass} inline-flex h-9 w-9 items-center justify-center rounded-full border-none bg-transparent p-0`}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99]"
               onClick={onClose}
               type="button"
             >
@@ -93,9 +118,6 @@ export function RecordDetailModal({ record, onClose, onUpdateRecord }: RecordDet
                   </div>
                 </div>
               ) : null}
-              <button className={`${primaryButtonClass} justify-self-start`} onClick={() => setIsEditing(true)} type="button">
-                편집
-              </button>
             </div>
           </div>
         )}

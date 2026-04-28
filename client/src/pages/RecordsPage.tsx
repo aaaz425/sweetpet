@@ -26,6 +26,7 @@ export function RecordsPage({ pets, onCreateRecord, onDeleteRecord, onUpdateReco
   const defaultPetId = useMemo(() => firstRegisteredPetId(pets), [pets]);
   const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
   const [selectedRecordId, setSelectedRecordId] = useState<number | null>(null);
+  const [shouldEditSelectedRecord, setShouldEditSelectedRecord] = useState(false);
   const [selectedPetId, setSelectedPetId] = useState<number | null>(null);
   const records = useInfiniteRecords(selectedPetId);
   const selectedRecord = useMemo(
@@ -47,6 +48,12 @@ export function RecordsPage({ pets, onCreateRecord, onDeleteRecord, onUpdateReco
   }
 
   function handleSelectRecord(record: RecordItem) {
+    setShouldEditSelectedRecord(false);
+    setSelectedRecordId(record.id);
+  }
+
+  function handleEditRecord(record: RecordItem) {
+    setShouldEditSelectedRecord(true);
     setSelectedRecordId(record.id);
   }
 
@@ -77,13 +84,19 @@ export function RecordsPage({ pets, onCreateRecord, onDeleteRecord, onUpdateReco
           </button>
         )}
         onDeleteRecord={onDeleteRecord}
+        onEditRecord={handleEditRecord}
         onSelectRecord={handleSelectRecord}
       />
 
       {selectedRecord ? (
         <RecordDetailModal
           record={selectedRecord}
-          onClose={() => setSelectedRecordId(null)}
+          initialIsEditing={shouldEditSelectedRecord}
+          onClose={() => {
+            setSelectedRecordId(null);
+            setShouldEditSelectedRecord(false);
+          }}
+          onDeleteRecord={onDeleteRecord}
           onUpdateRecord={onUpdateRecord}
         />
       ) : null}

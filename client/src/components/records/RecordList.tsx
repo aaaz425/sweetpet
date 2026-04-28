@@ -1,11 +1,11 @@
-import { CalendarDays, List } from "lucide-react";
+import { CalendarDays, List, Pencil, Trash2 } from "lucide-react";
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { recordImageUrl } from "../../lib/mockImages";
 import { cn } from "../../lib/utils";
 import type { RecordItem } from "../../types";
 import { EmptyState } from "../feedback/EmptyState";
-import { badgeClass, panelClass, secondaryButtonClass } from "../ui";
+import { badgeClass, panelClass } from "../ui";
 import { RecordCalendarView } from "./RecordCalendarView";
 
 type RecordListProps = {
@@ -17,6 +17,7 @@ type RecordListProps = {
   toolbarAction: ReactNode;
   toolbarStart: ReactNode;
   onDeleteRecord: (id: number) => void;
+  onEditRecord: (record: RecordItem) => void;
   onSelectRecord: (record: RecordItem) => void;
 };
 
@@ -31,6 +32,7 @@ export function RecordList({
   toolbarAction,
   toolbarStart,
   onDeleteRecord,
+  onEditRecord,
   onSelectRecord
 }: RecordListProps) {
   const [viewMode, setViewMode] = useState<RecordViewMode>("list");
@@ -114,8 +116,17 @@ export function RecordList({
             <>
               {records.map((record) => (
                 <article
-                  className="grid min-w-0 gap-4 rounded-xl border border-border bg-surface p-4 transition duration-150 hover:border-primary md:grid-cols-[176px_minmax(0,1fr)_auto]"
+                  className="grid min-w-0 cursor-pointer gap-4 rounded-xl border border-border bg-surface p-4 transition duration-150 hover:border-primary hover:bg-primary-soft/30 active:scale-[0.99] md:grid-cols-[176px_minmax(0,1fr)_auto]"
                   key={record.id}
+                  onClick={() => onSelectRecord(record)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      onSelectRecord(record);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
                 >
                   <div className="grid content-start gap-3">
                     <time className="text-sm font-medium text-text-secondary">{record.recordDate}</time>
@@ -128,8 +139,11 @@ export function RecordList({
                   </div>
                   <div className="grid min-w-0 gap-3 sm:grid-cols-[180px_minmax(0,1fr)] sm:items-start">
                     <button
-                      className="w-full max-w-sm text-left transition duration-150 hover:opacity-80 sm:max-w-none"
-                      onClick={() => onSelectRecord(record)}
+                      className="w-full max-w-sm text-left sm:max-w-none"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        onSelectRecord(record);
+                      }}
                       type="button"
                     >
                       <img
@@ -140,15 +154,38 @@ export function RecordList({
                     </button>
                     <button
                       className="min-w-0 text-left text-sm leading-6 text-text-secondary transition duration-150 hover:text-text-primary"
-                      onClick={() => onSelectRecord(record)}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        onSelectRecord(record);
+                      }}
                       type="button"
                     >
                       {record.memo}
                     </button>
                   </div>
-                  <div className="flex flex-wrap gap-2 self-start md:justify-end">
-                    <button className={secondaryButtonClass} onClick={() => onSelectRecord(record)} type="button">상세</button>
-                    <button className={secondaryButtonClass} onClick={() => onDeleteRecord(record.id)} type="button">삭제</button>
+                  <div className="flex shrink-0 gap-1 self-start md:justify-end">
+                    <button
+                      aria-label={`${record.recordDate} 일상기록 편집`}
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-full text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99]"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        onEditRecord(record);
+                      }}
+                      type="button"
+                    >
+                      <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
+                    </button>
+                    <button
+                      aria-label={`${record.recordDate} 일상기록 삭제`}
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-full text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99]"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        onDeleteRecord(record.id);
+                      }}
+                      type="button"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                    </button>
                   </div>
                 </article>
               ))}
