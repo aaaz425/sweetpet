@@ -42,7 +42,16 @@ const primaryLandingButtonClass =
 export function HomePage() {
   const navigate = useNavigate();
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+  const [isLandingSectionVisible, setIsLandingSectionVisible] = useState(true);
+  const landingSectionRef = useRef<HTMLElement>(null);
   const slideRefs = useRef<Array<HTMLElement | null>>([]);
+
+  function handleSlideIndicatorClick(slideIndex: number) {
+    slideRefs.current[slideIndex]?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -73,8 +82,27 @@ export function HomePage() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const landingSection = landingSectionRef.current;
+    if (!landingSection) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsLandingSectionVisible(entry.isIntersecting);
+      },
+      { threshold: 0.01 },
+    );
+
+    observer.observe(landingSection);
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="relative left-1/2 -mt-6 grid w-screen -translate-x-1/2 md:-mt-8">
+    <section
+      className="relative left-1/2 -ml-[50vw] -mt-6 grid w-screen md:-mt-8"
+      ref={landingSectionRef}
+    >
       <div className="sticky top-0 z-0 h-[calc(100dvh-76px)] min-h-[560px] overflow-hidden bg-text-primary">
         {landingSlides.map((slide, slideIndex) => (
           <img
@@ -149,18 +177,31 @@ export function HomePage() {
       </div>
 
       <div
-        className="fixed bottom-5 right-5 z-20 hidden gap-2 md:flex"
+        className={`fixed bottom-7 right-7 z-20 flex rounded-full bg-text-primary/20 p-1.5 backdrop-blur-sm transition-opacity duration-200 md:bottom-8 md:right-8 ${
+          isLandingSectionVisible
+            ? "opacity-100"
+            : "pointer-events-none opacity-0"
+        }`}
         aria-label="랜딩 슬라이드 진행 상태"
       >
         {landingSlides.map((slide, slideIndex) => (
-          <span
-            className={`h-1.5 rounded-full bg-surface transition-all duration-200 ${
-              activeSlideIndex === slideIndex
-                ? "w-9 opacity-100"
-                : "w-3 opacity-55"
-            }`}
+          <button
+            className="grid h-8 min-w-8 place-items-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-surface"
+            aria-current={activeSlideIndex === slideIndex ? "true" : undefined}
+            aria-label={`${slide.eyebrow} 섹션으로 이동`}
             key={slide.eyebrow}
-          />
+            onClick={() => handleSlideIndicatorClick(slideIndex)}
+            type="button"
+          >
+            <span
+              className={`h-2 rounded-full bg-surface transition-all duration-200 ${
+              activeSlideIndex === slideIndex
+                ? "w-8 opacity-100"
+                : "w-2.5 opacity-60"
+            }`}
+              aria-hidden="true"
+            />
+          </button>
         ))}
       </div>
     </section>
