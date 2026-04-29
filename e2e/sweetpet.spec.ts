@@ -5,16 +5,18 @@ test("creates an album order and exports JSON from admin", async ({ page }) => {
   const petName = `E2E 펫 ${runId}`;
   const orderTitle = `E2E 앨범 ${runId}`;
 
+  // seed 데이터에 의존하지 않도록 새 마이펫을 등록한다.
   await page.goto("/pets");
   await expect(page.getByRole("heading", { name: "등록된 마이펫" })).toBeVisible();
   await page.getByRole("button", { name: "마이펫 등록" }).click();
   await expect(page.getByRole("heading", { name: "마이펫 등록" })).toBeVisible();
   await page.getByLabel("이름").fill(petName);
   await page.getByRole("combobox", { name: "종류 선택" }).click();
-  await page.getByText("강아지").click();
+  await page.getByRole("option", { name: "강아지" }).click();
   await page.getByRole("button", { name: "등록", exact: true }).click();
   await expect(page.getByText(petName)).toBeVisible();
 
+  // 앨범북 주문에 필요한 최소 일상기록 5개를 작성한다.
   await page.goto("/records");
   await expect(page.getByRole("button", { name: "일상기록 작성" })).toBeVisible();
   await page.getByLabel("대상 반려동물").click();
@@ -30,6 +32,7 @@ test("creates an album order and exports JSON from admin", async ({ page }) => {
     await expect(page.getByText(recordMemo)).toBeVisible();
   }
 
+  // 방금 작성한 기록으로 앨범북 주문을 생성한다.
   await page.goto("/albums");
   await expect(page.getByRole("heading", { name: "주문 내역" })).toBeVisible();
 
@@ -43,6 +46,7 @@ test("creates an album order and exports JSON from admin", async ({ page }) => {
 
   await expect(page.getByText(orderTitle)).toBeVisible();
 
+  // 관리자가 주문을 열고 export JSON을 확인할 수 있는지 검증한다.
   await page.getByRole("tab", { name: "관리자" }).click();
   await expect(page.getByText(orderTitle)).toBeVisible();
   await page.getByText(orderTitle).click();
