@@ -4,7 +4,7 @@ import type { Pet, RecordItem } from "../types";
 export const speciesOptions = ["강아지", "고양이", "토끼", "햄스터", "앵무새", "거북이", "물고기", "달팽이"];
 
 const representativeImages = {
-  default: "/mock-images/default-pet.jpg",
+  default: "/mock-images/maltese-dog.jpg",
   dog: "/mock-images/maltese-dog.jpg",
   cat: "/mock-images/domestic-cat.jpg",
   rabbit: "/mock-images/rabbit.jpg",
