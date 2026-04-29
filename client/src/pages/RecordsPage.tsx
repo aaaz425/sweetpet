@@ -194,14 +194,6 @@ export function RecordsPage({
           isFetchingNextPage={false}
           emptyTitle={emptyTitle}
           emptyDescription={emptyDescription}
-          toolbarStart={(
-            <PetSelectField
-              pets={pets}
-              selectedPetId={selectedPetId}
-              onSelectPet={setSelectedPetId}
-              hideHeader
-            />
-          )}
           onCreateRecord={pets.length > 0 ? () => setIsRecordModalOpen(true) : undefined}
           filters={(
             <RecordFilters
@@ -212,6 +204,15 @@ export function RecordsPage({
               selectedCondition={selectedCondition}
               selectedTags={selectedTags}
               sortOrder={sortOrder}
+              petSelector={(
+                <PetSelectField
+                  pets={pets}
+                  selectedPetId={selectedPetId}
+                  onSelectPet={setSelectedPetId}
+                  label="마이펫"
+                  size="compact"
+                />
+              )}
               summary={(
                 <RecordFilterSummary
                   filters={activeFilterSummaryItems}

@@ -26,6 +26,7 @@ type RecordFiltersProps = {
   selectedCondition: string;
   selectedTags: string[];
   sortOrder: RecordSortOrder;
+  petSelector?: ReactNode;
   summary?: ReactNode;
   onChangeStartDate: (value: string) => void;
   onChangeEndDate: (value: string) => void;
@@ -133,6 +134,7 @@ export function RecordFilters({
   selectedCondition,
   selectedTags,
   sortOrder,
+  petSelector,
   summary,
   onChangeStartDate,
   onChangeEndDate,
@@ -152,7 +154,8 @@ export function RecordFilters({
 
   return (
     <div className="grid gap-3 rounded-xl border border-border bg-surface p-3">
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+        {petSelector}
         <label className="grid gap-1.5 text-sm font-semibold text-text-secondary">
           시작일
           <DatePicker placeholder="시작일 선택" value={startDate} onChange={onChangeStartDate} />

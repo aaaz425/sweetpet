@@ -19,15 +19,18 @@ type PetSelectFieldProps = {
   label?: string;
   helperText?: string;
   hideHeader?: boolean;
+  size?: "default" | "compact";
 };
 
 type PetAvatarProps = {
   pet?: Pet;
+  size?: "default" | "compact";
 };
 
-function PetAvatar({ pet }: PetAvatarProps) {
+function PetAvatar({ pet, size = "default" }: PetAvatarProps) {
   const [hasImageError, setHasImageError] = useState(false);
   const label = pet?.name?.trim().slice(0, 1) || "?";
+  const avatarClassName = size === "compact" ? "h-7 w-7 text-xs" : "h-9 w-9 text-sm";
 
   useEffect(() => {
     setHasImageError(false);
@@ -36,7 +39,7 @@ function PetAvatar({ pet }: PetAvatarProps) {
   if (!pet || hasImageError) {
     return (
       <span
-        className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-soft text-sm font-bold text-primary"
+        className={cn("inline-flex shrink-0 items-center justify-center rounded-full bg-primary-soft font-bold text-primary", avatarClassName)}
         aria-hidden="true"
       >
         {label}
@@ -46,7 +49,7 @@ function PetAvatar({ pet }: PetAvatarProps) {
 
   return (
     <img
-      className="h-9 w-9 shrink-0 rounded-full object-cover ring-1 ring-border"
+      className={cn("shrink-0 rounded-full object-cover ring-1 ring-border", avatarClassName)}
       alt={`${pet.name} 대표 사진`}
       src={petImageUrl(pet)}
       onError={() => setHasImageError(true)}
@@ -60,10 +63,12 @@ export function PetSelectField({
   onSelectPet,
   label = "대상 반려동물",
   helperText,
-  hideHeader = false
+  hideHeader = false,
+  size = "default"
 }: PetSelectFieldProps) {
   const labelId = useId();
   const selectedPet = pets.find((pet) => pet.id === selectedPetId);
+  const isCompact = size === "compact";
 
   return (
     <div className="grid min-w-0 gap-2">
@@ -80,18 +85,23 @@ export function PetSelectField({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
-            className="flex min-h-12 w-full min-w-0 cursor-pointer items-center justify-between gap-3 rounded-xl border border-white/50 bg-white/70 px-3 py-2 text-left shadow-sm backdrop-blur-xl transition-all duration-200 hover:bg-white/85 active:scale-[0.99]"
+            className={cn(
+              "flex w-full min-w-0 cursor-pointer items-center justify-between rounded-xl border border-white/50 bg-white/70 text-left shadow-sm backdrop-blur-xl transition-all duration-200 hover:bg-white/85 active:scale-[0.99]",
+              isCompact ? "min-h-10 gap-2 px-2.5 py-1.5" : "min-h-12 gap-3 px-3 py-2"
+            )}
             aria-labelledby={labelId}
             disabled={pets.length === 0}
             type="button"
           >
-            <span className="flex min-w-0 items-center gap-3">
-              <PetAvatar pet={selectedPet} />
-              <span className="grid min-w-0 gap-0.5">
+            <span className={cn("flex min-w-0 items-center", isCompact ? "gap-2" : "gap-3")}>
+              <PetAvatar pet={selectedPet} size={size} />
+              <span className={cn("grid min-w-0", isCompact ? "gap-0" : "gap-0.5")}>
                 <span className="truncate text-sm font-bold text-text-primary">{selectedPet?.name ?? "반려동물 선택"}</span>
-                <span className="truncate text-xs font-medium text-text-secondary">
-                  {selectedPet ? selectedPet.breed || selectedPet.species : "기록과 주문에 사용할 반려동물을 선택하세요"}
-                </span>
+                {isCompact ? null : (
+                  <span className="truncate text-xs font-medium text-text-secondary">
+                    {selectedPet ? selectedPet.breed || selectedPet.species : "기록과 주문에 사용할 반려동물을 선택하세요"}
+                  </span>
+                )}
               </span>
             </span>
             <ChevronDown className="h-4 w-4 shrink-0 text-text-secondary" aria-hidden="true" />

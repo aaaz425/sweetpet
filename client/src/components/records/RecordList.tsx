@@ -8,6 +8,7 @@ import { DeleteConfirmModal } from "../feedback/DeleteConfirmModal";
 import { DataLoadErrorState } from "../feedback/PageState";
 import { EmptyState } from "../feedback/EmptyState";
 import { badgeClass, cardSurfaceClass, panelClass } from "../ui";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import { RecordCalendarView } from "./RecordCalendarView";
 
 type RecordListProps = {
@@ -17,7 +18,6 @@ type RecordListProps = {
   isLoading: boolean;
   isError: boolean;
   isFetchingNextPage: boolean;
-  toolbarStart: ReactNode;
   filters?: ReactNode;
   emptyTitle?: string;
   emptyDescription?: string;
@@ -36,7 +36,6 @@ export function RecordList({
   isLoading,
   isError,
   isFetchingNextPage,
-  toolbarStart,
   filters,
   emptyTitle = "작성된 일상기록이 없습니다",
   emptyDescription = "선택한 반려동물의 사진, 컨디션, 메모를 남기면 이곳에서 날짜순으로 확인할 수 있습니다.",
@@ -86,51 +85,78 @@ export function RecordList({
     }
   }
 
+  function toggleViewMode(selectedViewMode: RecordViewMode) {
+    setViewMode((currentViewMode) => {
+      if (currentViewMode !== selectedViewMode) return selectedViewMode;
+      return currentViewMode === "list" ? "calendar" : "list";
+    });
+  }
+
+  const viewModeToggle = (
+    <TooltipProvider delayDuration={120}>
+      <div
+        className="relative grid grid-cols-2 rounded-full border border-white/50 bg-white/60 p-0.5 shadow-sm backdrop-blur-xl"
+        aria-label="일상기록 보기 방식"
+      >
+        <span
+          className={cn(
+            "absolute left-0.5 top-0.5 h-[calc(100%-0.25rem)] w-[calc(50%-0.125rem)] rounded-full bg-primary shadow transition-transform duration-200 ease-out",
+            viewMode === "calendar" && "translate-x-full"
+          )}
+          aria-hidden="true"
+        />
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              aria-label="리스트 보기"
+              aria-pressed={viewMode === "list"}
+              className={cn(
+                "relative z-10 inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors duration-[180ms] active:scale-[0.98]",
+                viewMode === "list" ? "text-surface hover:text-surface" : "text-text-secondary hover:text-primary"
+              )}
+              onClick={() => toggleViewMode("list")}
+              type="button"
+            >
+              <List className="h-4 w-4" aria-hidden="true" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>리스트 보기</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              aria-label="캘린더 보기"
+              aria-pressed={viewMode === "calendar"}
+              className={cn(
+                "relative z-10 inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors duration-[180ms] active:scale-[0.98]",
+                viewMode === "calendar" ? "text-surface hover:text-surface" : "text-text-secondary hover:text-primary"
+              )}
+              onClick={() => toggleViewMode("calendar")}
+              type="button"
+            >
+              <CalendarDays className="h-4 w-4" aria-hidden="true" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>캘린더 보기</TooltipContent>
+        </Tooltip>
+      </div>
+    </TooltipProvider>
+  );
+
+  const createRecordButton = onCreateRecord ? (
+    <button
+      aria-label="일상기록 작성"
+      className="fixed bottom-5 right-5 z-40 inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-primary bg-primary px-4 py-3 text-sm font-bold text-surface shadow-[0_14px_32px_rgba(25,23,20,0.22)] transition duration-150 hover:border-accent hover:bg-accent active:scale-[0.98] sm:bottom-10 sm:right-10 lg:right-[calc((100vw-1120px)/4+2rem)]"
+      onClick={onCreateRecord}
+      type="button"
+    >
+      <Plus className="h-5 w-5" aria-hidden="true" />
+      <span>일상기록 작성</span>
+    </button>
+  ) : null;
+
   return (
     <div className={`${panelClass} grid min-w-0 gap-5`}>
-      <div className={`grid min-w-0 gap-3.5 p-3 lg:grid-cols-[minmax(220px,1fr)_auto] lg:items-end ${cardSurfaceClass}`}>
-        <div className="min-w-0">{toolbarStart}</div>
-        <div
-          className="relative grid grid-cols-2 rounded-full border border-white/50 bg-white/60 p-0.5 shadow-sm backdrop-blur-xl"
-          aria-label="일상기록 보기 방식"
-          role="tablist"
-        >
-          <span
-            className={cn(
-              "absolute left-0.5 top-0.5 h-[calc(100%-0.25rem)] w-[calc(50%-0.125rem)] rounded-full bg-primary shadow transition-transform duration-200 ease-out",
-              viewMode === "calendar" && "translate-x-full"
-            )}
-            aria-hidden="true"
-          />
-          <button
-            className={cn(
-              "relative z-10 inline-flex min-h-8 items-center justify-center gap-1.5 rounded-full px-3 text-xs font-semibold transition-colors duration-[180ms] active:scale-[0.99]",
-              viewMode === "list" ? "text-surface hover:text-surface" : "text-text-secondary hover:text-primary"
-            )}
-            onClick={() => setViewMode("list")}
-            role="tab"
-            aria-selected={viewMode === "list"}
-            type="button"
-          >
-            <List className="h-4 w-4" aria-hidden="true" />
-            리스트
-          </button>
-          <button
-            className={cn(
-              "relative z-10 inline-flex min-h-8 items-center justify-center gap-1.5 rounded-full px-3 text-xs font-semibold transition-colors duration-[180ms] active:scale-[0.99]",
-              viewMode === "calendar" ? "text-surface hover:text-surface" : "text-text-secondary hover:text-primary"
-            )}
-            onClick={() => setViewMode("calendar")}
-            role="tab"
-            aria-selected={viewMode === "calendar"}
-            type="button"
-          >
-            <CalendarDays className="h-4 w-4" aria-hidden="true" />
-            캘린더
-          </button>
-        </div>
-      </div>
-
       {filters}
 
       {isLoading ? (
@@ -140,35 +166,24 @@ export function RecordList({
       ) : isError ? (
         <DataLoadErrorState title="일상기록을 불러오지 못했습니다" isFramed={false} />
       ) : (
-        <div className="grid min-w-0 gap-3.5">
-          {onCreateRecord ? (
-            <button
-              className={`grid min-w-0 place-items-center gap-3 p-5 text-center transition duration-150 hover:border-border-strong hover:bg-surface-muted/45 active:scale-[0.99] ${cardSurfaceClass}`}
-              onClick={onCreateRecord}
-              type="button"
-            >
-              <span className="grid justify-items-center gap-3">
-                <span className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-border bg-primary-soft text-primary">
-                  <Plus className="h-5 w-5" aria-hidden="true" />
-                </span>
-                <span className="grid gap-1">
-                  <strong className="text-base text-text-primary">일상기록 작성</strong>
-                  <span className="text-sm leading-6 text-text-secondary">오늘의 기록을 추가하세요</span>
-                </span>
-              </span>
-            </button>
-          ) : null}
-          {records.length === 0 ? (
-            <EmptyState
-              title={emptyTitle}
-              description={emptyDescription}
-            />
-          ) : null}
-          {viewMode === "list" ? (
-            <>
+        <div className={`overflow-hidden ${cardSurfaceClass}`}>
+          <div className="flex justify-start bg-surface px-2.5 py-1.5">
+            {viewModeToggle}
+          </div>
+          <div className="min-w-0">
+            {records.length === 0 ? (
+              <div className="p-3">
+                <EmptyState
+                  title={emptyTitle}
+                  description={emptyDescription}
+                />
+              </div>
+            ) : null}
+            {viewMode === "list" ? (
+              <div className="grid min-w-0">
               {records.map((record) => (
                 <article
-                  className={`grid min-w-0 cursor-pointer gap-3.5 p-4 transition duration-150 hover:border-border-strong hover:bg-surface-muted/45 active:scale-[0.99] md:grid-cols-[168px_minmax(0,1fr)_auto] md:gap-5 md:p-5 ${cardSurfaceClass}`}
+                  className="grid min-w-0 cursor-pointer gap-3.5 border-b border-border p-4 transition duration-150 last:border-b-0 hover:bg-surface-muted/45 active:scale-[0.99] sm:grid-cols-[144px_minmax(0,1fr)_auto] sm:items-start sm:gap-4 md:grid-cols-[156px_minmax(0,1fr)_auto] md:p-5"
                   key={record.id}
                   onClick={() => onSelectRecord(record)}
                   onKeyDown={(event) => {
@@ -180,42 +195,40 @@ export function RecordList({
                   role="button"
                   tabIndex={0}
                 >
-                  <div className="grid content-start gap-2.5">
-                    <time className="text-sm font-medium leading-5 text-text-secondary">{record.recordDate}</time>
-                    <h3 className="text-base font-bold leading-6 text-text-primary">{record.condition}</h3>
+                  <button
+                    className="w-full max-w-sm text-left sm:max-w-none"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onSelectRecord(record);
+                    }}
+                    type="button"
+                  >
+                    <img
+                      alt={`${record.recordDate} 일상기록 사진`}
+                      className="aspect-[4/3] w-full rounded-lg border border-border object-cover"
+                      src={recordImageUrl(record)}
+                    />
+                  </button>
+                  <button
+                    className="grid h-full min-w-0 grid-rows-[auto_minmax(0,1fr)_auto] gap-2 text-left transition duration-150 hover:text-text-primary"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onSelectRecord(record);
+                    }}
+                    type="button"
+                  >
+                    <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
+                      <time className="text-sm font-medium leading-5 text-text-secondary">{record.recordDate}</time>
+                      <h3 className="min-w-0 truncate text-base font-bold leading-6 text-text-primary">{record.condition}</h3>
+                    </div>
+                    <p className="line-clamp-3 max-w-3xl self-start text-sm leading-6 text-text-secondary">{record.memo}</p>
                     {record.tags.length > 0 ? (
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap content-end gap-2 self-end">
                         {record.tags.map((tag) => <span className={badgeClass} key={tag}>{tag}</span>)}
                       </div>
-                    ) : null}
-                  </div>
-                  <div className="grid min-w-0 gap-3 sm:grid-cols-[172px_minmax(0,1fr)] sm:items-start">
-                    <button
-                      className="w-full max-w-sm text-left sm:max-w-none"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        onSelectRecord(record);
-                      }}
-                      type="button"
-                    >
-                      <img
-                        alt={`${record.recordDate} 일상기록 사진`}
-                        className="aspect-[4/3] w-full rounded-lg border border-border object-cover"
-                        src={recordImageUrl(record)}
-                      />
-                    </button>
-                    <button
-                      className="min-w-0 text-left text-sm leading-6 text-text-secondary transition duration-150 hover:text-text-primary"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        onSelectRecord(record);
-                      }}
-                      type="button"
-                    >
-                      {record.memo}
-                    </button>
-                  </div>
-                  <div className="flex shrink-0 gap-1 self-start md:justify-end">
+                    ) : <span aria-hidden="true" />}
+                  </button>
+                  <div className="flex shrink-0 gap-1 self-start sm:justify-end">
                     <button
                       aria-label={`${record.recordDate} 일상기록 편집`}
                       className="inline-flex h-8 w-8 items-center justify-center rounded-full text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99]"
@@ -243,14 +256,20 @@ export function RecordList({
               ))}
               {hasNextPage ? <div ref={loadMoreRef} className="h-1" aria-hidden="true" /> : null}
               {isFetchingNextPage ? (
-                <div className="rounded-xl border border-border bg-surface-muted px-4 py-3 text-center text-sm font-medium text-text-secondary">
+                <div className="border-t border-border bg-surface-muted px-4 py-3 text-center text-sm font-medium text-text-secondary">
                   일상기록을 더 불러오는 중입니다
                 </div>
               ) : null}
-            </>
-          ) : records.length > 0 ? <RecordCalendarView records={records} onSelectRecord={onSelectRecord} /> : null}
+              </div>
+            ) : records.length > 0 ? (
+              <div className="p-5 sm:p-6">
+                <RecordCalendarView records={records} onSelectRecord={onSelectRecord} />
+              </div>
+            ) : null}
+          </div>
         </div>
       )}
+      {createRecordButton}
       {deleteTargetRecord ? (
         <DeleteConfirmModal
           title="일상기록 삭제"

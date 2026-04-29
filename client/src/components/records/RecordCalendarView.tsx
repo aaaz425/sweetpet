@@ -3,7 +3,15 @@ import { useEffect, useMemo, useState } from "react";
 import { recordImageUrl } from "../../lib/mockImages";
 import { cn } from "../../lib/utils";
 import type { RecordItem } from "../../types";
-import { cardSurfaceClass, secondaryButtonClass } from "../ui";
+import { cardSurfaceClass } from "../ui";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from "../ui/dropdown-menu";
 
 type RecordCalendarViewProps = {
   records: RecordItem[];
@@ -11,6 +19,8 @@ type RecordCalendarViewProps = {
 };
 
 const calendarWeekdays = ["일", "월", "화", "수", "목", "금", "토"];
+const calendarMonths = Array.from({ length: 12 }, (_, index) => index);
+type CalendarPickerStep = "year" | "month";
 
 function parseRecordDate(date: string) {
   const [year, month, day] = date.split("-").map(Number);
@@ -24,12 +34,12 @@ function formatDateKey(date: Date) {
   return `${year}-${month}-${day}`;
 }
 
-function formatMonthLabel(date: Date) {
-  return `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
-}
-
 function startOfMonth(date: Date) {
   return new Date(date.getFullYear(), date.getMonth(), 1);
+}
+
+function isAfterMonth(date: Date, maxDate: Date) {
+  return startOfMonth(date) > startOfMonth(maxDate);
 }
 
 function addMonths(date: Date, amount: number) {
@@ -38,10 +48,14 @@ function addMonths(date: Date, amount: number) {
 
 function getCalendarDays(activeMonth: Date) {
   const monthStart = startOfMonth(activeMonth);
+  const monthEnd = new Date(activeMonth.getFullYear(), activeMonth.getMonth() + 1, 0);
   const firstCalendarDay = new Date(monthStart);
+  const lastCalendarDay = new Date(monthEnd);
   firstCalendarDay.setDate(monthStart.getDate() - monthStart.getDay());
+  lastCalendarDay.setDate(monthEnd.getDate() + (6 - monthEnd.getDay()));
+  const calendarDayCount = Math.round((lastCalendarDay.getTime() - firstCalendarDay.getTime()) / (1000 * 60 * 60 * 24)) + 1;
 
-  return Array.from({ length: 42 }, (_, index) => {
+  return Array.from({ length: calendarDayCount }, (_, index) => {
     const day = new Date(firstCalendarDay);
     day.setDate(firstCalendarDay.getDate() + index);
     return day;
@@ -58,7 +72,16 @@ function latestRecordMonth(records: RecordItem[]) {
 }
 
 export function RecordCalendarView({ records, onSelectRecord }: RecordCalendarViewProps) {
+  const maxCalendarMonth = useMemo(() => startOfMonth(new Date()), []);
   const [activeMonth, setActiveMonth] = useState(() => startOfMonth(latestRecordMonth(records)));
+  const [isCalendarPickerOpen, setIsCalendarPickerOpen] = useState(false);
+  const [calendarPickerStep, setCalendarPickerStep] = useState<CalendarPickerStep>("year");
+  const [selectedPickerYear, setSelectedPickerYear] = useState(() => activeMonth.getFullYear());
+  const calendarYears = useMemo(() => {
+    const currentYear = new Date().getFullYear();
+
+    return Array.from({ length: 100 }, (_, index) => currentYear - index);
+  }, []);
 
   const recordsByDate = useMemo(() => {
     const groupedRecords = new Map<string, RecordItem[]>();
@@ -76,30 +99,91 @@ export function RecordCalendarView({ records, onSelectRecord }: RecordCalendarVi
   }, [records]);
 
   const calendarDays = useMemo(() => getCalendarDays(activeMonth), [activeMonth]);
+  const isNextMonthDisabled = isAfterMonth(addMonths(activeMonth, 1), maxCalendarMonth);
 
   useEffect(() => {
-    setActiveMonth(startOfMonth(latestRecordMonth(records)));
-  }, [records]);
+    const latestMonth = startOfMonth(latestRecordMonth(records));
+    setActiveMonth(isAfterMonth(latestMonth, maxCalendarMonth) ? maxCalendarMonth : latestMonth);
+  }, [maxCalendarMonth, records]);
+
+  useEffect(() => {
+    if (!isCalendarPickerOpen) return;
+    setCalendarPickerStep("year");
+    setSelectedPickerYear(activeMonth.getFullYear());
+  }, [activeMonth, isCalendarPickerOpen]);
 
   return (
     <div className="grid min-w-0 gap-3.5">
-      <div className={`flex items-center justify-between gap-3 px-3 py-2 ${cardSurfaceClass}`}>
+      <div className="flex items-center justify-center gap-1.5">
         <button
           aria-label="이전 달"
-          className={`${secondaryButtonClass} inline-flex h-9 w-9 items-center justify-center rounded-lg p-0`}
+          className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-text-secondary transition duration-150 hover:bg-surface-muted hover:text-primary active:scale-[0.98]"
           onClick={() => setActiveMonth((currentMonth) => addMonths(currentMonth, -1))}
           type="button"
         >
-          <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+          <ChevronLeft className="h-5 w-5" aria-hidden="true" />
         </button>
-        <h3 className="text-base font-bold text-text-primary">{formatMonthLabel(activeMonth)}</h3>
+        <DropdownMenu open={isCalendarPickerOpen} onOpenChange={setIsCalendarPickerOpen}>
+          <DropdownMenuTrigger asChild>
+            <button
+              className="inline-flex h-9 items-center justify-center gap-1 rounded-lg px-3 text-base font-bold text-text-primary transition duration-150 hover:bg-surface-muted active:scale-[0.99]"
+              type="button"
+            >
+              {activeMonth.getFullYear()}년 {activeMonth.getMonth() + 1}월
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="max-h-80 w-56 overflow-y-auto">
+            <DropdownMenuLabel>
+              {calendarPickerStep === "year" ? "연도 선택" : `${selectedPickerYear}년 월 선택`}
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <div className="grid grid-cols-3 gap-1 p-1">
+              {calendarPickerStep === "year"
+                ? calendarYears.map((year) => (
+                    <DropdownMenuItem
+                      className="aspect-square justify-center px-2 text-center font-semibold"
+                      key={year}
+                      onSelect={(event) => {
+                        event.preventDefault();
+                        setSelectedPickerYear(year);
+                        setCalendarPickerStep("month");
+                      }}
+                    >
+                      {year}
+                    </DropdownMenuItem>
+                  ))
+                : calendarMonths.map((monthIndex) => (
+                    <DropdownMenuItem
+                      className="aspect-square justify-center px-2 text-center font-semibold"
+                      disabled={
+                        isAfterMonth(new Date(selectedPickerYear, monthIndex, 1), maxCalendarMonth) ||
+                        (selectedPickerYear === activeMonth.getFullYear() && monthIndex === activeMonth.getMonth())
+                      }
+                      key={monthIndex}
+                      onSelect={() => {
+                        setActiveMonth(new Date(selectedPickerYear, monthIndex, 1));
+                        setIsCalendarPickerOpen(false);
+                      }}
+                    >
+                      {monthIndex + 1}월
+                    </DropdownMenuItem>
+                  ))}
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
         <button
           aria-label="다음 달"
-          className={`${secondaryButtonClass} inline-flex h-9 w-9 items-center justify-center rounded-lg p-0`}
-          onClick={() => setActiveMonth((currentMonth) => addMonths(currentMonth, 1))}
+          className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-text-secondary transition duration-150 hover:bg-surface-muted hover:text-primary active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent disabled:hover:text-text-secondary"
+          disabled={isNextMonthDisabled}
+          onClick={() => {
+            setActiveMonth((currentMonth) => {
+              const nextMonth = addMonths(currentMonth, 1);
+              return isAfterMonth(nextMonth, maxCalendarMonth) ? currentMonth : nextMonth;
+            });
+          }}
           type="button"
         >
-          <ChevronRight className="h-4 w-4" aria-hidden="true" />
+          <ChevronRight className="h-5 w-5" aria-hidden="true" />
         </button>
       </div>
       <div className={`grid grid-cols-7 overflow-hidden ${cardSurfaceClass}`}>
