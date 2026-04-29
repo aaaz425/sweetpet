@@ -24,6 +24,8 @@ export function appendIfPresent(formData: FormData, key: string, value: string |
 }
 
 export function assetUrl(path: string | null) {
-  return path ? `${apiUrl}${path}` : "";
+  if (!path) return "";
+  if (path.startsWith("http://") || path.startsWith("https://")) return path;
+  if (!path.startsWith("/uploads")) return path;
+  return `${apiUrl}${path}`;
 }
-

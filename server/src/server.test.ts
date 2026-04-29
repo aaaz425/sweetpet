@@ -29,9 +29,9 @@ async function createSeedOrder() {
     .post("/api/orders")
     .send({
       petId,
-      title: "몽이의 4월 앨범",
-      startDate: "2026-04-01",
-      endDate: "2026-04-30",
+      title: "온달의 3월 앨범",
+      startDate: "2026-03-04",
+      endDate: "2026-03-29",
       printOptions: {
         size: "b5",
         binding: "hardcover",
@@ -68,7 +68,7 @@ describe("sweetpet api", () => {
     expect(response.body.data).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          name: "몽이",
+          name: "온달",
           species: "강아지"
         })
       ])
@@ -126,7 +126,7 @@ describe("sweetpet api", () => {
     const order = await createSeedOrder();
 
     expect(order).toMatchObject({
-      title: "몽이의 4월 앨범",
+      title: "온달의 3월 앨범",
       status: "pending",
       recordCount: 5,
       printOptions: {
@@ -192,7 +192,7 @@ describe("sweetpet api", () => {
         recordCount: 5
       }),
       pet: expect.objectContaining({
-        name: "몽이"
+        name: "온달"
       }),
       printOptions: {
         size: "b5",
