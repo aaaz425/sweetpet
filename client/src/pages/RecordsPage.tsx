@@ -7,7 +7,7 @@ import { RecordFilterSummary, type RecordFilterSummaryItem } from "../components
 import { RecordFilters, type RecordSortOrder } from "../components/records/RecordFilters";
 import { RecordForm } from "../components/records/RecordForm";
 import { RecordList } from "../components/records/RecordList";
-import { primaryButtonClass, secondaryButtonClass } from "../components/ui";
+import { secondaryButtonClass } from "../components/ui";
 import type { Pet, RecordFormState, RecordItem } from "../types";
 
 type RecordsPageProps = {
@@ -202,16 +202,7 @@ export function RecordsPage({
               hideHeader
             />
           )}
-          toolbarAction={(
-            <button
-              className={primaryButtonClass}
-              disabled={pets.length === 0}
-              onClick={() => setIsRecordModalOpen(true)}
-              type="button"
-            >
-              일상기록 작성
-            </button>
-          )}
+          onCreateRecord={pets.length > 0 ? () => setIsRecordModalOpen(true) : undefined}
           filters={(
             <RecordFilters
               conditionOptions={conditionOptions}

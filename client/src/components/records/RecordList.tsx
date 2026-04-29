@@ -1,4 +1,4 @@
-import { CalendarDays, List, Pencil, Trash2 } from "lucide-react";
+import { CalendarDays, List, Pencil, Plus, Trash2 } from "lucide-react";
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { recordImageUrl } from "../../lib/mockImages";
@@ -17,11 +17,11 @@ type RecordListProps = {
   isLoading: boolean;
   isError: boolean;
   isFetchingNextPage: boolean;
-  toolbarAction: ReactNode;
   toolbarStart: ReactNode;
   filters?: ReactNode;
   emptyTitle?: string;
   emptyDescription?: string;
+  onCreateRecord?: () => void;
   onDeleteRecord: (id: number) => Promise<void>;
   onEditRecord: (record: RecordItem) => void;
   onSelectRecord: (record: RecordItem) => void;
@@ -36,11 +36,11 @@ export function RecordList({
   isLoading,
   isError,
   isFetchingNextPage,
-  toolbarAction,
   toolbarStart,
   filters,
   emptyTitle = "작성된 일상기록이 없습니다",
   emptyDescription = "선택한 반려동물의 사진, 컨디션, 메모를 남기면 이곳에서 날짜순으로 확인할 수 있습니다.",
+  onCreateRecord,
   onDeleteRecord,
   onEditRecord,
   onSelectRecord
@@ -86,25 +86,28 @@ export function RecordList({
     }
   }
 
-  function toggleViewMode() {
-    setViewMode((currentViewMode) => (currentViewMode === "list" ? "calendar" : "list"));
-  }
-
   return (
     <div className={`${panelClass} grid min-w-0 gap-5`}>
-      <div className={`grid min-w-0 gap-3.5 p-3 lg:grid-cols-[minmax(220px,1fr)_auto_auto] lg:items-end ${cardSurfaceClass}`}>
+      <div className={`grid min-w-0 gap-3.5 p-3 lg:grid-cols-[minmax(220px,1fr)_auto] lg:items-end ${cardSurfaceClass}`}>
         <div className="min-w-0">{toolbarStart}</div>
         <div
-          className="grid grid-cols-2 rounded-xl border border-border bg-surface-muted p-1"
+          className="relative grid grid-cols-2 rounded-full border border-white/50 bg-white/60 p-0.5 shadow-sm backdrop-blur-xl"
           aria-label="일상기록 보기 방식"
           role="tablist"
         >
+          <span
+            className={cn(
+              "absolute left-0.5 top-0.5 h-[calc(100%-0.25rem)] w-[calc(50%-0.125rem)] rounded-full bg-primary shadow transition-transform duration-200 ease-out",
+              viewMode === "calendar" && "translate-x-full"
+            )}
+            aria-hidden="true"
+          />
           <button
             className={cn(
-              "inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg px-3 text-sm font-semibold transition duration-150",
-              viewMode === "list" ? "bg-surface text-primary shadow-sm" : "text-text-secondary hover:text-primary"
+              "relative z-10 inline-flex min-h-8 items-center justify-center gap-1.5 rounded-full px-3 text-xs font-semibold transition-colors duration-[180ms] active:scale-[0.99]",
+              viewMode === "list" ? "text-surface hover:text-surface" : "text-text-secondary hover:text-primary"
             )}
-            onClick={toggleViewMode}
+            onClick={() => setViewMode("list")}
             role="tab"
             aria-selected={viewMode === "list"}
             type="button"
@@ -114,10 +117,10 @@ export function RecordList({
           </button>
           <button
             className={cn(
-              "inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg px-3 text-sm font-semibold transition duration-150",
-              viewMode === "calendar" ? "bg-surface text-primary shadow-sm" : "text-text-secondary hover:text-primary"
+              "relative z-10 inline-flex min-h-8 items-center justify-center gap-1.5 rounded-full px-3 text-xs font-semibold transition-colors duration-[180ms] active:scale-[0.99]",
+              viewMode === "calendar" ? "text-surface hover:text-surface" : "text-text-secondary hover:text-primary"
             )}
-            onClick={toggleViewMode}
+            onClick={() => setViewMode("calendar")}
             role="tab"
             aria-selected={viewMode === "calendar"}
             type="button"
@@ -126,7 +129,6 @@ export function RecordList({
             캘린더
           </button>
         </div>
-        <div className="grid min-w-0">{toolbarAction}</div>
       </div>
 
       {filters}
@@ -139,6 +141,23 @@ export function RecordList({
         <DataLoadErrorState title="일상기록을 불러오지 못했습니다" isFramed={false} />
       ) : (
         <div className="grid min-w-0 gap-3.5">
+          {onCreateRecord ? (
+            <button
+              className={`grid min-w-0 place-items-center gap-3 p-5 text-center transition duration-150 hover:border-border-strong hover:bg-surface-muted/45 active:scale-[0.99] ${cardSurfaceClass}`}
+              onClick={onCreateRecord}
+              type="button"
+            >
+              <span className="grid justify-items-center gap-3">
+                <span className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-border bg-primary-soft text-primary">
+                  <Plus className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <span className="grid gap-1">
+                  <strong className="text-base text-text-primary">일상기록 작성</strong>
+                  <span className="text-sm leading-6 text-text-secondary">오늘의 기록을 추가하세요</span>
+                </span>
+              </span>
+            </button>
+          ) : null}
           {records.length === 0 ? (
             <EmptyState
               title={emptyTitle}
