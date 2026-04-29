@@ -12,7 +12,11 @@ async function deletePetByName(request: APIRequestContext, petName: string) {
   await Promise.all(createdPets.map((pet) => request.delete(`${apiUrl}/api/pets/${pet.id}`)));
 }
 
-test("creates an album order and exports JSON from admin", async ({ page, request }) => {
+test("마이펫 등록부터 일상기록 작성, 앨범북 주문, 관리자 JSON 보기와 복사까지 확인한다", async ({
+  context,
+  page,
+  request
+}) => {
   const runId = Date.now();
   const petName = `E2E 펫 ${runId}`;
   const orderTitle = `E2E 앨범 ${runId}`;
@@ -64,7 +68,9 @@ test("creates an album order and exports JSON from admin", async ({ page, reques
       await expect(page.getByText(orderTitle)).toBeVisible();
     });
 
-    await test.step("관리자가 주문을 열고 export JSON을 확인한다", async () => {
+    await test.step("관리자가 주문을 열고 JSON 보기, 복사를 확인한다", async () => {
+      await context.grantPermissions(["clipboard-write"], { origin: "http://127.0.0.1:5175" });
+
       await page.getByRole("tab", { name: "관리자" }).click();
       await expect(page.getByText(orderTitle)).toBeVisible();
       await page.getByText(orderTitle).click();
@@ -77,6 +83,9 @@ test("creates an album order and exports JSON from admin", async ({ page, reques
       await expect(exportJson).toContainText('"exportVersion": "1.0"');
       await expect(exportJson).toContainText(orderTitle);
       await expect(exportJson).toContainText('"selectedRecords"');
+
+      await page.getByRole("button", { name: "JSON 복사" }).click();
+      await expect(page.getByText("JSON을 복사했습니다.")).toBeVisible();
     });
   } finally {
     await test.step("E2E가 생성한 마이펫과 연결 데이터를 정리한다", async () => {
