@@ -1,22 +1,20 @@
 import { X } from "lucide-react";
 
-export type RecordFilterSummaryItem = {
+export type OrderFilterSummaryItem = {
   label: string;
   value: string;
   onRemove?: () => void;
 };
 
-type RecordFilterSummaryProps = {
-  filters: RecordFilterSummaryItem[];
+type OrderFilterSummaryProps = {
+  filters: OrderFilterSummaryItem[];
   resultCount: number;
 };
 
 const summaryBadgeClass =
   "box-border inline-flex h-6 appearance-none items-center rounded-full border border-border-strong bg-primary-soft px-2.5 py-0 font-sans !text-xs font-semibold !leading-none text-primary";
 
-export function RecordFilterSummary({ filters, resultCount }: RecordFilterSummaryProps) {
-  if (filters.length === 0) return null;
-
+export function OrderFilterSummary({ filters, resultCount }: OrderFilterSummaryProps) {
   const sortedFilters = [...filters].sort((firstFilter, secondFilter) => {
     if (Boolean(firstFilter.onRemove) === Boolean(secondFilter.onRemove)) return 0;
     return firstFilter.onRemove ? 1 : -1;
@@ -25,7 +23,7 @@ export function RecordFilterSummary({ filters, resultCount }: RecordFilterSummar
   return (
     <div className="flex min-w-0 flex-wrap items-center gap-2 px-1 pt-1">
       <span className="text-sm font-semibold text-text-primary">필터</span>
-      <span className="text-sm font-medium text-text-secondary">{resultCount}개</span>
+      <span className="text-sm font-medium text-text-secondary">{resultCount}건</span>
       <span className="text-sm text-border-strong" aria-hidden="true">|</span>
       <div className="flex min-w-0 flex-wrap items-center gap-2">
         {sortedFilters.map((filter) =>

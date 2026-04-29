@@ -21,9 +21,11 @@ export function AdminOrderFilterSummary({ filters, resultCount }: AdminOrderFilt
   });
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2 px-1 pt-1">
+    <div className="flex min-w-0 flex-wrap items-center gap-2 px-1 pt-1">
+      <span className="text-sm font-semibold text-text-primary">필터</span>
+      <span className="text-sm font-medium text-text-secondary">{resultCount}건</span>
+      <span className="text-sm text-border-strong" aria-hidden="true">|</span>
       <div className="flex min-w-0 flex-wrap items-center gap-2">
-        <span className="text-sm font-semibold text-text-primary">현재 적용 조건</span>
         {sortedFilters.map((filter) =>
           filter.onRemove ? (
             <button
@@ -42,9 +44,6 @@ export function AdminOrderFilterSummary({ filters, resultCount }: AdminOrderFilt
             </span>
           )
         )}
-      </div>
-      <div className="flex shrink-0 items-center gap-2">
-        <span className="text-sm font-medium text-text-secondary">{resultCount}건</span>
       </div>
     </div>
   );

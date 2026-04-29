@@ -6,7 +6,6 @@ import { PetFilterSummary } from "../components/pets/PetFilterSummary";
 import { PetFilters } from "../components/pets/PetFilters";
 import { PetForm } from "../components/pets/PetForm";
 import { PetList } from "../components/pets/PetList";
-import { primaryButtonClass } from "../components/ui";
 import type { Pet, PetFormState } from "../types";
 
 type PetsPageProps = {
@@ -90,28 +89,22 @@ export function PetsPage({ pets, isPetsError, onCreatePet, onDeletePet, onUpdate
           pets={filteredPets}
           emptyTitle={emptyTitle}
           emptyDescription={emptyDescription}
+          onCreatePet={() => setIsPetModalOpen(true)}
           onEditPet={setEditingPet}
           onDeletePet={onDeletePet}
           filters={
-            pets.length > 0 ? (
-              <PetFilters
-                speciesOptions={speciesOptions}
-                selectedSpecies={selectedSpecies}
-                summary={
-                  <PetFilterSummary
-                    selectedSpecies={selectedSpecies}
-                    resultCount={filteredPets.length}
-                    onRemoveSpecies={hasActiveFilters ? () => setSelectedSpecies("all") : undefined}
-                  />
-                }
-                onChangeSpecies={setSelectedSpecies}
-              />
-            ) : null
-          }
-          headerAction={
-            <button className={primaryButtonClass} onClick={() => setIsPetModalOpen(true)} type="button">
-              마이펫 등록
-            </button>
+            <PetFilters
+              speciesOptions={speciesOptions}
+              selectedSpecies={selectedSpecies}
+              summary={
+                <PetFilterSummary
+                  selectedSpecies={selectedSpecies}
+                  resultCount={filteredPets.length}
+                  onRemoveSpecies={hasActiveFilters ? () => setSelectedSpecies("all") : undefined}
+                />
+              }
+              onChangeSpecies={setSelectedSpecies}
+            />
           }
         />
       )}

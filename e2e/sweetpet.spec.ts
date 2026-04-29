@@ -7,8 +7,8 @@ test("creates an album order and exports JSON from admin", async ({ page }) => {
 
   // seed 데이터에 의존하지 않도록 새 마이펫을 등록한다.
   await page.goto("/pets");
-  await expect(page.getByRole("heading", { name: "등록된 마이펫" })).toBeVisible();
-  await page.getByRole("button", { name: "마이펫 등록" }).click();
+  await expect(page.getByRole("button", { name: /마이펫 등록/ })).toBeVisible();
+  await page.getByRole("button", { name: /마이펫 등록/ }).click();
   await expect(page.getByRole("heading", { name: "마이펫 등록" })).toBeVisible();
   await page.getByLabel("이름").fill(petName);
   await page.getByRole("combobox", { name: "종류 선택" }).click();

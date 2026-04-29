@@ -13,9 +13,11 @@ export function PetFilterSummary({ selectedSpecies, resultCount, onRemoveSpecies
   const speciesLabel = selectedSpecies === "all" ? "전체" : selectedSpecies;
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2 px-1 pt-1">
+    <div className="flex min-w-0 flex-wrap items-center gap-2 px-1 pt-1">
+      <span className="text-sm font-semibold text-text-primary">필터</span>
+      <span className="text-sm font-medium text-text-secondary">{resultCount}마리</span>
+      <span className="text-sm text-border-strong" aria-hidden="true">|</span>
       <div className="flex min-w-0 flex-wrap items-center gap-2">
-        <span className="text-sm font-semibold text-text-primary">현재 적용 조건</span>
         {onRemoveSpecies ? (
           <button
             aria-label="종류 조건 해제"
@@ -31,9 +33,6 @@ export function PetFilterSummary({ selectedSpecies, resultCount, onRemoveSpecies
             <span className="truncate font-sans !text-xs font-semibold !leading-none">종류: {speciesLabel}</span>
           </span>
         )}
-      </div>
-      <div className="flex shrink-0 items-center gap-2">
-        <span className="text-sm font-medium text-text-secondary">{resultCount}마리</span>
       </div>
     </div>
   );

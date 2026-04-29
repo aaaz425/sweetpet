@@ -1,6 +1,8 @@
 import { X } from "lucide-react";
 import { useMemo, useState } from "react";
+import { orderStatusLabels } from "../constants";
 import { DataLoadErrorState } from "../components/feedback/PageState";
+import { OrderFilterSummary, type OrderFilterSummaryItem } from "../components/orders/OrderFilterSummary";
 import { OrderFilters, type OrderSortOrder, type OrderStatusFilter } from "../components/orders/OrderFilters";
 import { OrderForm } from "../components/orders/OrderForm";
 import { OrderList } from "../components/orders/OrderList";
@@ -78,6 +80,31 @@ export function AlbumsPage({
     [orders, selectedFilterPetId, selectedStatus]
   );
   const sortedOrders = useMemo(() => sortOrders(filteredOrders, sortOrder), [filteredOrders, sortOrder]);
+  const selectedFilterPet = useMemo(
+    () => pets.find((pet) => pet.id === selectedFilterPetId) ?? null,
+    [pets, selectedFilterPetId]
+  );
+  const activeFilterSummaryItems = useMemo(() => {
+    const nextFilters: OrderFilterSummaryItem[] = [
+      {
+        label: "마이펫",
+        value: selectedFilterPet?.name ?? "전체",
+        onRemove: selectedFilterPetId !== null ? () => setSelectedFilterPetId(null) : undefined
+      },
+      {
+        label: "상태",
+        value: selectedStatus === "all" ? "전체" : orderStatusLabels[selectedStatus],
+        onRemove: selectedStatus !== "all" ? () => setSelectedStatus("all") : undefined
+      },
+      {
+        label: "정렬",
+        value: sortOrder === "newest" ? "최신순" : "오래된순",
+        onRemove: sortOrder === "oldest" ? () => setSortOrder("newest") : undefined
+      }
+    ];
+
+    return nextFilters;
+  }, [selectedFilterPet?.name, selectedFilterPetId, selectedStatus, sortOrder]);
   const emptyOrderTitle = orders.length === 0 ? "생성된 앨범북 주문이 없습니다" : "조건에 맞는 주문이 없습니다";
   const emptyOrderDescription =
     orders.length === 0
@@ -132,6 +159,7 @@ export function AlbumsPage({
               selectedPetId={selectedFilterPetId}
               selectedStatus={selectedStatus}
               sortOrder={sortOrder}
+              summary={<OrderFilterSummary filters={activeFilterSummaryItems} resultCount={sortedOrders.length} />}
               onChangePetId={setSelectedFilterPetId}
               onChangeStatus={setSelectedStatus}
               onChangeSortOrder={setSortOrder}

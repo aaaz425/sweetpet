@@ -1,4 +1,5 @@
 import { ChevronDown } from "lucide-react";
+import type { ReactNode } from "react";
 import { orderStatusLabels } from "../../constants";
 import type { OrderStatus, Pet } from "../../types";
 import { Button } from "../ui/button";
@@ -19,6 +20,7 @@ type OrderFiltersProps = {
   selectedPetId: number | null;
   selectedStatus: OrderStatusFilter;
   sortOrder: OrderSortOrder;
+  summary?: ReactNode;
   onChangePetId: (value: number | null) => void;
   onChangeStatus: (value: OrderStatusFilter) => void;
   onChangeSortOrder: (value: OrderSortOrder) => void;
@@ -72,6 +74,7 @@ export function OrderFilters({
   selectedPetId,
   selectedStatus,
   sortOrder,
+  summary,
   onChangePetId,
   onChangeStatus,
   onChangeSortOrder
@@ -98,6 +101,7 @@ export function OrderFilters({
         <FilterDropdown label="주문 상태" value={selectedStatus} options={statusOptions} onChange={onChangeStatus} />
         <FilterDropdown label="정렬" value={sortOrder} options={sortOptions} onChange={onChangeSortOrder} />
       </div>
+      {summary}
     </div>
   );
 }
