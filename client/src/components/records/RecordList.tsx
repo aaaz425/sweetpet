@@ -166,11 +166,11 @@ export function RecordList({
       ) : isError ? (
         <DataLoadErrorState title="일상기록을 불러오지 못했습니다" isFramed={false} />
       ) : (
-        <div className={`overflow-hidden ${cardSurfaceClass}`}>
-          <div className="flex justify-start bg-surface px-2.5 py-1.5">
+        <div className={`relative ${cardSurfaceClass}`}>
+          <div className="sticky top-0 z-30 flex justify-start px-2.5 py-1.5">
             {viewModeToggle}
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 overflow-hidden rounded-b-xl">
             {records.length === 0 ? (
               <div className="p-3">
                 <EmptyState
