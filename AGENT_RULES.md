@@ -116,6 +116,7 @@ The current codebase is intentionally small, but new work should move it toward 
 * For backend business logic, API behavior, and data model changes, write or update tests before or alongside implementation.
 * New order, record, export, and validation behavior must include tests that fail without the intended change.
 * Tests are required when changing records CRUD behavior, order creation or status flow, JSON export structure, validation rules, or API response shape.
+* Before finishing any code change, check whether the change affects existing unit, integration, or E2E tests, including Playwright selectors based on visible text, roles, labels, and routes.
 * Run `npm test` and `npm run build` before committing code changes.
 * For small visual-only UI changes, tests may be skipped if existing behavior is unchanged.
 
