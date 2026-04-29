@@ -14,7 +14,7 @@ export function PetFilterSummary({ selectedSpecies, resultCount, onRemoveSpecies
 
   return (
     <div className="flex min-w-0 flex-wrap items-center gap-2 px-1 pt-1">
-      <span className="text-sm font-semibold text-text-primary">필터</span>
+      <span className="text-sm font-semibold text-text-primary">결과</span>
       <span className="text-sm font-medium text-text-secondary">{resultCount}마리</span>
       <span className="text-sm text-border-strong" aria-hidden="true">|</span>
       <div className="flex min-w-0 flex-wrap items-center gap-2">
