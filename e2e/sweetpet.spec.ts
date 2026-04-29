@@ -19,7 +19,7 @@ test("creates an album order and exports JSON from admin", async ({ page }) => {
   // 앨범북 주문에 필요한 최소 일상기록 5개를 작성한다.
   await page.goto("/records");
   await expect(page.getByRole("button", { name: "일상기록 작성" })).toBeVisible();
-  await page.getByLabel("대상 반려동물").click();
+  await page.getByLabel("마이펫").click();
   await page.getByText(petName).click();
 
   for (let index = 1; index <= 5; index += 1) {
