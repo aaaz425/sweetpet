@@ -2,7 +2,6 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import { NotFoundState } from "../components/feedback/PageState";
 import { AdminOrdersPage } from "../pages/AdminOrdersPage";
 import { AlbumsPage } from "../pages/AlbumsPage";
-import { ExportPage } from "../pages/ExportPage";
 import { HomePage } from "../pages/HomePage";
 import { PetsPage } from "../pages/PetsPage";
 import { RecordsPage } from "../pages/RecordsPage";
@@ -73,7 +72,6 @@ export function AppRoutes({ app }: AppRoutesProps) {
           />
         }
       />
-      <Route path={pagePaths.export} element={<ExportPage exportJson={app.exportJson} />} />
       <Route path="*" element={<NotFoundState onGoHome={() => navigate(pagePaths.home)} />} />
     </Routes>
   );

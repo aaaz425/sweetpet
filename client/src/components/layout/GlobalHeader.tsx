@@ -8,7 +8,7 @@ type GlobalHeaderProps = {
 };
 
 export function GlobalHeader({ activePage, onSelectPage }: GlobalHeaderProps) {
-  const activeSection = activePage === "admin-orders" || activePage === "export" ? "admin" : "user";
+  const activeSection = activePage === "admin-orders" ? "admin" : "user";
   const visibleNavItems = activeSection === "admin" ? adminNavItems : userNavItems;
 
   function handleLogoClick() {

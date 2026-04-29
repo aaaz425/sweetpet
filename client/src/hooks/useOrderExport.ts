@@ -1,18 +1,14 @@
-import { useState } from "react";
 import { toast } from "sonner";
 import { exportOrder } from "../api/orders";
 import type { Order } from "../types";
 
 export function useOrderExport() {
-  const [exportJson, setExportJson] = useState("");
-
   async function handleExportOrder(order: Order) {
     if (!order.orderUid) return null;
 
     try {
       const exportedOrder = await exportOrder(order.orderUid);
       const nextExportJson = JSON.stringify(exportedOrder, null, 2);
-      setExportJson(nextExportJson);
       toast.success("내보내기 데이터가 준비되었습니다.");
       return nextExportJson;
     } catch {
@@ -38,7 +34,6 @@ export function useOrderExport() {
         null,
         2
       );
-      setExportJson(nextExportJson);
       toast.success(`${exportedOrders.length}건의 내보내기 데이터가 준비되었습니다.`);
       return nextExportJson;
     } catch {
@@ -48,7 +43,6 @@ export function useOrderExport() {
   }
 
   return {
-    exportJson,
     handleExportOrder,
     handleExportOrders
   };

@@ -5,8 +5,7 @@ export const pageLabels: Record<Page, string> = {
   pets: "마이펫",
   records: "일상기록",
   albums: "앨범북",
-  "admin-orders": "주문 관리",
-  export: "JSON 결과"
+  "admin-orders": "주문 관리"
 };
 
 export const pagePaths: Record<Page, string> = {
@@ -14,8 +13,7 @@ export const pagePaths: Record<Page, string> = {
   pets: "/pets",
   records: "/records",
   albums: "/albums",
-  "admin-orders": "/admin/orders",
-  export: "/admin/export"
+  "admin-orders": "/admin/orders"
 };
 
 export function getPageFromPath(pathname: string): Page | null {
@@ -35,7 +33,7 @@ export const orderStatusLabels: Record<OrderStatus, string> = {
 
 export const userNavItems: Page[] = ["home", "pets", "records", "albums"];
 
-export const adminNavItems: Page[] = ["admin-orders", "export"];
+export const adminNavItems: Page[] = ["admin-orders"];
 
 export const defaultPrintOptions: PrintOptions = {
   size: "a5",

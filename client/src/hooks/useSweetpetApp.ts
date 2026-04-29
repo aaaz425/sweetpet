@@ -10,7 +10,6 @@ export function useSweetpetApp() {
   const orderExport = useOrderExport();
 
   return {
-    exportJson: orderExport.exportJson,
     orders: orders.orders,
     ordersStatus: {
       isLoading: orders.isLoading,
