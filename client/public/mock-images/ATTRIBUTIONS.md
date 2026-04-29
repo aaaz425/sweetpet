@@ -14,6 +14,12 @@ These images are used as local demo assets when uploaded pet or record images ar
   - License: Creative Commons Attribution-Share Alike 4.0 International
   - Changes: downloaded at a resized width through Wikimedia Commons
 
+- `default-pet.jpg`
+  - Source: https://commons.wikimedia.org/wiki/File:Pawprints.JPG
+  - Author: rrr12
+  - License: Public domain
+  - Changes: downloaded at a resized width through Wikimedia Commons
+
 - `rabbit.jpg`
   - Source: https://commons.wikimedia.org/wiki/File:Rabbit_pet.jpg
   - Author: 20041027 tatsu

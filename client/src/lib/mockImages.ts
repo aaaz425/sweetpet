@@ -4,6 +4,7 @@ import type { Pet, RecordItem } from "../types";
 export const speciesOptions = ["강아지", "고양이", "토끼", "햄스터", "앵무새", "거북이", "물고기", "달팽이"];
 
 const representativeImages = {
+  default: "/mock-images/default-pet.jpg",
   dog: "/mock-images/maltese-dog.jpg",
   cat: "/mock-images/domestic-cat.jpg",
   rabbit: "/mock-images/rabbit.jpg",
@@ -31,7 +32,7 @@ function representativeImageUrl(speciesValue: string) {
   if (species.includes("fish") || speciesValue.includes("물고기")) return representativeImages.fish;
   if (species.includes("snail") || speciesValue.includes("달팽이")) return representativeImages.snail;
 
-  return representativeImages.dog;
+  return representativeImages.default;
 }
 
 export function petImageUrl(pet: Pet) {
@@ -40,5 +41,5 @@ export function petImageUrl(pet: Pet) {
 
 export function recordImageUrl(record: RecordItem, pet?: Pet | null) {
   if (record.imagePath) return assetUrl(record.imagePath);
-  return pet ? petImageUrl(pet) : representativeImages.dog;
+  return pet ? petImageUrl(pet) : representativeImages.default;
 }
