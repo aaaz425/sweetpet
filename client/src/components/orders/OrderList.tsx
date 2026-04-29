@@ -1,4 +1,4 @@
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown, Pencil, Trash2, X } from "lucide-react";
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { getPrintOptionLabel, orderStatusLabels } from "../../constants";
@@ -42,8 +42,21 @@ function hasPrintOptions(order: Order) {
   return Boolean(order.printOptions.size || order.printOptions.binding || order.printOptions.paper);
 }
 
-function OrderDetailModal({ order, petName, onClose }: { order: Order; petName: string; onClose: () => void }) {
+function OrderDetailModal({
+  order,
+  petName,
+  onCancelOrder,
+  onClose,
+  onEditOrder
+}: {
+  order: Order;
+  petName: string;
+  onCancelOrder?: (order: Order) => void;
+  onClose: () => void;
+  onEditOrder?: (order: Order) => void;
+}) {
   const hasSavedPrintOptions = hasPrintOptions(order);
+  const canModifyOrder = order.status === "pending" && (onEditOrder || onCancelOrder);
 
   return (
     <div
@@ -59,14 +72,36 @@ function OrderDetailModal({ order, petName, onClose }: { order: Order; petName: 
             <h2 className="break-words text-lg font-bold text-text-primary">{order.title}</h2>
             <p className="text-sm text-text-secondary">{order.startDate} - {order.endDate}</p>
           </div>
-          <button
-            aria-label="닫기"
-            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99]"
-            onClick={onClose}
-            type="button"
-          >
-            <X className="h-4 w-4" aria-hidden="true" />
-          </button>
+          <div className="flex shrink-0 items-center gap-2">
+            {canModifyOrder && onEditOrder ? (
+              <button
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99]"
+                onClick={() => onEditOrder(order)}
+                aria-label="주문 편집"
+                type="button"
+              >
+                <Pencil className="h-4 w-4" aria-hidden="true" />
+              </button>
+            ) : null}
+            {canModifyOrder && onCancelOrder ? (
+              <button
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99]"
+                onClick={() => onCancelOrder(order)}
+                aria-label="주문 취소"
+                type="button"
+              >
+                <Trash2 className="h-4 w-4" aria-hidden="true" />
+              </button>
+            ) : null}
+            <button
+              aria-label="닫기"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99]"
+              onClick={onClose}
+              type="button"
+            >
+              <X className="h-4 w-4" aria-hidden="true" />
+            </button>
+          </div>
         </div>
         <div className="grid gap-3.5">
           <section className="grid gap-2.5 rounded-xl border border-border bg-surface p-4">
@@ -133,6 +168,8 @@ export function OrderList({
   const [cancelTargetOrder, setCancelTargetOrder] = useState<Order | null>(null);
   const [isCanceling, setIsCanceling] = useState(false);
   const isAlbumDisplay = displayMode === "album";
+  const headerSpacingClass = isAlbumDisplay ? "mb-3" : "mb-5";
+  const hasInlineHeader = Boolean(headerAction) || isAlbumDisplay;
 
   async function handleConfirmCancelOrder() {
     if (!cancelTargetOrder) return;
@@ -159,15 +196,27 @@ export function OrderList({
     void onUpdateStatus?.(order, status);
   }
 
+  function handleEditDetailOrder(order: Order) {
+    setSelectedDetailOrder(null);
+    onEditOrder?.(order);
+  }
+
+  function handleCancelDetailOrder(order: Order) {
+    setSelectedDetailOrder(null);
+    setCancelTargetOrder(order);
+  }
+
   return (
     <div className={panelClass}>
-      {headerAction ? (
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+      {hasInlineHeader ? (
+        <div className={`${headerSpacingClass} flex flex-wrap items-center justify-between gap-3`}>
           <div className="flex min-w-0 items-center gap-2">
             <h2 className="text-lg font-bold text-text-primary">{title}</h2>
-            <span className="text-sm font-medium text-text-secondary">{orders.length}건</span>
+            {!isAlbumDisplay ? (
+              <span className="text-sm font-medium text-text-secondary">{orders.length}건</span>
+            ) : null}
           </div>
-          {headerAction}
+          {headerAction ? headerAction : null}
         </div>
       ) : (
         <SectionTitle title={title} meta={`${orders.length}건`} />
@@ -184,11 +233,11 @@ export function OrderList({
           }
         />
       ) : (
-        <div className="grid min-w-0 gap-3.5">
+        <div className={isAlbumDisplay ? `relative min-w-0 overflow-hidden ${cardSurfaceClass}` : "grid min-w-0 gap-3.5"}>
           {orders.map((order) =>
             isAlbumDisplay ? (
               <article
-                className={`grid min-w-0 gap-3 p-4 transition duration-150 hover:border-border-strong hover:bg-surface-muted/45 md:p-5 ${cardSurfaceClass}`}
+                className="grid min-w-0 gap-3 border-b border-border p-4 transition duration-150 last:border-b-0 hover:bg-surface-muted/45 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start md:p-5"
                 key={order.id}
               >
                 <button
@@ -204,16 +253,26 @@ export function OrderList({
                   </span>
                 </button>
                 {order.status === "pending" && (onEditOrder || onCancelOrder) ? (
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex shrink-0 gap-1 self-start sm:justify-end">
                     {onEditOrder ? (
-                      <Button onClick={() => onEditOrder(order)} variant="secondary">
-                        편집
-                      </Button>
+                      <button
+                        aria-label={`${order.title} 주문 편집`}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99]"
+                        onClick={() => onEditOrder(order)}
+                        type="button"
+                      >
+                        <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
+                      </button>
                     ) : null}
                     {onCancelOrder ? (
-                      <Button onClick={() => setCancelTargetOrder(order)} variant="secondary">
-                        취소
-                      </Button>
+                      <button
+                        aria-label={`${order.title} 주문 취소`}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99]"
+                        onClick={() => setCancelTargetOrder(order)}
+                        type="button"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                      </button>
                     ) : null}
                   </div>
                 ) : null}
@@ -278,7 +337,9 @@ export function OrderList({
         <OrderDetailModal
           order={selectedDetailOrder}
           petName={pets.find((pet) => pet.id === selectedDetailOrder.petId)?.name ?? `마이펫 #${selectedDetailOrder.petId}`}
+          onCancelOrder={onCancelOrder ? handleCancelDetailOrder : undefined}
           onClose={() => setSelectedDetailOrder(null)}
+          onEditOrder={onEditOrder ? handleEditDetailOrder : undefined}
         />
       ) : null}
       {cancelTargetOrder ? (

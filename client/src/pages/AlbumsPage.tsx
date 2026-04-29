@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { ShoppingBag, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { orderStatusLabels } from "../constants";
 import { DataLoadErrorState } from "../components/feedback/PageState";
@@ -7,7 +7,7 @@ import { OrderFilters, type OrderSortOrder, type OrderStatusFilter } from "../co
 import { OrderForm } from "../components/orders/OrderForm";
 import { OrderList } from "../components/orders/OrderList";
 import { PetSelectField } from "../components/pets/PetSelectField";
-import { primaryButtonClass, secondaryButtonClass } from "../components/ui";
+import { secondaryButtonClass } from "../components/ui";
 import type { Order, OrderFormState, Pet, RecordItem } from "../types";
 
 type AlbumsPageProps = {
@@ -140,7 +140,7 @@ export function AlbumsPage({
   }
 
   return (
-    <section className="grid min-w-0 gap-4">
+    <section className="-mt-2 grid min-w-0 gap-4 md:-mt-3">
       {isOrdersError ? (
         <DataLoadErrorState title="주문 내역을 불러오지 못했습니다" />
       ) : (
@@ -165,18 +165,20 @@ export function AlbumsPage({
               onChangeSortOrder={setSortOrder}
             />
           )}
-          headerAction={
-            <button
-              className={primaryButtonClass}
-              disabled={pets.length === 0}
-              onClick={openCreateOrderModal}
-              type="button"
-            >
-              주문하기
-            </button>
-          }
         />
       )}
+
+      {!isOrdersError && pets.length > 0 ? (
+        <button
+          aria-label="앨범북 주문하기"
+          className="fixed bottom-5 right-5 z-40 inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-primary bg-primary px-4 py-3 text-sm font-bold text-surface shadow-[0_14px_32px_rgba(25,23,20,0.22)] transition duration-150 hover:border-accent hover:bg-accent active:scale-[0.98] sm:bottom-10 sm:right-10 lg:right-[calc((100vw-1120px)/4+2rem)]"
+          onClick={openCreateOrderModal}
+          type="button"
+        >
+          <ShoppingBag className="h-5 w-5" aria-hidden="true" />
+          <span>주문하기</span>
+        </button>
+      ) : null}
 
       {!isOrdersError && isOrderModalOpen ? (
         <div
@@ -184,7 +186,7 @@ export function AlbumsPage({
           onClick={closeOrderModal}
         >
           <div
-            className="grid max-h-full w-full max-w-[520px] gap-4 overflow-y-auto rounded-xl border border-border bg-surface p-4 shadow-[0_18px_44px_rgba(31,41,51,0.16)]"
+            className="grid max-h-full w-full max-w-[560px] gap-4 overflow-y-auto rounded-xl border border-border bg-surface px-6 py-6 shadow-[0_18px_44px_rgba(31,41,51,0.16)] sm:px-8 sm:py-7"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-center justify-between gap-3">

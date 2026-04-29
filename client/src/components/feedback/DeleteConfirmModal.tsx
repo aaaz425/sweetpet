@@ -1,5 +1,5 @@
 import { Ban, Trash2, X } from "lucide-react";
-import { primaryButtonClass, secondaryButtonClass } from "../ui";
+import { primaryButtonClass } from "../ui";
 
 type DeleteConfirmModalProps = {
   title: string;
@@ -52,9 +52,6 @@ export function DeleteConfirmModal({
           </button>
         </div>
         <div className="flex flex-wrap justify-end gap-2">
-          <button className={secondaryButtonClass} disabled={isDeleting} onClick={onCancel} type="button">
-            취소
-          </button>
           <button
             className={`${primaryButtonClass} inline-flex items-center justify-center gap-2`}
             disabled={isDeleting}
