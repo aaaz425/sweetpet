@@ -111,6 +111,10 @@ export function RecordsPage({
     () => records.find((record) => record.id === selectedRecordId) ?? null,
     [records, selectedRecordId]
   );
+  const selectedRecordPet = useMemo(
+    () => pets.find((pet) => pet.id === selectedRecord?.petId) ?? null,
+    [pets, selectedRecord?.petId]
+  );
   const selectedPet = useMemo(() => pets.find((pet) => pet.id === selectedPetId) ?? null, [pets, selectedPetId]);
   const activeFilterSummaryItems = useMemo(() => {
     const nextFilters: RecordFilterSummaryItem[] = [];
@@ -187,6 +191,7 @@ export function RecordsPage({
       ) : (
         <RecordList
           records={sortedRecords}
+          pets={pets}
           fetchNextPage={() => Promise.resolve()}
           hasNextPage={false}
           isLoading={isRecordsLoading}
@@ -236,6 +241,7 @@ export function RecordsPage({
       {!isPetsError && selectedRecord ? (
         <RecordDetailModal
           record={selectedRecord}
+          pet={selectedRecordPet}
           initialIsEditing={shouldEditSelectedRecord}
           onClose={() => {
             setSelectedRecordId(null);

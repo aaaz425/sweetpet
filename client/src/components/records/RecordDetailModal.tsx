@@ -1,13 +1,14 @@
 import { Pencil, Trash2, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { recordImageUrl } from "../../lib/mockImages";
-import type { RecordFormState, RecordItem } from "../../types";
+import type { Pet, RecordFormState, RecordItem } from "../../types";
 import { DeleteConfirmModal } from "../feedback/DeleteConfirmModal";
 import { badgeClass } from "../ui";
 import { RecordForm } from "./RecordForm";
 
 type RecordDetailModalProps = {
   record: RecordItem;
+  pet?: Pet | null;
   initialIsEditing?: boolean;
   onClose: () => void;
   onDeleteRecord: (id: number) => Promise<void>;
@@ -26,6 +27,7 @@ function toRecordFormState(record: RecordItem): RecordFormState {
 
 export function RecordDetailModal({
   record,
+  pet,
   initialIsEditing = false,
   onClose,
   onDeleteRecord,
@@ -112,7 +114,7 @@ export function RecordDetailModal({
             <img
               alt={`${record.recordDate} 일상기록 사진`}
               className="aspect-[4/3] w-full rounded-lg border border-border object-cover"
-              src={recordImageUrl(record)}
+              src={recordImageUrl(record, pet)}
             />
             <div className="grid content-start gap-4">
               <div className="grid gap-2">

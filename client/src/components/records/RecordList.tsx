@@ -1,9 +1,9 @@
 import { CalendarDays, List, Pencil, Plus, Trash2 } from "lucide-react";
 import type { ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { recordImageUrl } from "../../lib/mockImages";
 import { cn } from "../../lib/utils";
-import type { RecordItem } from "../../types";
+import type { Pet, RecordItem } from "../../types";
 import { DeleteConfirmModal } from "../feedback/DeleteConfirmModal";
 import { DataLoadErrorState } from "../feedback/PageState";
 import { EmptyState } from "../feedback/EmptyState";
@@ -13,6 +13,7 @@ import { RecordCalendarView } from "./RecordCalendarView";
 
 type RecordListProps = {
   records: RecordItem[];
+  pets: Pet[];
   fetchNextPage: () => Promise<unknown>;
   hasNextPage: boolean;
   isLoading: boolean;
@@ -31,6 +32,7 @@ type RecordViewMode = "list" | "calendar";
 
 export function RecordList({
   records,
+  pets,
   fetchNextPage,
   hasNextPage,
   isLoading,
@@ -48,6 +50,7 @@ export function RecordList({
   const [deleteTargetRecord, setDeleteTargetRecord] = useState<RecordItem | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const petsById = useMemo(() => new Map(pets.map((pet) => [pet.id, pet])), [pets]);
 
   useEffect(() => {
     if (viewMode !== "list" || !hasNextPage || isFetchingNextPage) return;
@@ -206,7 +209,7 @@ export function RecordList({
                     <img
                       alt={`${record.recordDate} 일상기록 사진`}
                       className="aspect-[4/3] w-full rounded-lg border border-border object-cover"
-                      src={recordImageUrl(record)}
+                      src={recordImageUrl(record, petsById.get(record.petId))}
                     />
                   </button>
                   <button
@@ -263,7 +266,7 @@ export function RecordList({
               </div>
             ) : records.length > 0 ? (
               <div className="p-5 sm:p-6">
-                <RecordCalendarView records={records} onSelectRecord={onSelectRecord} />
+                <RecordCalendarView records={records} pets={pets} onSelectRecord={onSelectRecord} />
               </div>
             ) : null}
           </div>

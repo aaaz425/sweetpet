@@ -2,7 +2,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { recordImageUrl } from "../../lib/mockImages";
 import { cn } from "../../lib/utils";
-import type { RecordItem } from "../../types";
+import type { Pet, RecordItem } from "../../types";
 import { cardSurfaceClass } from "../ui";
 import {
   DropdownMenu,
@@ -15,6 +15,7 @@ import {
 
 type RecordCalendarViewProps = {
   records: RecordItem[];
+  pets: Pet[];
   onSelectRecord: (record: RecordItem) => void;
 };
 
@@ -71,7 +72,7 @@ function latestRecordMonth(records: RecordItem[]) {
   }, parseRecordDate(records[0].recordDate));
 }
 
-export function RecordCalendarView({ records, onSelectRecord }: RecordCalendarViewProps) {
+export function RecordCalendarView({ records, pets, onSelectRecord }: RecordCalendarViewProps) {
   const maxCalendarMonth = useMemo(() => startOfMonth(new Date()), []);
   const [activeMonth, setActiveMonth] = useState(() => startOfMonth(latestRecordMonth(records)));
   const [isCalendarPickerOpen, setIsCalendarPickerOpen] = useState(false);
@@ -97,6 +98,7 @@ export function RecordCalendarView({ records, onSelectRecord }: RecordCalendarVi
 
     return groupedRecords;
   }, [records]);
+  const petsById = useMemo(() => new Map(pets.map((pet) => [pet.id, pet])), [pets]);
 
   const calendarDays = useMemo(() => getCalendarDays(activeMonth), [activeMonth]);
   const isNextMonthDisabled = isAfterMonth(addMonths(activeMonth, 1), maxCalendarMonth);
@@ -219,7 +221,7 @@ export function RecordCalendarView({ records, onSelectRecord }: RecordCalendarVi
                   <img
                     alt={`${representativeRecord.recordDate} 대표 사진`}
                     className="aspect-[4/3] w-full rounded-lg border border-border object-cover"
-                    src={recordImageUrl(representativeRecord)}
+                    src={recordImageUrl(representativeRecord, petsById.get(representativeRecord.petId))}
                   />
                   {dailyRecords.length > 1 ? (
                     <span className="mx-1 mb-1 mt-1 inline-flex w-fit rounded-full bg-primary-soft px-2 py-0.5 text-[11px] font-semibold text-primary">

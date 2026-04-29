@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { petFormSchema } from "../../lib/formSchemas";
+import { speciesOptions } from "../../lib/mockImages";
 import { cn } from "../../lib/utils";
 import type { PetFormState } from "../../types";
 import { fieldClass, labelClass, primaryButtonClass, secondaryButtonClass } from "../ui";
@@ -32,8 +33,6 @@ const initialPetForm: PetFormState = {
   memo: "",
   photo: null
 };
-
-const speciesOptions = ["강아지", "고양이", "토끼", "햄스터", "앵무새", "거북이", "물고기", "달팽이"];
 
 function SpeciesCombobox({ id, value, onChange }: { id: string; value: string; onChange: (value: string) => void }) {
   const [open, setOpen] = useState(false);
