@@ -26,7 +26,7 @@ export function PetFilters({
   const selectedSpeciesLabel = selectedSpecies === "all" ? "전체" : selectedSpecies;
 
   return (
-    <div className="mb-5 grid gap-3 rounded-xl border border-border bg-surface p-3">
+    <div className="grid gap-3 rounded-xl border border-border bg-surface p-3">
       <label className="grid max-w-sm gap-1.5 text-sm font-semibold text-text-secondary">
         종류
         <DropdownMenu>

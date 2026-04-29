@@ -75,104 +75,108 @@ export function PetList({
   }
 
   return (
-    <div className={panelClass}>
+    <div className={`${panelClass} grid min-w-0 gap-5`}>
       {filters}
-      <div className="grid min-w-0 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
-        {onCreatePet ? (
-          <button
-            className={`grid min-h-[19rem] w-full min-w-0 place-items-center gap-3 p-5 text-center transition duration-150 hover:border-border-strong hover:bg-surface-muted/45 active:scale-[0.99] ${cardSurfaceClass}`}
-            onClick={onCreatePet}
-            type="button"
-          >
-            <span className="grid justify-items-center gap-3">
-              <span className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-border bg-primary-soft text-primary">
-                <Plus className="h-5 w-5" aria-hidden="true" />
+      <section className="grid min-w-0 gap-3.5 rounded-xl bg-primary/10 p-3 shadow-[0_18px_42px_rgba(25,23,20,0.1),inset_0_1px_0_rgba(255,255,255,0.36)] backdrop-blur-2xl sm:p-4">
+        <div className="grid min-w-0 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+          {onCreatePet ? (
+            <button
+              className={`grid min-h-[19rem] w-full min-w-0 place-items-center gap-3 p-5 text-center transition duration-150 hover:border-border-strong hover:bg-surface-muted/45 active:scale-[0.99] ${cardSurfaceClass}`}
+              onClick={onCreatePet}
+              type="button"
+            >
+              <span className="grid justify-items-center gap-3">
+                <span className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-border bg-primary-soft text-primary">
+                  <Plus className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <span className="grid gap-1">
+                  <strong className="text-base text-text-primary">마이펫 등록</strong>
+                  <span className="text-sm leading-6 text-text-secondary">새 반려동물을 추가하세요</span>
+                </span>
               </span>
-              <span className="grid gap-1">
-                <strong className="text-base text-text-primary">마이펫 등록</strong>
-                <span className="text-sm leading-6 text-text-secondary">새 반려동물을 추가하세요</span>
-              </span>
-            </span>
-          </button>
-        ) : null}
-        {pets.length === 0 && !onCreatePet ? (
-          <EmptyState
-            title={emptyTitle}
-            description={emptyDescription}
-          />
-        ) : null}
-        {pets.map((pet) => (
-          <article
-            className={`relative grid w-full min-w-0 cursor-pointer gap-1 p-3.5 text-left transition duration-150 hover:border-border-strong hover:bg-surface-muted/45 active:scale-[0.99] ${cardSurfaceClass}`}
-            key={pet.id}
-            onClick={() => setSelectedDetailPet(pet)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                setSelectedDetailPet(pet);
-              }
-            }}
-            role="button"
-            tabIndex={0}
-          >
-            <img
-              alt={`${pet.name} 대표 사진`}
-              className="mb-2.5 aspect-[5/3] w-full rounded-lg border border-border object-cover"
-              src={petImageUrl(pet)}
-            />
-            <div className="min-w-0">
-              <dl className="grid min-w-0 flex-1 gap-1.5 text-sm">
-                <div className="grid min-w-0 grid-cols-[3rem_minmax(0,1fr)_auto] items-center gap-2">
-                  <dt className="font-medium text-text-secondary">이름</dt>
-                  <dd className="min-w-0 truncate font-bold text-text-primary">{pet.name}</dd>
-                  {onEditPet || onDeletePet ? (
-                    <div className="flex shrink-0 gap-1">
-                      {onEditPet ? (
-                        <button
-                          aria-label={`${pet.name} 편집`}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-full text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99]"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            handleEditPet(pet);
-                          }}
-                          type="button"
-                        >
-                          <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
-                        </button>
-                      ) : null}
-                      {onDeletePet ? (
-                        <button
-                          aria-label={`${pet.name} 삭제`}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-full text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99]"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            handleDeletePet(pet);
-                          }}
-                          type="button"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
-                        </button>
-                      ) : null}
-                    </div>
-                  ) : null}
-                </div>
-                <div className="grid min-w-0 grid-cols-[3rem_minmax(0,1fr)] gap-2">
-                  <dt className="font-medium text-text-secondary">종류</dt>
-                  <dd className="min-w-0 truncate text-text-primary">{pet.species}</dd>
-                </div>
-                <div className="grid min-w-0 grid-cols-[3rem_minmax(0,1fr)] gap-2">
-                  <dt className="font-medium text-text-secondary">나이</dt>
-                  <dd className="min-w-0 truncate text-text-primary">{formatPetAge(pet.birthday)}</dd>
-                </div>
-                <div className="grid min-w-0 grid-cols-[3rem_minmax(0,1fr)] gap-2">
-                  <dt className="font-medium text-text-secondary">메모</dt>
-                  <dd className="min-w-0 truncate text-text-primary">{pet.memo || "등록된 메모가 없습니다."}</dd>
-                </div>
-              </dl>
+            </button>
+          ) : null}
+          {pets.length === 0 && !onCreatePet ? (
+            <div className="sm:col-span-2 lg:col-span-3">
+              <EmptyState
+                title={emptyTitle}
+                description={emptyDescription}
+              />
             </div>
-          </article>
-        ))}
-      </div>
+          ) : null}
+          {pets.map((pet) => (
+            <article
+              className={`relative grid w-full min-w-0 cursor-pointer gap-1 p-3.5 text-left transition duration-150 hover:border-border-strong hover:bg-surface-muted/45 active:scale-[0.99] ${cardSurfaceClass}`}
+              key={pet.id}
+              onClick={() => setSelectedDetailPet(pet)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  setSelectedDetailPet(pet);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+            >
+              <img
+                alt={`${pet.name} 대표 사진`}
+                className="mb-2.5 aspect-[5/3] w-full rounded-lg border border-border object-cover"
+                src={petImageUrl(pet)}
+              />
+              <div className="min-w-0">
+                <dl className="grid min-w-0 flex-1 gap-1.5 text-sm">
+                  <div className="grid min-w-0 grid-cols-[3rem_minmax(0,1fr)_auto] items-center gap-2">
+                    <dt className="font-medium text-text-secondary">이름</dt>
+                    <dd className="min-w-0 truncate font-bold text-text-primary">{pet.name}</dd>
+                    {onEditPet || onDeletePet ? (
+                      <div className="flex shrink-0 gap-1">
+                        {onEditPet ? (
+                          <button
+                            aria-label={`${pet.name} 편집`}
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-full text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99]"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleEditPet(pet);
+                            }}
+                            type="button"
+                          >
+                            <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
+                          </button>
+                        ) : null}
+                        {onDeletePet ? (
+                          <button
+                            aria-label={`${pet.name} 삭제`}
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-full text-text-secondary transition duration-150 hover:bg-primary-soft hover:text-primary active:scale-[0.99]"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleDeletePet(pet);
+                            }}
+                            type="button"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                          </button>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </div>
+                  <div className="grid min-w-0 grid-cols-[3rem_minmax(0,1fr)] gap-2">
+                    <dt className="font-medium text-text-secondary">종류</dt>
+                    <dd className="min-w-0 truncate text-text-primary">{pet.species}</dd>
+                  </div>
+                  <div className="grid min-w-0 grid-cols-[3rem_minmax(0,1fr)] gap-2">
+                    <dt className="font-medium text-text-secondary">나이</dt>
+                    <dd className="min-w-0 truncate text-text-primary">{formatPetAge(pet.birthday)}</dd>
+                  </div>
+                  <div className="grid min-w-0 grid-cols-[3rem_minmax(0,1fr)] gap-2">
+                    <dt className="font-medium text-text-secondary">메모</dt>
+                    <dd className="min-w-0 truncate text-text-primary">{pet.memo || "등록된 메모가 없습니다."}</dd>
+                  </div>
+                </dl>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
       {selectedDetailPet ? (
         <div
           className="fixed inset-0 z-50 grid place-items-center bg-text-primary/35 px-4 py-6"
