@@ -58,7 +58,7 @@ function failure<T>(status: number, message: string): ServiceResult<T> {
   return { ok: false, status, message };
 }
 
-function normalizePrintOptions(printOptions: unknown): PrintOptions {
+export function normalizePrintOptions(printOptions: unknown): PrintOptions {
   if (!printOptions || typeof printOptions !== "object" || Array.isArray(printOptions)) {
     return defaultPrintOptions;
   }

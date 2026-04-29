@@ -9,35 +9,47 @@ import { recordsRouter } from "./domains/records/records.router.js";
 import { fail, ok } from "./response.js";
 import { uploadRoot } from "./uploads.js";
 
-const app = express();
 const port = Number(process.env.PORT ?? 4000);
 
-app.use(cors());
-app.use(express.json());
-app.use("/uploads", express.static(uploadRoot));
+export function createApp() {
+  const app = express();
 
-migrate();
-seed();
+  app.use(cors());
+  app.use(express.json());
+  app.use("/uploads", express.static(uploadRoot));
 
-app.get("/api/health", (_req, res) => {
-  ok(res, "Success", { ok: true, service: "sweetpet" });
-});
+  app.get("/api/health", (_req, res) => {
+    ok(res, "Success", { ok: true, service: "sweetpet" });
+  });
 
-app.use("/api/pets", petsRouter);
-app.use("/api/records", recordsRouter);
-app.use("/api/books", booksRouter);
-app.use("/api/orders", ordersRouter);
+  app.use("/api/pets", petsRouter);
+  app.use("/api/records", recordsRouter);
+  app.use("/api/books", booksRouter);
+  app.use("/api/orders", ordersRouter);
 
-app.use("/api", (req, res) => {
-  fail(res, 404, `API 경로를 찾을 수 없습니다: ${req.path}`);
-});
+  app.use("/api", (req, res) => {
+    fail(res, 404, `API 경로를 찾을 수 없습니다: ${req.path}`);
+  });
 
-const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
-  fail(res, 400, error.message || "request failed");
-};
+  const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
+    fail(res, 400, error.message || "request failed");
+  };
 
-app.use(errorHandler);
+  app.use(errorHandler);
 
-app.listen(port, "0.0.0.0", () => {
-  console.log(`sweetpet api listening on ${port}`);
-});
+  return app;
+}
+
+export function startServer() {
+  migrate();
+  seed();
+
+  const app = createApp();
+  return app.listen(port, "0.0.0.0", () => {
+    console.log(`sweetpet api listening on ${port}`);
+  });
+}
+
+if (process.env.NODE_ENV !== "test") {
+  startServer();
+}
