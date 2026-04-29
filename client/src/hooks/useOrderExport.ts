@@ -9,7 +9,6 @@ export function useOrderExport() {
     try {
       const exportedOrder = await exportOrder(order.orderUid);
       const nextExportJson = JSON.stringify(exportedOrder, null, 2);
-      toast.success("내보내기 데이터가 준비되었습니다.");
       return nextExportJson;
     } catch {
       toast.error("내보내기 준비 중 문제가 발생했습니다.");
@@ -34,7 +33,6 @@ export function useOrderExport() {
         null,
         2
       );
-      toast.success(`${exportedOrders.length}건의 내보내기 데이터가 준비되었습니다.`);
       return nextExportJson;
     } catch {
       toast.error("내보내기 일괄 준비 중 문제가 발생했습니다.");
