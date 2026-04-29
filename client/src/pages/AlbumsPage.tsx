@@ -140,7 +140,7 @@ export function AlbumsPage({
   }
 
   return (
-    <section className="-mt-2 grid min-w-0 gap-4 md:-mt-3">
+    <section className="grid min-w-0 gap-4">
       {isOrdersError ? (
         <DataLoadErrorState title="주문 내역을 불러오지 못했습니다" />
       ) : (

@@ -237,7 +237,7 @@ export function OrderList({
           {orders.map((order) =>
             isAlbumDisplay ? (
               <article
-                className="grid min-w-0 gap-3 border-b border-border p-4 transition duration-150 last:border-b-0 hover:bg-surface-muted/45 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start md:p-5"
+                className="grid min-w-0 gap-3 border-b border-border p-4 transition duration-150 last:border-b-0 hover:bg-primary-soft/35 hover:shadow-[inset_3px_0_0_#2F2923] sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start md:p-5"
                 key={order.id}
               >
                 <button

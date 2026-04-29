@@ -17,7 +17,6 @@ import type { OrderSortOrder } from "./OrderFilters";
 
 type AdminOrdersHeaderProps = {
   filters: OrderStatusFilter[];
-  orderCount: number;
   selectedFilter: OrderStatusFilter;
   searchKeyword: string;
   sortOrder: OrderSortOrder;
@@ -30,7 +29,6 @@ type AdminOrdersHeaderProps = {
 
 export function AdminOrdersHeader({
   filters,
-  orderCount,
   selectedFilter,
   searchKeyword,
   sortOrder,
@@ -47,7 +45,6 @@ export function AdminOrdersHeader({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2">
           <h2 className="text-lg font-bold text-text-primary">주문 관리</h2>
-          <span className="text-sm font-medium text-text-secondary">{orderCount}건</span>
         </div>
       </div>
 

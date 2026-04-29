@@ -36,7 +36,7 @@ export function AdminOrderDetailModal({
       onClick={onClose}
     >
       <div
-        className="grid max-h-full w-full max-w-[600px] gap-4 overflow-y-auto rounded-xl border border-border bg-surface p-4 shadow-[0_18px_44px_rgba(31,41,51,0.16)]"
+        className="grid max-h-full w-full max-w-[640px] gap-5 overflow-y-auto rounded-xl border border-border bg-surface p-5 shadow-[0_18px_44px_rgba(31,41,51,0.16)] sm:p-6"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex min-w-0 items-start justify-between gap-3">
@@ -54,8 +54,8 @@ export function AdminOrderDetailModal({
           </button>
         </div>
 
-        <div className="grid gap-3">
-          <section className="grid gap-2 rounded-xl border border-border bg-surface p-3">
+        <div className="grid gap-4">
+          <section className="grid gap-3 rounded-xl border border-border bg-surface p-4">
             <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
               <span className="text-text-secondary">상태</span>
               <span className={badgeClass}>{orderStatusLabels[order.status]}</span>
@@ -74,7 +74,7 @@ export function AdminOrderDetailModal({
             </div>
           </section>
 
-          <section className="grid gap-2 rounded-xl border border-border bg-surface p-3 text-sm">
+          <section className="grid gap-3 rounded-xl border border-border bg-surface p-4 text-sm">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <span className="text-text-secondary">기록/수량</span>
               <strong className="text-text-primary">기록 {order.recordCount}개 · {getOrderQuantity(order)}권</strong>
@@ -89,15 +89,15 @@ export function AdminOrderDetailModal({
             </div>
           </section>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap justify-end gap-2 pt-1">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button>
+                <Button className="min-h-11 px-4 shadow-[0_10px_22px_rgba(25,23,20,0.14)]" variant="primary">
                   상태 변경
                   <ChevronDown aria-hidden="true" size={16} />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent align="end">
                 <DropdownMenuLabel>주문 상태</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {orderStatuses.map((status) => (
@@ -112,8 +112,10 @@ export function AdminOrderDetailModal({
               </DropdownMenuContent>
             </DropdownMenu>
             <Button
+              className="min-h-11 px-4 shadow-[0_10px_22px_rgba(25,23,20,0.14)]"
               disabled={!order.orderUid || exportingOrderId === order.id}
               onClick={() => onExportOrder(order)}
+              variant="primary"
             >
               {exportingOrderId === order.id ? "준비 중" : "JSON 보기"}
             </Button>

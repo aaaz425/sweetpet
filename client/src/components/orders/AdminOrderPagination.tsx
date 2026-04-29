@@ -1,5 +1,4 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { cardSurfaceClass } from "../ui";
 import { Button } from "../ui/button";
 
 type AdminOrderPaginationProps = {
@@ -32,14 +31,11 @@ export function AdminOrderPagination({
   const visiblePages = getVisiblePages(currentPage, totalPages);
 
   return (
-    <div className={`flex flex-wrap items-center justify-between gap-3 px-4 py-3 ${cardSurfaceClass}`}>
-      <span className="text-sm font-medium text-text-secondary">
-        {startItem}-{endItem} / {totalCount}건
-      </span>
-      <div className="flex items-center gap-1">
+    <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 border-t border-border px-4 py-3">
+      <div className="col-start-2 flex items-center justify-center gap-1">
         <Button
           aria-label="이전 페이지"
-          className="h-9 min-h-9 w-9 p-0"
+          className="h-9 min-h-9 w-9 border-0 bg-transparent p-0 shadow-none hover:bg-surface-muted"
           disabled={currentPage === 1}
           onClick={() => onPageChange(currentPage - 1)}
           variant="secondary"
@@ -48,10 +44,10 @@ export function AdminOrderPagination({
         </Button>
         {visiblePages.map((page) => (
           <button
-            className={`h-9 min-w-9 rounded-lg border px-3 text-sm font-semibold transition duration-150 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-soft ${
+            className={`h-9 min-w-9 rounded-lg border-0 px-3 text-sm font-semibold transition duration-150 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-soft ${
               currentPage === page
-                ? "border-primary bg-primary text-surface"
-                : "border-border bg-surface text-text-secondary hover:border-border-strong hover:bg-surface-muted hover:text-primary"
+                ? "bg-primary text-surface"
+                : "bg-transparent text-text-secondary hover:bg-surface-muted hover:text-primary"
             }`}
             key={page}
             onClick={() => onPageChange(page)}
@@ -62,7 +58,7 @@ export function AdminOrderPagination({
         ))}
         <Button
           aria-label="다음 페이지"
-          className="h-9 min-h-9 w-9 p-0"
+          className="h-9 min-h-9 w-9 border-0 bg-transparent p-0 shadow-none hover:bg-surface-muted"
           disabled={currentPage === totalPages}
           onClick={() => onPageChange(currentPage + 1)}
           variant="secondary"
@@ -70,6 +66,9 @@ export function AdminOrderPagination({
           <ChevronRight className="h-4 w-4" aria-hidden="true" />
         </Button>
       </div>
+      <span className="col-start-3 justify-self-end text-sm font-medium text-text-secondary">
+        {startItem}-{endItem} / {totalCount}건
+      </span>
     </div>
   );
 }

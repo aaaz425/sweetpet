@@ -27,7 +27,7 @@ export function AdminOrderStatusFilter({
 
         return (
           <button
-            className={`rounded-full border px-3 py-2 text-sm font-semibold leading-5 transition duration-150 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-soft ${
+            className={`rounded-lg border px-3 py-1.5 text-xs font-semibold leading-5 transition duration-150 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-soft ${
               isSelected
                 ? "border-primary bg-primary text-surface"
                 : "border-border bg-surface text-text-secondary hover:border-border-strong hover:bg-surface-muted hover:text-primary"

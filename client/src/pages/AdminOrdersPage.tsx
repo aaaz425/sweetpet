@@ -11,7 +11,7 @@ import { AdminOrdersHeader } from "../components/orders/AdminOrdersHeader";
 import type { OrderSortOrder } from "../components/orders/OrderFilters";
 import { DeleteConfirmModal } from "../components/feedback/DeleteConfirmModal";
 import { DataLoadErrorState } from "../components/feedback/PageState";
-import { panelClass } from "../components/ui";
+import { cardSurfaceClass, panelClass } from "../components/ui";
 import type { Order, OrderStatus } from "../types";
 
 type AdminOrdersPageProps = {
@@ -273,7 +273,6 @@ export function AdminOrdersPage({
     <section className={`${panelClass} grid gap-5`}>
       <AdminOrdersHeader
         filters={orderStatusFilters}
-        orderCount={sortedOrders.length}
         selectedFilter={selectedStatus}
         searchKeyword={searchKeyword}
         sortOrder={sortOrder}
@@ -289,26 +288,30 @@ export function AdminOrdersPage({
         onChangeSortOrder={handleChangeSortOrder}
       />
 
-      <AdminOrderTable
-        emptyDescription={emptyDescription}
-        orders={paginatedOrders}
-        selectedOrderIds={selectedOrderIds}
-        onOpenOrder={setDetailOrder}
-        onToggleOrder={handleToggleOrder}
-        onToggleVisibleOrders={handleToggleVisibleOrders}
-      />
+      <div className={cardSurfaceClass}>
+        <AdminOrderTable
+          emptyDescription={emptyDescription}
+          isFramed={false}
+          orders={paginatedOrders}
+          selectedOrderIds={selectedOrderIds}
+          onOpenOrder={setDetailOrder}
+          onToggleOrder={handleToggleOrder}
+          onToggleVisibleOrders={handleToggleVisibleOrders}
+        />
 
-      <AdminOrderPagination
-        currentPage={currentPage}
-        pageSize={orderPageSize}
-        totalCount={sortedOrders.length}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+        <AdminOrderPagination
+          currentPage={currentPage}
+          pageSize={orderPageSize}
+          totalCount={sortedOrders.length}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      </div>
 
       <AdminOrderBulkActions
         isExporting={isBatchExporting}
         selectedCount={selectedOrders.length}
+        onClearSelection={() => setSelectedOrderIds([])}
         onExportOrders={handleBatchExportOrders}
         onUpdateStatus={handleBatchUpdateStatus}
       />

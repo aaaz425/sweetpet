@@ -1,4 +1,4 @@
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import { orderStatusLabels } from "../../constants";
 import type { OrderStatus } from "../../types";
 import { glassSurfaceClass } from "../ui";
@@ -15,6 +15,7 @@ import {
 type AdminOrderBulkActionsProps = {
   selectedCount: number;
   isExporting: boolean;
+  onClearSelection: () => void;
   onExportOrders: () => void;
   onUpdateStatus: (status: OrderStatus) => void;
 };
@@ -24,14 +25,25 @@ const orderStatuses: OrderStatus[] = ["pending", "processing", "completed", "can
 export function AdminOrderBulkActions({
   selectedCount,
   isExporting,
+  onClearSelection,
   onExportOrders,
   onUpdateStatus
 }: AdminOrderBulkActionsProps) {
   if (selectedCount === 0) return null;
 
   return (
-    <div className={`fixed bottom-20 left-1/2 z-40 flex max-w-[calc(100vw-40px)] -translate-x-1/2 flex-wrap items-center gap-2 rounded-xl p-3 sm:bottom-28 sm:left-auto sm:right-32 sm:translate-x-0 ${glassSurfaceClass}`}>
-      <span className="rounded-lg bg-primary px-3 py-2 text-sm font-semibold leading-5 text-surface">{selectedCount}건 선택</span>
+    <div className={`fixed bottom-5 right-5 z-40 flex max-w-[calc(100vw-40px)] flex-wrap items-center gap-2 rounded-xl p-3 sm:bottom-10 sm:right-10 lg:right-[calc((100vw-1120px)/4+2rem)] ${glassSurfaceClass}`}>
+      <button
+        aria-label="선택 해제"
+        className="inline-flex items-center gap-2 rounded-lg bg-primary py-2 pl-3 pr-2 text-sm font-semibold leading-5 text-surface transition duration-150 hover:bg-accent active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-soft"
+        onClick={onClearSelection}
+        type="button"
+      >
+        {selectedCount}건 선택
+        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full text-surface/80">
+          <X className="h-3.5 w-3.5" aria-hidden="true" />
+        </span>
+      </button>
       <div className="flex gap-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

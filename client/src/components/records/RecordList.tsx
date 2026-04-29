@@ -183,7 +183,7 @@ export function RecordList({
               <div className="grid min-w-0">
               {records.map((record) => (
                 <article
-                  className="grid min-w-0 cursor-pointer gap-3.5 border-b border-border p-4 transition duration-150 last:border-b-0 hover:bg-surface-muted/45 active:scale-[0.99] sm:grid-cols-[144px_minmax(0,1fr)_auto] sm:items-start sm:gap-4 md:grid-cols-[156px_minmax(0,1fr)_auto] md:p-5"
+                  className="grid min-w-0 cursor-pointer gap-3.5 border-b border-border p-4 transition duration-150 last:border-b-0 hover:bg-primary-soft/35 hover:shadow-[inset_3px_0_0_#2F2923] active:scale-[0.99] sm:grid-cols-[144px_minmax(0,1fr)_auto] sm:items-start sm:gap-4 md:grid-cols-[156px_minmax(0,1fr)_auto] md:p-5"
                   key={record.id}
                   onClick={() => onSelectRecord(record)}
                   onKeyDown={(event) => {

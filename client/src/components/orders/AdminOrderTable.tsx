@@ -1,12 +1,17 @@
 import { orderStatusLabels } from "../../constants";
+import { cn } from "../../lib/utils";
 import type { Order } from "../../types";
 import { EmptyState } from "../feedback/EmptyState";
 import { badgeClass, cardSurfaceClass } from "../ui";
 import { getOrderPrintOptions, getOrderQuantity } from "./orderViewUtils";
 
+const headerCellClass =
+  "sticky top-0 z-20 border-b border-border bg-white/75 px-4 py-3.5 text-xs font-bold text-text-secondary shadow-[0_1px_0_rgba(25,23,20,0.04)] backdrop-blur-xl";
+
 type AdminOrderTableProps = {
   orders: Order[];
   emptyDescription: string;
+  isFramed?: boolean;
   selectedOrderIds: number[];
   onOpenOrder: (order: Order) => void;
   onToggleOrder: (orderId: number) => void;
@@ -16,6 +21,7 @@ type AdminOrderTableProps = {
 export function AdminOrderTable({
   orders,
   emptyDescription,
+  isFramed = true,
   selectedOrderIds,
   onOpenOrder,
   onToggleOrder,
@@ -35,20 +41,20 @@ export function AdminOrderTable({
   }
 
   return (
-    <div className={`overflow-x-auto ${cardSurfaceClass}`}>
-      <table className="w-full min-w-[960px] table-fixed border-collapse text-left text-sm">
+    <div className={cn("overflow-visible", isFramed && cardSurfaceClass)}>
+      <table className="w-full min-w-[928px] table-fixed border-collapse text-left text-sm">
         <colgroup>
           <col className="w-[48px]" />
-          <col className="w-[32%]" />
+          <col className="w-[34%]" />
           <col className="w-[12%]" />
-          <col className="w-[18%]" />
-          <col className="w-[14%]" />
-          <col className="w-[14%]" />
+          <col className="w-[11%]" />
+          <col className="w-[11%]" />
+          <col className="w-[22%]" />
           <col className="w-[10%]" />
         </colgroup>
-        <thead className="bg-surface/30 text-xs font-bold text-text-secondary">
+        <thead>
           <tr>
-            <th className="border-b border-border px-4 py-3.5">
+            <th className={cn(headerCellClass, "rounded-tl-xl")}>
               <input
                 aria-label="현재 목록 주문 전체 선택"
                 checked={areAllVisibleOrdersSelected}
@@ -57,12 +63,12 @@ export function AdminOrderTable({
                 type="checkbox"
               />
             </th>
-            <th className="border-b border-border px-4 py-3.5">주문 요약</th>
-            <th className="border-b border-border px-4 py-3.5">상태</th>
-            <th className="border-b border-border px-4 py-3.5">기간</th>
-            <th className="border-b border-border px-4 py-3.5">기록/수량</th>
-            <th className="border-b border-border px-4 py-3.5">인쇄 옵션</th>
-            <th className="border-b border-border px-4 py-3.5">주문일</th>
+            <th className={headerCellClass}>주문 요약</th>
+            <th className={headerCellClass}>상태</th>
+            <th className={headerCellClass}>기록</th>
+            <th className={headerCellClass}>수량</th>
+            <th className={headerCellClass}>인쇄 옵션</th>
+            <th className={cn(headerCellClass, "rounded-tr-xl")}>주문일</th>
           </tr>
         </thead>
         <tbody>
@@ -71,7 +77,7 @@ export function AdminOrderTable({
 
             return (
               <tr
-                className={`transition duration-150 hover:bg-surface/60 ${isSelected ? "bg-primary-soft/55" : "odd:bg-surface/30 even:bg-surface/15"}`}
+                className={`group relative transition duration-150 hover:bg-primary-soft/35 hover:shadow-[inset_3px_0_0_#2F2923] ${isSelected ? "bg-primary-soft/55 shadow-[inset_3px_0_0_#2F2923]" : "odd:bg-surface/30 even:bg-surface/15"}`}
                 key={order.id}
               >
                 <td className="border-b border-border px-4 py-3.5 align-middle">
@@ -105,15 +111,13 @@ export function AdminOrderTable({
                   className="min-w-0 cursor-pointer border-b border-border px-4 py-3.5 align-middle text-text-secondary"
                   onClick={() => onOpenOrder(order)}
                 >
-                  <span className="block truncate" title={`${order.startDate} - ${order.endDate}`}>
-                    {order.startDate} - {order.endDate}
-                  </span>
+                  <span className="block truncate">기록 {order.recordCount}개</span>
                 </td>
                 <td
                   className="min-w-0 cursor-pointer border-b border-border px-4 py-3.5 align-middle text-text-secondary"
                   onClick={() => onOpenOrder(order)}
                 >
-                  <span className="block truncate">기록 {order.recordCount}개 · {getOrderQuantity(order)}권</span>
+                  <span className="block truncate">{getOrderQuantity(order)}권</span>
                 </td>
                 <td
                   className="min-w-0 cursor-pointer border-b border-border px-4 py-3.5 align-middle text-text-secondary"
