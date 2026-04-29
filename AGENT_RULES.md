@@ -111,6 +111,14 @@ The current codebase is intentionally small, but new work should move it toward 
 * Keep JSON export as structured API-ready data, but do not integrate real external print APIs.
 * Admin order management should operate on already-created orders and should not mutate source pet records.
 
+## Testing Rules
+
+* For backend business logic, API behavior, and data model changes, write or update tests before or alongside implementation.
+* New order, record, export, and validation behavior must include tests that fail without the intended change.
+* Tests are required when changing records CRUD behavior, order creation or status flow, JSON export structure, validation rules, or API response shape.
+* Run `npm test` and `npm run build` before committing code changes.
+* For small visual-only UI changes, tests may be skipped if existing behavior is unchanged.
+
 ## Protected Documents
 
 Do not edit the following files unless the user explicitly asks for documentation changes:
