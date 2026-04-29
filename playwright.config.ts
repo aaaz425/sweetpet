@@ -2,6 +2,7 @@ import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./e2e",
+  reporter: [["list", { printSteps: true }]],
   timeout: 60_000,
   expect: {
     timeout: 8_000
