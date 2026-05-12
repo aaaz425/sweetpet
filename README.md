@@ -10,6 +10,9 @@
 
 반려동물의 일상을 기록하고, 일정 기간의 기록을 앨범북 주문 데이터로 만들 수 있는 서비스입니다.
 
+### 시연 영상
+<img width="600" height="327" alt="시연영상" src="https://github.com/user-attachments/assets/5a60b22e-0aed-404e-8f32-51cef089a7d8" />
+
 ### 타겟 사용자
 
 - 반려동물을 키우는 보호자
